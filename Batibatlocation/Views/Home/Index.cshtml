@@ -2,30 +2,60 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@*HERO Section*@
+<section id="hero" class="hero d-flex align-items-center justify-content-center">
+    <div class="preHero"></div>
+    <img id="LogoHeroSection" class="hero-img fade-out" src="~/Content/Images/LogoBatibatSVG.svg" alt="Logo Bati'Bat Location Echaufaudages, Le partenaire de vos projets">
+    <div class="hero-content text-center">
+        <p class="construction-subtext">"Le partenaire de vos projets."</p>
+    </div>
+    <!-- SVG a forma di tetto -->
+    <svg class="roof-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <polygon points="0,20 50,0 100,20" style="fill:#f8f9fa;" />
+    </svg>
+</section>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+@*Service*@
+<br>
+<section id="services" class="services bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Nos Services</h2>
+        <hr><br>
+        <div class="row row-services">
+            <div class="col-md-6 mb-6">
+                <div class="service-item d-flex flex-column justify-content-center p-4 bg-white shadow-sm">
+                    <h3>Location d'échafaudages</h3>
+                    <p><span class="first-letter">N</span>ous sommes spécialisés dans la location d'échafaudages pour tous les types de chantiers. Nous proposons des solutions personnalisées pour répondre à tous vos besoins.</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-6">
+                <div class="service-item d-flex flex-column justify-content-center p-4 bg-white shadow-sm">
+                    <h3>Assistance et Maintenance</h3>
+                    <p><span class="first-letter">N</span>ous offrons un suivi et une maintenance continus pour garantir que l'échafaudage est toujours en parfait état.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+</section>
+
+@*Contact*@
+<section id="contact" class="contact py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Contactez-nous pour une <span class="reservation">"Reservation"</span></h2>
+        <hr><br>
+        <div class="mail">
+            <div class="envelope-wrapper">
+                <div class="envelope">
+                    <div class="envelope-top"></div>
+                </div>
+                <button class="email-button">
+                    Email
+                    <div class="click-icon">
+                        <i class="fas fa-hand-pointer"></i>
+                        <div class="click-effect"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+</section>
