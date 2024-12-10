@@ -10,119 +10,125 @@
 
 </head>
 <body>
-    @*Navbar*@
-    <header id="navbar" class="navbar-home">
-        <div id="topbar" class="top-bar bg-dark text-white py-2">
-            <div class="container-md">
-                <div class="row align-items-center">
-                    <!-- Sezione Indirizzo -->
-                    <div class="col-md-4 col-6 text-center text-md-left">
-                        <i class="fas fa-map-marker-alt"></i> Rouvray 89230
-                    </div>
-                    <!-- Sezione Numero di Telefono -->
-                    <div class="col-md-4 col-6 text-center">
-                        <i class="fas fa-phone-alt"></i> +33 06 95889208
-                    </div>
-                    <!-- Sezione Icone Social -->
-                    <div class="social-icons col-md-4 text-center text-md-right">
-                        <div class="row">
-                            <div class="col-md-6"></div>
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <!-- Facebook -->
-                                    <div class="col-4 social-icon" id="facebook">
-                                        <a href="https://www.facebook.com" target="_blank" class="disabled-link text-white d-flex justify-content-center align-items-center">
-                                            <i class="fab fa-facebook-f"></i>
-                                        </a>
-                                    </div>
-                                    <!-- Instagram -->
-                                    <div class="col-4 social-icon" id="instagram">
-                                        <a href="https://www.instagram.com" target="_blank" class="disabled-link text-white d-flex justify-content-center align-items-center">
-                                            <i class="fab fa-instagram"></i>
-                                        </a>
-                                    </div>
-                                    <!-- WhatsApp -->
-                                    <div class="col-4 social-icon" id="whatsapp">
-                                        <a href="https://wa.me/+330695889208" target="_blank" class="text-white d-flex justify-content-center align-items-center">
-                                            <i class="fab fa-whatsapp"></i>
-                                        </a>
+    <div class="main-wrapper">
+        @*Navbar*@
+        <header id="navbar" class="navbar-home">
+            <div id="topbar" class="top-bar bg-dark text-white py-2">
+                <div class="container-md">
+                    <div class="row align-items-center">
+                        <!-- Sezione Indirizzo -->
+                        <div class="col-md-4 col-6 text-center text-md-left">
+                            <i class="fas fa-map-marker-alt"></i> Rouvray 89230
+                        </div>
+                        <!-- Sezione Numero di Telefono -->
+                        <div class="col-md-4 col-6 text-center">
+                            <i class="fas fa-phone-alt"></i> +33 06 95889208
+                        </div>
+                        <!-- Sezione Icone Social -->
+                        <div class="social-icons col-md-4 text-center text-md-right">
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <!-- Facebook -->
+                                        <div class="col-4 social-icon" id="facebook">
+                                            <a href="https://www.facebook.com" target="_blank" class="disabled-link text-white d-flex justify-content-center align-items-center">
+                                                <i class="fab fa-facebook-f"></i>
+                                            </a>
+                                        </div>
+                                        <!-- Instagram -->
+                                        <div class="col-4 social-icon" id="instagram">
+                                            <a href="https://www.instagram.com" target="_blank" class="disabled-link text-white d-flex justify-content-center align-items-center">
+                                                <i class="fab fa-instagram"></i>
+                                            </a>
+                                        </div>
+                                        <!-- WhatsApp -->
+                                        <div class="col-4 social-icon" id="whatsapp">
+                                            <a href="https://wa.me/+330695889208" target="_blank" class="text-white d-flex justify-content-center align-items-center">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="container-md">
+
+                <nav class="navbar navbar-expand-md navbar-dark">
+
+                    <a class="navbar-brand" href="@Url.Action("Index","Home")">
+
+                        <img id="idBrandImg" src="~/Content/Images/LogoBatibatSVGTetto.svg" alt="Brand Bati'Bat PNG" srcset="">
+                    </a>
+                    <button class="navbar-toggler" type="button" id="menuToggle" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <svg width="35" height="25" viewBox="0 0 30 30">
+
+                            <rect x="0" width="35" height="3" fill="black"></rect>
+                            <!-- <rect x="10" width="10"  height="3" fill="white"></rect>
+                            <rect x="25" width="10"  height="3" fill="white"></rect> -->
+
+                            <rect y="13" x="0" width="25" height="3" fill="black"></rect>
+                            <!-- <rect y="13" x="30" width="5" height="3" fill="white"></rect> -->
+
+                            <rect y="26" width="15" height="3" fill="black"></rect>
+                            <rect y="26" x="20" width="15" height="3" fill="black"></rect>
+                        </svg>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a id="homeBtn" class="nav-link" href="@Url.Action("Index","Home")">Accueil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index","Home")#services">Nos Services</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index","Home")#contact">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Menu Laterale -->
+        <div id="sideMenu" class="side-menu">
+            <button id="closeMenu" class="close-menu">&times;</button>
+            <ul class="side-menu-nav">
+                <li><a id="homeBtn2" class="nav-link" href="@Url.Action("Index","Home")">Accueil</a></li>
+                <li><a class="nav-link" href="@Url.Action("Index","Home")#services">Nos Services</a></li>
+                <li><a class="nav-link" href="@Url.Action("Index","Home")#contact">Contact</a></li>
+            </ul>
         </div>
-        <div class="container-md">
 
-            <nav class="navbar navbar-expand-md navbar-dark">
+        <main id="main">
+            @RenderBody()
+        </main>
 
-                <a class="navbar-brand" href="#">
 
-                    <img id="idBrandImg" src="~/Content/Images/LogoBatibatSVGTetto.svg" alt="Brand Bati'Bat PNG" srcset="">
-                </a>
-                <button class="navbar-toggler" type="button" id="menuToggle" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <svg width="35" height="25" viewBox="0 0 30 30">
+        <footer class="bg-dark text-white py-3 text-center">
+            <div class="container">
+                <p class="mb-0">
+                    <i class="fa fa-cc"></i> @DateTime.Now.Year BATI'BAT Location d'Echafaudages. Tous droits réservés.
+                    <br>
+                    <i class="fa fa-paint-brush"></i> Powered by:
+                    <a href="mailto:andry.almas@gmail.com" target="_blank">
+                        @@AndryAlmas
+                    </a>
+                </p>
+            </div>
+        </footer>
 
-                        <rect x="0" width="35" height="3" fill="black"></rect>
-                        <!-- <rect x="10" width="10"  height="3" fill="white"></rect>
-                        <rect x="25" width="10"  height="3" fill="white"></rect> -->
-
-                        <rect y="13" x="0" width="25" height="3" fill="black"></rect>
-                        <!-- <rect y="13" x="30" width="5" height="3" fill="white"></rect> -->
-
-                        <rect y="26" width="15" height="3" fill="black"></rect>
-                        <rect y="26" x="20" width="15" height="3" fill="black"></rect>
-                    </svg>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a id="homeBtn" class="nav-link" href="#home">Accueil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#services">Nos Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contact">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Menu Laterale -->
-    <div id="sideMenu" class="side-menu">
-        <button id="closeMenu" class="close-menu">&times;</button>
-        <ul class="side-menu-nav">
-            <li><a id="homeBtn2" class="nav-link" href="#home">Accueil</a></li>
-            <li><a class="nav-link" href="#services">Nos Services</a></li>
-            <li><a class="nav-link" href="#contact">Contact</a></li>
-        </ul>
+        <!-- Pulsante "To Top" -->
+        <button class="to-top-btn" id="toTopBtn" aria-label="Go to top">
+            <i class="fas fa-chevron-up"></i>
+        </button>
     </div>
 
-    @RenderBody()
-
-    <footer class="bg-dark text-white py-3 text-center">
-        <div class="container">
-            <p class="mb-0">
-                <i class="fa fa-cc"></i> @DateTime.Now.Year BATI'BAT Location d'Echafaudages. Tous droits réservés.
-                <br>
-                <i class="fa fa-paint-brush"></i> Powered by:
-                <a href="mailto:andry.almas@gmail.com" target="_blank">
-                    @@AndryAlmas
-                </a>
-            </p>
-        </div>
-    </footer>
-
-    <!-- Pulsante "To Top" -->
-    <button class="to-top-btn" id="toTopBtn" aria-label="Go to top">
-        <i class="fas fa-chevron-up"></i>
-    </button>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

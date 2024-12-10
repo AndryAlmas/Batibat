@@ -12,5 +12,11 @@ namespace Batibatlocation.Controllers
         {
             return View();
         }
+
+        public ActionResult Reservation()
+        {
+            // Logic for reservation page can be added here
+            return View();
+        }
     }
 }

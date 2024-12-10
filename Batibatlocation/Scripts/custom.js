@@ -17,6 +17,7 @@ const sideMenu = document.getElementById('sideMenu');
 const menuToggle = document.getElementById('menuToggle');
 const closeMenu = document.getElementById('closeMenu');
 const heroSection = document.getElementById('hero'); // Assicurati che l'ID sia corretto
+const mainSection = document.getElementById('main'); // Assicurati che l'ID sia corretto
 
 // Aggiungi un listener per l'evento scroll
 window.addEventListener('scroll', function () {
@@ -40,12 +41,13 @@ window.addEventListener('scroll', function () {
     lastScrollTop = scrollTop;
 });
 
-window.addEventListener('load', function() {
-    // Aspetta un istante prima di forzare lo scroll in cima
-    setTimeout(function() {
-        window.scrollTo(window.pageYOffset || document.documentElement.scrollTop, 0);
-    }, 25); // Piccolo ritardo di 25 millisecondi
-});
+// SCROLL IN CIMA
+// window.addEventListener('load', function() {
+//     // Aspetta un istante prima di forzare lo scroll in cima
+//     setTimeout(function() {
+//         window.scrollTo(window.pageYOffset || document.documentElement.scrollTop, 0);
+//     }, 25); // Piccolo ritardo di 25 millisecondi
+// });
 
 
 // Mostra il menu laterale
@@ -72,8 +74,8 @@ document.addEventListener("DOMContentLoaded", function() {
     function setHeroHeight() {
         // const topbarHeight = topbar.offsetHeight;
         const navbarHeight = navbar.offsetHeight; // Ottiene l'altezza della navbar
-        heroSection.style.height = `calc(100vh - ${(navbarHeight)}px)`; // Imposta l'altezza della hero section
-        heroSection.style.marginTop = navbarHeight + "px";
+        mainSection.style.height = `calc(100vh - ${(navbarHeight)}px)`; // Imposta l'altezza della hero section
+        mainSection.style.marginTop = navbarHeight + "px";
     }
 
     // Imposta l'altezza iniziale

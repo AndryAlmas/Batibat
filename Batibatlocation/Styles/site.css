@@ -4,6 +4,17 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    height: 100%;
+}
+
+.main-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* This makes the main content area grow to fill the available space */
 }
 
 /* Rimuovere l'effetto di contorno per tutti i link */
@@ -333,17 +344,17 @@ a:focus {
 .click-icon-service i {
     z-index: 1;
     position: relative;
-    font-size: 3rem; /* Dimensione dell'icona */
+    font-size: 2.5rem; /* Dimensione dell'icona */
     animation: clickIcon 1s infinite ease-out;
 }
 
 @keyframes clickIcon {
     0% {
-        font-size: 3rem;
+        font-size: 2.5rem;
         /* opacity: 1; */
     }
     100% {
-        font-size: 2.5rem;
+        font-size: 3rem;
         /* opacity: 0; */
     }
 }
@@ -1050,4 +1061,8 @@ body, .email-button {
     font-weight: bolder;
     font-family: math;
     font-size: 3rem;
+}
+
+footer{
+    width: 100%;    
 }
