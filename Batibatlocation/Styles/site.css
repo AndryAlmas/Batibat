@@ -201,7 +201,141 @@ a:focus {
 }
 
 
+/*Produits Section*/
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,500,700);
+.snip-produit {
+  font-family: 'Raleway', Arial, sans-serif;
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  text-align: left;
+  color: #000000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  font-size: 16px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-perspective: 20em;
+  perspective: 20em;
+}
+.snip-produit * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+.snip-image-area{
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* This sets a 4:3 aspect ratio. Adjust as needed */
+    overflow: hidden;
+}
+.snip-produit img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container while maintaining aspect ratio */
 
+}
+.snip-produit .add-to-cart {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 10px;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  opacity: 0;
+  background-color: #409ad5;
+  -webkit-transform: rotateX(-90deg);
+  transform: rotateX(-90deg);
+  -webkit-transform-origin: 100% 0;
+  -ms-transform-origin: 100% 0;
+  transform-origin: 100% 0;
+}
+.snip-produit .add-to-cart i {
+  display: inline-block;
+  margin-right: 10px;
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #164666;
+  color: #ffffff;
+  font-size: 1.4em;
+}
+.snip-produit figcaption {
+    padding: 3rem 1rem 4rem 1rem;
+    position: relative;
+    height: -webkit-fill-available;
+}
+.snip-produit h3,
+.snip-produit p {
+  margin: 0;
+}
+.snip-produit h3 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.snip-produit p {
+  font-size: 0.9em;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+.snip-produit .price {
+    font-weight: 500;
+    font-size: 1.5em;
+    line-height: 48px;
+    letter-spacing: 1px;
+    padding: 0.5rem;
+    color: forestgreen;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #efefef;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.snip-produit .price s {
+  margin-right: 5px;
+  opacity: 0.5;
+  font-size: 0.9em;
+  color: black;
+}
+.snip-produit a {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.snip-produit:hover .add-to-cart,
+.snip-produit.hover .add-to-cart {
+  opacity: 1;
+  -webkit-transform: rotateX(0deg);
+  transform: rotateX(0deg);
+}
+.snip-produit:hover .add-to-cart i,
+.snip-produit.hover .add-to-cart i {
+  background-color: #2980b9;
+}
+
+.snip-price-period{
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    padding-left: 6px;
+}
+
+/*Hero Section*/
 
 .hero h2 {
     font-size: 2.5em;
@@ -326,7 +460,7 @@ a:focus {
     display: inline-block;
     margin: 4vh 1vw 0 1vw;
     color: #ffffff;
-    background-color: hsl(0deg 0% 0% / 65%);
+    background-color: hsl(0deg 0% 0% / 20%);
     border: none;
     border-radius: 50%;
     width: 5rem;
