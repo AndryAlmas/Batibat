@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@model IEnumerable<Batibatlocation.Models.Product>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrizione</th>
+            <th>Prezzo</th>
+            <th>Disponibilità</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price €</td>
+                <td>@(product.IsAvailable ? "Disponibile" : "Non disponibile")</td>
+                <td>
+                    <a href="@Url.Action("Details", "Product", new { id = product.Id })">Dettagli</a>
+                    <a href="@Url.Action("Create", "Booking", new { productId = product.Id })">Prenota</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
