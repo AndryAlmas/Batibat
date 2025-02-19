@@ -1,0 +1,32 @@
+﻿@model Batibatlocation.Models.Echafaudage
+
+<h2>Ajouter Échafaudage</h2>
+
+<form method="post" action="@Url.Action("CreateEchafaudage", "Admin")">
+    <div>
+        <label for="Nom">Nom:</label>
+        <input type="text" id="Nom" name="Nom" required />
+    </div>
+    <div>
+        <label for="Description">Description:</label>
+        <textarea id="Description" name="Description" required></textarea>
+    </div>
+    <div>
+        <label for="Prix">Prix:</label>
+        <input type="number" id="Prix" name="Prix" required step="0.01" />
+    </div>
+    <div>
+        <label for="Disponible">Disponibilité:</label>
+        <input type="checkbox" id="Disponible" name="Disponible" checked />
+    </div>
+    <div>
+        <label for="ImageUrl">URL de l'Image:</label>
+        <input type="text" id="ImageUrl" name="ImageUrl" required />
+    </div>
+    <div>
+        <label for="SpecificheTechniques">Spécifications Techniques:</label>
+        <textarea id="SpecificheTechniques" name="SpecificheTechniques" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Enregistrer</button>
+    <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
+</form>

@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@model IEnumerable<Batibatlocation.Models.Echafaudage>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Prix</th>
+            <th>Disponibilité</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var echafaudage in Model)
+        {
+            <tr>
+                <td>@echafaudage.Nom</td>
+                <td>@echafaudage.Description</td>
+                <td>@echafaudage.Prix €</td>
+                <td>@(echafaudage.Disponible ? "Disponible" : "Non disponible")</td>
+                <td>
+                    <a href="@Url.Action("Details", "Echafaudage", new { id = echafaudage.Id })" class="btn btn-info">Détails</a>
+                    <a href="@Url.Action("CreateReservation", "Echafaudage", new { echafaudageId = echafaudage.Id })" class="btn btn-success">Réserver</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

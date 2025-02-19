@@ -1,0 +1,49 @@
+﻿@model Batibatlocation.Models.Reservation
+
+<h2>Réserver Échafaudage</h2>
+
+<form method="post" action="@Url.Action("CreateReservation", "Echafaudage")">
+    <input type="hidden" name="echafaudageId" value="@ViewBag.EchafaudageId" />
+    <div>
+        <label for="Nom">Nom:</label>
+        <input type="text" id="Nom" name="Nom" required />
+    </div>
+    <div>
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required />
+    </div>
+    <div>
+        <label for="Telephone">Téléphone:</label>
+        <input type="tel" id="Telephone" name="Telephone" required />
+    </div>
+    <div>
+        <label for="DateDebut">Date Début:</label>
+        <input type="date" id="DateDebut" name="DateDebut" required />
+    </div>
+    <div>
+        <label for="DateFin">Date Fin:</label>
+        <input type="date" id="DateFin" name="DateFin" required />
+    </div>
+    <div>
+        <label for="Accessoires">Accessoires:</label>
+        <select id="Accessoires" name="selectedAccessoires" multiple required>
+            @foreach (var accessoire in ViewBag.Accessoires)
+            {
+                <option value="@accessoire.Value">@accessoire.Text</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="Quantites">Quantités:</label>
+        <input type="text" id="Quantites" name="quantites" required placeholder="Ex. 1,2,3" />
+    </div>
+    <button type="submit">Confirmer Réservation</button>
+</form>
+
+<script>
+    document.getElementById('Accessoires').addEventListener('change', function () {
+        const selectedCount = this.selectedOptions.length;
+        const quantitesInput = document.getElementById('Quantites');
+        quantitesInput.value = Array(selectedCount).fill(1).join(',');
+    });
+</script>

@@ -154,20 +154,26 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\BookingController.cs" />
+    <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\EchafaudageController.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202502181533469_InitialCreate.cs" />
-    <Compile Include="Migrations\202502181533469_InitialCreate.Designer.cs">
-      <DependentUpon>202502181533469_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202502191532180_AddReservationAccessoireTable.cs" />
+    <Compile Include="Migrations\202502191532180_AddReservationAccessoireTable.Designer.cs">
+      <DependentUpon>202502191532180_AddReservationAccessoireTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202502191720296_UpdateTableEchafaudage.cs" />
+    <Compile Include="Migrations\202502191720296_UpdateTableEchafaudage.Designer.cs">
+      <DependentUpon>202502191720296_UpdateTableEchafaudage.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Booking.cs" />
-    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Reservation.cs" />
+    <Compile Include="Models\Accessoire.cs" />
+    <Compile Include="Models\Echafaudage.cs" />
+    <Compile Include="Models\ReservationAccessoire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +208,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Booking\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -210,12 +215,17 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
-    <Content Include="Views\Admin\Products.cshtml" />
-    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Admin\ListeEchafaudages.cshtml" />
+    <Content Include="Views\Echafaudage\Details.cshtml" />
+    <Content Include="Views\Reservation\CreateReservation.cshtml" />
+    <Content Include="Views\Admin\CreateEchafaudage.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202502181533469_InitialCreate.resx">
-      <DependentUpon>202502181533469_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202502191532180_AddReservationAccessoireTable.resx">
+      <DependentUpon>202502191532180_AddReservationAccessoireTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502191720296_UpdateTableEchafaudage.resx">
+      <DependentUpon>202502191720296_UpdateTableEchafaudage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
