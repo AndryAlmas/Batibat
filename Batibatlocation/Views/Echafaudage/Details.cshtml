@@ -151,7 +151,7 @@
                     <dt>Disponibilité:</dt>
                     <dd>@(Model.Disponible ? "Disponible" : "Non disponible")</dd>
                 </dl>
-                <a href="@Url.Action("CreateReservation", "Echafaudage", new { echafaudageId = Model.Id })" class="reserve-button">Réserver</a>
+                <a href="@Url.Action("CreateReservation", "Reservation", new { echafaudageId = Model.Id })" class="reserve-button">Réserver</a>
             </div>
         </div>
         <div class="specifications-container">
@@ -168,6 +168,7 @@
                 <img src="/images/echafaudage1_5.jpg" alt="@Model.Nom - Vue 5" />
             </div>
         </div>
+        <br />
     </div>
 </body>
 </html>
