@@ -194,9 +194,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\glide.min.js" />
+    <Content Include="Scripts\login.js" />
     <Content Include="Styles\bootstrap-4.5.2.min.css" />
     <Content Include="Styles\glide.core.min.css" />
     <Content Include="Styles\glide.theme.min.css" />
+    <Content Include="Styles\login.css" />
     <Content Include="Styles\site.css" />
     <Content Include="Scripts\bootstrap-4.5.2.min.js" />
     <Content Include="Scripts\FontAwesome.js" />
@@ -229,6 +231,8 @@
     <Content Include="Views\Echafaudage\Details.cshtml" />
     <Content Include="Views\Reservation\CreateReservation.cshtml" />
     <Content Include="Views\Admin\CreateEchafaudage.cshtml" />
+    <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202502191532180_AddReservationAccessoireTable.resx">

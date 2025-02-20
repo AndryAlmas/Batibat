@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Web.Mvc;
+using System.Web.Security;
 using Batibatlocation.Data;
 using Batibatlocation.Models;
 
@@ -15,6 +16,35 @@ namespace Batibatlocation.Controllers
         public AdminController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(string username, string password)
+        {
+            // Esempio di autenticazione hardcoded
+            if (username == "admin" && password == "password")
+            {
+                FormsAuthentication.SetAuthCookie(username, false);
+                return RedirectToAction("Dashboard", "Admin");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid username or password.");
+                return View();
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login", "Account");
         }
 
         // GET: Admin/Echafaudages
