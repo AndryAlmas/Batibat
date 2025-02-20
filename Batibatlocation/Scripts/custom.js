@@ -16,25 +16,23 @@ const topbar = document.getElementById('topbar');
 const sideMenu = document.getElementById('sideMenu');
 const menuToggle = document.getElementById('menuToggle');
 const closeMenu = document.getElementById('closeMenu');
-const heroSection = document.getElementById('hero'); // Assicurati che l'ID sia corretto
+//const heroSection = document.getElementById('hero'); // Assicurati che l'ID sia corretto
 const mainSection = document.getElementById('main'); // Assicurati che l'ID sia corretto
 
 // Aggiungi un listener per l'evento scroll
 window.addEventListener('scroll', function () {
     let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     let marginIOS = 25;
-    const heroHeight = heroSection.offsetHeight; // Ottieni l'altezza della sezione hero
+    const mainHeight = mainSection.offsetHeight; // Ottieni l'altezza della sezione hero
     const topbarHeight = topbar.offsetHeight; // Ottieni l'altezza della sezione hero
         if (scrollTop > lastScrollTop && scrollTop > marginIOS) {
-            // Se l'utente scorre verso il basso, la top-bar scompare
             topbar.style.marginTop = "-" + topbarHeight + "px";
             topbar.classList.add('topbar-hidden');
         } else {
             // Se l'utente scorre verso l'alto, la navbar riappare
-            if (heroHeight >= (scrollTop+heroHeight-marginIOS)) { // Solo se si è in cima al sito
+            if (mainHeight >= (scrollTop+mainHeight-marginIOS)) { // Solo se si è in cima al sito
                 topbar.style.marginTop = "0px";
                 topbar.classList.remove('topbar-hidden');
-                //console.log(heroHeight, scrollTop,heroHeight,marginIOS, scrollTop+heroHeight-marginIOS)
             }
         }    
     // Aggiorna l'ultima posizione di scorrimento
@@ -130,6 +128,22 @@ toHomeBtn2.addEventListener('click', function() {
 });
 
 
-document.querySelector('.email-button').addEventListener('click', function() {
-    window.location.href = 'mailto:batibatlocation@gmail.com';
-});
+var emailBtn = document.querySelector('.email-button');
+if (emailBtn != null) {
+    document.querySelector('.email-button').addEventListener('click', function () {
+        window.location.href = 'mailto:batibatlocation@gmail.com';
+    });
+}
+
+var glideSlide = document.querySelector('.glide');
+if (glideSlide != null) {
+    new Glide('.glide', {
+        type: 'carousel',
+        startAt: 0,
+        autoplay: 3000,
+        hoverpause: true,
+        perView: 1,
+        animationDuration: 800,
+        animationTimingFunc: 'ease-in-out'
+    }).mount();
+}

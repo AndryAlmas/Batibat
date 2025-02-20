@@ -20,11 +20,16 @@ namespace Batibatlocation
             bundles.Add(new ScriptBundle("~/bundles/fontawesome").Include(
             "~/Scripts/FontAwesome-6.7.1.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/glide").Include(
+            "~/Scripts/glide.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/custom").Include(
             "~/Scripts/custom.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Styles/bootstrap-4.5.2.min.css",
+                      "~/Styles/glide.core.min.css",
+                      "~/Styles/glide.theme.min.css",
                       "~/Styles/site.css"));
         }
     }

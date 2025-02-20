@@ -177,16 +177,26 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\1.png" />
+    <Content Include="Content\Images\2.png" />
+    <Content Include="Content\Images\3.png" />
+    <Content Include="Content\Images\4.png" />
     <Content Include="Content\Images\Brand_Batibat_PNG.png" />
     <Content Include="Content\Images\ECHAFAUDAGE_FACADE.jpg" />
     <Content Include="Content\Images\LogoBatibatSVG.svg" />
     <Content Include="Content\Images\LogoBatibatSVGTetto.svg" />
+    <Content Include="Content\Images\produit-1.png" />
+    <Content Include="Content\Images\produit-2.png" />
+    <Content Include="Content\Images\produit-3.png" />
     <Content Include="Content\Images\qr-code.svg" />
     <Content Include="Content\Images\qrchimpX2048.svg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\glide.min.js" />
     <Content Include="Styles\bootstrap-4.5.2.min.css" />
+    <Content Include="Styles\glide.core.min.css" />
+    <Content Include="Styles\glide.theme.min.css" />
     <Content Include="Styles\site.css" />
     <Content Include="Scripts\bootstrap-4.5.2.min.js" />
     <Content Include="Scripts\FontAwesome.js" />

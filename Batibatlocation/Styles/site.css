@@ -1199,3 +1199,105 @@ body, .email-button {
 footer{
     width: 100%;    
 }
+
+
+.container-echafaudage {
+    background: #ced4da;
+    padding: 25px;
+}
+
+.details-container {
+    display: flex;
+    align-items: stretch; /* Assicura che i figli si stirendano per avere la stessa altezza */
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    width: 40%;
+    margin-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: block;
+    }
+
+.info-container {
+    width: 60%;
+}
+
+    .info-container h2 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .info-container dl {
+        margin-bottom: 20px;
+    }
+
+    .info-container dt {
+        font-weight: bold;
+        margin-top: 10px;
+        color: #555;
+    }
+
+    .info-container dd {
+        margin-bottom: 10px;
+        color: #777;
+    }
+
+.reserve-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+    .reserve-button:hover {
+        color: white;
+    }
+
+.specifications-container {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .specifications-container h3 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+.glide__arrow {
+    color: black;
+    background-color: hsl(0deg 0% 100% / 70%);
+    font-size: 25px;
+}
+
+.glide__arrow--right {
+    right: 1em;
+}
+
+.glide__arrow--left {
+    left: 1em;
+}
