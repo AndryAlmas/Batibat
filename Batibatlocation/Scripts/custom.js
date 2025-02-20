@@ -147,3 +147,4 @@ if (glideSlide != null) {
         animationTimingFunc: 'ease-in-out'
     }).mount();
 }
+
