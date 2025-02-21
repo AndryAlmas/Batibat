@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Security;
 using Batibatlocation.Data;
@@ -28,8 +32,28 @@ namespace Batibatlocation.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(string username, string password)
         {
-            // Esempio di autenticazione hardcoded
-            if (username == "admin" && password == "password")
+            // Leggi le credenziali dal file users.txt
+            string filePath = Server.MapPath("~/App_Data/users.txt");
+            if (!System.IO.File.Exists(filePath))
+            {
+                ModelState.AddModelError("", "Fichier users.txt non trouvé.");
+                return View();
+            }
+
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+            bool isValidUser = false;
+
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(':');
+                if (parts.Length == 2 && parts[0].Trim() == username && parts[1].Trim() == password)
+                {
+                    isValidUser = true;
+                    break;
+                }
+            }
+
+            if (isValidUser)
             {
                 FormsAuthentication.SetAuthCookie(username, false);
                 return RedirectToAction("Dashboard", "Admin");
@@ -45,6 +69,154 @@ namespace Batibatlocation.Controllers
         {
             FormsAuthentication.SignOut();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ForgotPassword(string username)
+        {
+            // Esempio di verifica dell'utente
+            if (username == "admin")
+            {
+                // Genera un codice OTP
+                string otp = GenerateOTP();
+
+                // Salva il codice OTP in un file temporaneo
+                SaveOTP(otp);
+
+                // Invia l'email con il codice OTP in modo asincrono
+                await SendOTPEmailAsync(otp);
+
+                if(ModelState.IsValid)
+                    // Reindirizza alla pagina di verifica OTP
+                    return RedirectToAction("VerifyOTP", new { username = username });
+                else
+                    return View();
+            }
+            else
+            {
+                ModelState.AddModelError("", "Nom d'utilisateur non trouvé.");
+                return View();
+            }
+        }
+
+        private string GenerateOTP()
+        {
+            // Genera un codice OTP casuale
+            return "123456"; // Esempio fisso per semplicità
+        }
+
+        private void SaveOTP(string otp)
+        {
+            // Salva il codice OTP in un file temporaneo
+            string filePath = Path.Combine(Server.MapPath("~/App_Data"), "otp.txt");
+            System.IO.File.WriteAllText(filePath, otp);
+        }
+
+        private async Task SendOTPEmailAsync(string otp)
+        {
+            // Ottieni i parametri SMTP dal file di configurazione
+            string adminEmail = ConfigurationManager.AppSettings["AdminEmail"];
+            string smtpHost = ConfigurationManager.AppSettings["SmtpHost"];
+            int smtpPort = int.Parse(ConfigurationManager.AppSettings["SmtpPort"]);
+            string smtpUser = ConfigurationManager.AppSettings["SmtpUser"];
+            string smtpName = ConfigurationManager.AppSettings["SmtpName"];
+            string smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"]; // Utilizza la tua password o App Password
+
+            // Configura il client SMTP
+            SmtpClient smtpClient = new SmtpClient(smtpHost, smtpPort);
+            smtpClient.Credentials = new System.Net.NetworkCredential(smtpUser, smtpPassword);
+            smtpClient.UseDefaultCredentials = true;
+            smtpClient.EnableSsl = true; // Richiede SSL per la porta 465
+                      
+
+            // Crea il messaggio email
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress(smtpUser, smtpName);
+            mailMessage.To.Add(adminEmail);
+            mailMessage.Subject = "Changement de Mot de Passe";
+
+            // Corpo della mail con il codice OTP
+            StringBuilder bodyBuilder = new StringBuilder();
+            bodyBuilder.AppendLine("Bonjour,");
+            bodyBuilder.AppendLine("Vous avez demandé un changement de mot de passe pour votre compte Bati'Bat.");
+            bodyBuilder.AppendLine("Voici votre code OTP pour changer votre mot de passe:");
+            bodyBuilder.AppendLine("<div style='background-color: black; color: yellow; font-size: 24px; text-align: center;'>");
+            bodyBuilder.AppendLine($"<strong>{otp}</strong>");
+            bodyBuilder.AppendLine("</div>");
+            bodyBuilder.AppendLine("Entrez ce code sur la page de vérification OTP pour continuer.");
+            bodyBuilder.AppendLine("Cordialement,");
+            bodyBuilder.AppendLine("Équipe Bati'Bat");
+
+            mailMessage.Body = bodyBuilder.ToString();
+            mailMessage.IsBodyHtml = true;
+
+            // Invia l'email in modo asincrono
+            try
+            {
+                await smtpClient.SendMailAsync(mailMessage);
+                smtpClient.Dispose();
+            }
+            catch (SmtpException ex)
+            {
+                smtpClient.Dispose();
+                // Gestisci l'eccezione
+                ModelState.AddModelError("", $"Erreur lors de l'envoi de l'email.");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult VerifyOTP(string username)
+        {
+            ViewBag.Username = username;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VerifyOTP(string username, string otp)
+        {
+            // Leggi il codice OTP dal file temporaneo
+            string filePath = Path.Combine(Server.MapPath("~/App_Data"), "otp.txt");
+            string savedOtp = System.IO.File.ReadAllText(filePath);
+
+            if (otp == savedOtp)
+            {
+                // Reindirizza alla pagina di cambio password
+                return RedirectToAction("ResetPassword", new { username = username });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Code OTP non valido.");
+                ViewBag.Username = username;
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ResetPassword(string username)
+        {
+            ViewBag.Username = username;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetPassword(string username, string newPassword)
+        {
+            // Esempio di salvataggio della nuova password in un file protetto
+            string filePath = Path.Combine(Server.MapPath("~/App_Data"), "users.txt");
+            string userData = $"{username}:{newPassword}";
+            System.IO.File.WriteAllText(filePath, userData);
+
+            // Reindirizza alla pagina di login
+            return RedirectToAction("Login");
         }
 
         // GET: Admin/Echafaudages

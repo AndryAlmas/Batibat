@@ -28,5 +28,11 @@
             </div>
             <button type="submit">Accéder</button>
         }
-        </div>
+        <p>
+            <br />
+            <a class="forgot_PSW" href="@Url.Action("ForgotPassword", "Admin")">Mot de passe oublié ?</a>
+        </p>
+    </div>
+    <br />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 </div>

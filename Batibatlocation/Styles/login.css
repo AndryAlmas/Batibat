@@ -20,6 +20,7 @@ body, html {
 /* Center the login container */
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -93,4 +94,12 @@ button {
 h2 {
     margin-bottom: 30px;
     color: #fff;
+}
+
+.forgot_PSW:hover {
+    color: #c6c6c6;
+}
+
+.forgot_PSW {
+    color: #ff9b00;
 }
