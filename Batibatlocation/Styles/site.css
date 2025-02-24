@@ -1351,3 +1351,12 @@ footer{
     .glide__slide img {
         object-fit: cover; /* Zooma e adatta l'immagine per coprire tutto lo spazio */
     }
+
+
+#topbaradmin {
+    background-color: rgb(163, 39, 39) !important;
+}
+
+.top-bar-admin a:hover {
+    color: #ff6e6e;
+}

@@ -13,6 +13,24 @@
     <div class="main-wrapper">
         @*Navbar*@
         <header id="navbar" class="navbar-home">
+            @if (Request.IsAuthenticated)
+            {
+                <div id="topbaradmin" class="top-bar top-bar-admin bg-dark text-white py-2">
+                    <div class="container-md">
+                        <div class="row align-items-center">
+                            <!-- Sezione Indirizzo -->
+
+                            <div class="offset-md-8"></div>
+                            <div class="col-md-4 col-6 text-center text-md-right">
+                                <a href="@Url.Action("Dashboard", "Admin")" class="home-link">
+                                    Admin 
+                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             <div id="topbar" class="top-bar bg-dark text-white py-2">
                 <div class="container-md">
                     <div class="row align-items-center">
@@ -69,7 +87,7 @@
 
                             <rect x="0" width="35" height="3" fill="black"></rect>
                             <!-- <rect x="10" width="10"  height="3" fill="white"></rect>
-                            <rect x="25" width="10"  height="3" fill="white"></rect> -->
+                    <rect x="25" width="10"  height="3" fill="white"></rect> -->
 
                             <rect y="13" x="0" width="25" height="3" fill="black"></rect>
                             <!-- <rect y="13" x="30" width="5" height="3" fill="white"></rect> -->
