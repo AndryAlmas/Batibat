@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Styles/dashboard.css">
+}
+
+@section Scripts {
+    <script src="~/Scripts/dashboard.js"></script>
+}
+
+<div class="background"></div>
+<div class="dashboard-container">
+    <div class="header">
+        <div class="header-items">
+            <i class="fa fa-bell-o fa-2x notification-icon"></i>
+            <i class="fa fa-cogs fa-2x settings-icon"></i>
+            <i class="fa fa-user-circle-o fa-2x account-icon"></i>
+        </div>
+    </div>
+    <div class="content">
+        <div class="left-section">
+            <div class="menu-header">
+                <h3>Menu</h3>
+                <i class="fa fa-times fa-2x close-icon visible" id="closeIcon"></i> <!-- X icon -->
+            </div>
+            <ul>
+                <li><a href="#">Impalcature</a></li>
+                <li><a href="#">Prenotazioni</a></li>
+                <li><a href="#">Utenti</a></li>
+                <li><a href="#">Statistiche</a></li>
+            </ul>
+        </div>
+        <div class="right-section" id="rightSection">
+            <div class="right-header">
+                <i class="fa fa-bars fa-2x hamburger-icon" id="hamburgerIconRight"></i> <!-- Hamburger icon -->
+            </div>
+            <h3>Contenuto</h3>
+            <!-- Contenuto della sezione destra -->
+        </div>
+    </div>
+</div>

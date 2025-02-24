@@ -26,10 +26,16 @@ namespace Batibatlocation
             bundles.Add(new ScriptBundle("~/bundles/custom").Include(
             "~/Scripts/custom.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/fullcalendar").Include(
+            "~/Scripts/fullcalendar/fullcalendar.min.js",
+            "~/Scripts/fullcalendar/locale/fr.js"
+            ));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Styles/bootstrap-4.5.2.min.css",
                       "~/Styles/glide.core.min.css",
                       "~/Styles/glide.theme.min.css",
+                      "~/Styles/fullcalendar.min.css",
                       "~/Styles/site.css"));
         }
     }
