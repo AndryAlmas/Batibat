@@ -80,7 +80,7 @@ body, html {
     background: hsl(0deg 0% 12.6% / 80%); /* Colore scuro */
     color: white;
     border-radius: 5px 0 0 5px;
-    padding: 40px;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -119,31 +119,29 @@ body, html {
             display: none; /* Nasconde la X */
         }
 
-.left-section ul {
-    list-style-type: none;
-    padding: 0;
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-    .left-section ul li {
-        margin-bottom: 10px;
+.menu-button {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease, background 0.3s ease;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1); /* Sfondo leggermente trasparente */
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+    .menu-button:hover {
+        color: #ffcc00;
+        background: rgba(255, 255, 255, 0.2); /* Sfondo più chiaro al passaggio del mouse */
     }
-
-        .left-section ul li a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s ease;
-            padding: 10px 15px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1); /* Sfondo leggermente trasparente */
-            display: block;
-            width: 100%;
-            text-align: left;
-        }
-
-            .left-section ul li a:hover {
-                color: #ffcc00;
-                background: rgba(255, 255, 255, 0.2); /* Sfondo più chiaro al passaggio del mouse */
-            }
 
 /* Right section styling */
 .right-section {
