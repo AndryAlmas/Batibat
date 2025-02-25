@@ -34,6 +34,7 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [VerificaNumeroTentativi]
         public ActionResult Login(string username, string password)
         {
             // Leggi le credenziali dal file users.txt
