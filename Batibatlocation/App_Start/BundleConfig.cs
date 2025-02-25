@@ -15,7 +15,7 @@ namespace Batibatlocation
             "~/Scripts/bootstrap-4.5.2.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/popper").Include(
-            "~/Scripts/popper-2.5.2.min.js"));
+            "~/Scripts/popper-1.16.1.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/fontawesome").Include(
             "~/Scripts/FontAwesome-6.7.1.js"));

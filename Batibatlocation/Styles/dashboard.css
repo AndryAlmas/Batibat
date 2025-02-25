@@ -76,7 +76,7 @@ body, html {
 
 /* Left section styling */
 .left-section {
-    flex: 0 0 25%; /* 25% width */
+    flex: 0 0 20%; /* 25% width */
     background: hsl(0deg 0% 12.6% / 80%); /* Colore scuro */
     color: white;
     border-radius: 5px 0 0 5px;
@@ -145,7 +145,7 @@ body, html {
 
 /* Right section styling */
 .right-section {
-    flex: 0 0 75%; /* 75% width */
+    flex: 0 0 80%; /* 75% width */
     background: white; /* Bianco senza trasparenza */
     color: black;
     border-radius: 0 5px 5px 0;
@@ -186,3 +186,54 @@ body, html {
         .right-header .hamburger-icon.visible {
             display: block; /* Mostra l'icona quando la sezione sinistra è nascosta */
         }
+
+
+/* Stili per la tabella */
+.table-responsive {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+.thead-light th {
+    background-color: #f8f9fa; /* Colore chiaro per l'intestazione */
+    color: #333; /* Testo scuro per migliorare la leggibilità */
+    border-color: #dee2e6; /* Bordo leggero */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05); /* Sfondo leggermente grigio per le righe dispari */
+}
+
+.dropdown-toggle {
+    background-color: #007bff; /* Blu Bootstrap per il pulsante ingranaggio */
+    border: none;
+    color: white;
+}
+
+    .dropdown-toggle:hover {
+        background-color: #0056b3; /* Effetto hover più scuro */
+    }
+
+.dropdown-menu {
+    min-width: 150px; /* Larghezza minima del menù */
+}
+
+.dropdown-item {
+    color: black; /* Testo nero per le voci del menù */
+}
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa; /* Sfondo chiaro al passaggio del mouse */
+    }
+
+    .dropdown-item.text-danger {
+        color: #dc3545; /* Rosso per l'opzione Supprimer */
+    }

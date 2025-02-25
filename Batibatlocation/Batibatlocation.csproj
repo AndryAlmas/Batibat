@@ -246,7 +246,7 @@
     <Content Include="Scripts\bootstrap-4.5.2.min.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
     <Content Include="Scripts\custom.js" />
-    <Content Include="Scripts\popper-2.5.2.min.js" />
+    <Content Include="Scripts\popper-1.16.1.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

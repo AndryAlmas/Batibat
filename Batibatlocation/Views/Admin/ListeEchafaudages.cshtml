@@ -1,33 +1,55 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Échafaudages";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 @model IEnumerable<Batibatlocation.Models.Echafaudage>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Description</th>
-            <th>Prix</th>
-            <th>Disponibilité</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var echafaudage in Model)
-        {
+<h3>Échafaudages</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="thead-light">
             <tr>
-                <td>@echafaudage.Nom</td>
-                <td>@echafaudage.Description</td>
-                <td>@echafaudage.Prix €</td>
-                <td>@(echafaudage.Disponible ? "Disponible" : "Non disponible")</td>
-                <td>
-                    <a href="@Url.Action("Details", "Echafaudage", new { id = echafaudage.Id })" class="btn btn-info">Détails</a>
-                    <a href="@Url.Action("CreateReservation", "Echafaudage", new { echafaudageId = echafaudage.Id })" class="btn btn-success">Réserver</a>
-                </td>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Specifiques Techniques</th>
+                <th>Prix</th>
+                <th>Image</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var echafaudage in Model)
+            {
+                <tr>
+                    <td>@echafaudage.Id</td>
+                    <td>@echafaudage.Nom</td>
+                    <td>@echafaudage.SpecificheTechniques</td>
+                    <td>@echafaudage.Prix €</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(echafaudage.ImageUrl))
+                        {
+                            <img src="@echafaudage.ImageUrl" alt="@echafaudage.Nom" style="max-width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>Aucune image</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-@echafaudage.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@echafaudage.Id">
+                                <a class="dropdown-item" href="@Url.Action("Details", "Admin", new { id = echafaudage.Id })">Détails</a>
+                                <a class="dropdown-item" href="@Url.Action("Edit", "Admin", new { id = echafaudage.Id })">Modifier</a>
+                                <a class="dropdown-item text-danger" href="@Url.Action("Delete", "Admin", new { id = echafaudage.Id })">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

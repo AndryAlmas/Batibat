@@ -6,15 +6,51 @@
     <title>@ViewBag.Title - Bati'Bat - Location d'Echaufaudages</title>
     <!-- Bootstrap CSS -->
     @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Styles/dashboard.css">
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    @RenderBody()
+    <div class="background"></div>
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="header-items-left">
+                <a href="@Url.Action("Index", "Home")" class="home-link">
+                    <i class="fa fa-home fa-2x home-icon" id="homeIcon"></i> <!-- Icona Home -->
+                </a>
+            </div>
+            <div class="header-items-right">
+                <i class="fa fa-bell-o fa-2x notification-icon"></i>
+                <i class="fa fa-user-circle-o fa-2x account-icon"></i>
+            </div>
+        </div>
+        <div class="content">
+            <div class="left-section">
+                <div class="menu-header">
+                    <h3>Menu</h3>
+                    <i class="fa fa-times fa-2x close-icon visible" id="closeIcon"></i> <!-- X icon -->
+                </div>
+                <div class="menu-buttons">
+                    <a href="@Url.Action("ListeEchafaudages", "Admin")" class="menu-button">Echafaudages</a>
+                    @*<a href="#" class="menu-button">Prenotazioni</a>
+                        <a href="#" class="menu-button">Utenti</a>
+                        <a href="#" class="menu-button">Statistiche</a>*@
+                </div>
+            </div>
+            <div class="right-section" id="rightSection">
+                <div class="right-header">
+                    <i class="fa fa-bars fa-2x hamburger-icon" id="hamburgerIconRight"></i> <!-- Hamburger icon -->
+                </div>
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/popper")
+    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/fontawesome")
     @Scripts.Render("~/bundles/glide")
+    <script src="~/Scripts/dashboard.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
