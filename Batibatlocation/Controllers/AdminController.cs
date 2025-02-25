@@ -10,6 +10,10 @@ using System.Web.Mvc;
 using System.Web.Security;
 using Batibatlocation.Data;
 using Batibatlocation.Models;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System.Security.Cryptography;
+using Batibatlocation.Filters;
 
 namespace Batibatlocation.Controllers
 {
@@ -65,6 +69,7 @@ namespace Batibatlocation.Controllers
             }
         }
         [Authorize]
+        [VerificaNumeroTentativi]
         public ActionResult Dashboard()
         {
             return View();
@@ -77,6 +82,7 @@ namespace Batibatlocation.Controllers
         }
 
         [HttpGet]
+        [VerificaNumeroTentativi]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -84,13 +90,14 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [VerificaNumeroTentativi]
         public async Task<ActionResult> ForgotPassword(string username)
         {
             // Esempio di verifica dell'utente
             if (username == "admin")
             {
                 // Genera un codice OTP
-                string otp = GenerateOTP();
+                string otp = GenerateOTP(6);
 
                 // Salva il codice OTP in un file temporaneo
                 SaveOTP(otp);
@@ -100,7 +107,7 @@ namespace Batibatlocation.Controllers
 
                 if(ModelState.IsValid)
                     // Reindirizza alla pagina di verifica OTP
-                    return RedirectToAction("VerifyOTP", new { username = username });
+                    return RedirectToAction("VerifyOTP", new { username });
                 else
                     return View();
             }
@@ -111,17 +118,33 @@ namespace Batibatlocation.Controllers
             }
         }
 
-        private string GenerateOTP()
+        private string GenerateOTP(int length)
         {
             // Genera un codice OTP casuale
-            return "123456"; // Esempio fisso per semplicità
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]!?-=+#@$€%&()";
+            char[] otp = new char[length];
+
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                byte[] randomBytes = new byte[length];
+
+                rng.GetBytes(randomBytes); // Genera byte casuali sicuri
+
+                for (int i = 0; i < length; i++)
+                {
+                    otp[i] = chars[randomBytes[i] % chars.Length]; // Seleziona un carattere casuale
+                }
+            }
+
+            return new string(otp);
         }
 
         private void SaveOTP(string otp)
         {
             // Salva il codice OTP in un file temporaneo
             string filePath = Path.Combine(Server.MapPath("~/App_Data"), "otp.txt");
-            System.IO.File.WriteAllText(filePath, otp);
+            System.IO.File.WriteAllText(filePath, otp+":0"); // 0 tentativi
         }
 
         private async Task SendOTPEmailAsync(string otp)
@@ -130,53 +153,50 @@ namespace Batibatlocation.Controllers
             string adminEmail = ConfigurationManager.AppSettings["AdminEmail"];
             string smtpHost = ConfigurationManager.AppSettings["SmtpHost"];
             int smtpPort = int.Parse(ConfigurationManager.AppSettings["SmtpPort"]);
-            string smtpUser = ConfigurationManager.AppSettings["SmtpUser"];
+            string smtpUserEmail = ConfigurationManager.AppSettings["SmtpUser"];
             string smtpName = ConfigurationManager.AppSettings["SmtpName"];
             string smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"]; // Utilizza la tua password o App Password
 
-            // Configura il client SMTP
-            SmtpClient smtpClient = new SmtpClient(smtpHost, smtpPort);
-            smtpClient.Credentials = new System.Net.NetworkCredential(smtpUser, smtpPassword);
-            smtpClient.UseDefaultCredentials = true;
-            smtpClient.EnableSsl = true; // Richiede SSL per la porta 465
-                      
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(smtpName, smtpUserEmail));
+            message.To.Add(new MailboxAddress("Batibat", adminEmail));
+            message.Subject = "Changement de Mot de Passe pour le compte Batibatlocation.com";
 
-            // Crea il messaggio email
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress(smtpUser, smtpName);
-            mailMessage.To.Add(adminEmail);
-            mailMessage.Subject = "Changement de Mot de Passe";
-
-            // Corpo della mail con il codice OTP
+            //// Corpo della mail con il codice OTP
             StringBuilder bodyBuilder = new StringBuilder();
-            bodyBuilder.AppendLine("Bonjour,");
-            bodyBuilder.AppendLine("Vous avez demandé un changement de mot de passe pour votre compte Bati'Bat.");
-            bodyBuilder.AppendLine("Voici votre code OTP pour changer votre mot de passe:");
-            bodyBuilder.AppendLine("<div style='background-color: black; color: yellow; font-size: 24px; text-align: center;'>");
+            bodyBuilder.AppendLine($"Bonjour,");
+            bodyBuilder.AppendLine($"Vous avez demandé un changement de mot de passe pour votre compte Bati'Bat.");
+            bodyBuilder.AppendLine($"Voici votre code OTP pour changer votre mot de passe:");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"<div style='background-color: black; color: yellow; padding: 3px; font-size: 24px; text-align: center;'>");
             bodyBuilder.AppendLine($"<strong>{otp}</strong>");
-            bodyBuilder.AppendLine("</div>");
-            bodyBuilder.AppendLine("Entrez ce code sur la page de vérification OTP pour continuer.");
-            bodyBuilder.AppendLine("Cordialement,");
-            bodyBuilder.AppendLine("Équipe Bati'Bat");
+            bodyBuilder.AppendLine($"</div>");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"Entrez ce code sur la page de vérification OTP pour continuer.");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"Cordialement,");
+            bodyBuilder.AppendLine($"<br>");
+            bodyBuilder.AppendLine($"Équipe Bati'Bat");
 
-            mailMessage.Body = bodyBuilder.ToString();
-            mailMessage.IsBodyHtml = true;
+            message.Body = new TextPart("html") { Text = bodyBuilder.ToString()};
 
-            // Invia l'email in modo asincrono
-            try
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
-                await smtpClient.SendMailAsync(mailMessage);
-                smtpClient.Dispose();
-            }
-            catch (SmtpException ex)
-            {
-                smtpClient.Dispose();
-                // Gestisci l'eccezione
-                ModelState.AddModelError("", $"Erreur lors de l'envoi de l'email.");
-            }
+                client.Connect(smtpHost, smtpPort, true);
+                
+                // Note: only needed if the SMTP server requires authentication
+                client.Authenticate(smtpUserEmail, smtpPassword);
+
+                client.Send(message);
+                client.Disconnect(true);
+            }            
         }
 
         [HttpGet]
+        [VerificaNumeroTentativi]
         public ActionResult VerifyOTP(string username)
         {
             ViewBag.Username = username;
@@ -185,26 +205,67 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [VerificaNumeroTentativi]
         public ActionResult VerifyOTP(string username, string otp)
         {
             // Leggi il codice OTP dal file temporaneo
             string filePath = Path.Combine(Server.MapPath("~/App_Data"), "otp.txt");
-            string savedOtp = System.IO.File.ReadAllText(filePath);
 
-            if (otp == savedOtp)
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+
+            string[] parts = lines.Last().Split(':');
+            string otpFile = parts[0].Trim();   
+            int otpCount = int.Parse(parts[1].Trim());
+
+            if (otpFile == otp)
             {
                 // Reindirizza alla pagina di cambio password
-                return RedirectToAction("ResetPassword", new { username = username });
+                return RedirectToAction("ResetPassword", new { username });
             }
             else
             {
-                ModelState.AddModelError("", "Code OTP non valido.");
+                AumentaNumeroTentativi(); // Incrementa il count nel file otp
+                ModelState.AddModelError("", "Code OTP invalide.");
+                ModelState.AddModelError("", "Nombre maximum de tentatives atteint: " + "[" + (otpCount+1) + "/5].");
                 ViewBag.Username = username;
                 return View();
+            }            
+        }
+
+        private void AumentaNumeroTentativi()
+        {
+            string filePath = Server.MapPath("~/App_Data/otp.txt");
+            int tentativiCorrenti = 0;
+            string passw = "";
+
+            // Controlla se il file esiste e legge l'ultima riga
+            if (System.IO.File.Exists(filePath))
+            {
+                var lines = System.IO.File.ReadAllLines(filePath);
+                if (lines.Length > 0)
+                {
+                    string lastLine = lines.Last(); // Ottieni l'ultima riga
+                    string[] parts = lastLine.Split(':');
+                    passw = parts[0].Trim();
+
+                    if (parts.Length == 2 && int.TryParse(parts[1].Trim(), out tentativiCorrenti))
+                    {
+                        // Aumenta il numero di tentativi
+                        tentativiCorrenti += 1;
+                    }
+                }
+            }
+
+            // Scrivi il nuovo numero di tentativi nel file
+            using (StreamWriter writer = new StreamWriter(filePath, false))
+            {
+                // Scrivi l'ultima riga con il nuovo numero di tentativi
+                writer.WriteLine($"{passw}:{tentativiCorrenti}");
             }
         }
 
         [HttpGet]
+        [VerificaNumeroTentativi]
         public ActionResult ResetPassword(string username)
         {
             ViewBag.Username = username;
@@ -213,6 +274,7 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [VerificaNumeroTentativi]
         public ActionResult ResetPassword(string username, string newPassword)
         {
             // Esempio di salvataggio della nuova password in un file protetto
@@ -225,6 +287,7 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Echafaudages
+        [Authorize]
         public ActionResult ListeEchafaudages()
         {
             var echafaudages = _context.Echafaudages.ToList();
@@ -232,6 +295,7 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Echafaudage/Create
+        [Authorize]
         public ActionResult CreateEchafaudage()
         {
             return View();
@@ -239,6 +303,7 @@ namespace Batibatlocation.Controllers
 
         // POST: Admin/Echafaudage/Create
         [HttpPost]
+        [Authorize]
         public ActionResult CreateEchafaudage(Echafaudage echafaudage)
         {
             if (ModelState.IsValid)
@@ -251,6 +316,7 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Echafaudage/Edit/{id}
+        [Authorize]
         public ActionResult EditEchafaudage(int id)
         {
             var echafaudage = _context.Echafaudages.Find(id);
@@ -263,6 +329,7 @@ namespace Batibatlocation.Controllers
 
         // POST: Admin/Echafaudage/Edit/{id}
         [HttpPost]
+        [Authorize]
         public ActionResult EditEchafaudage(Echafaudage echafaudage)
         {
             if (ModelState.IsValid)
@@ -275,6 +342,7 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Echafaudage/Delete/{id}
+        [Authorize]
         public ActionResult DeleteEchafaudage(int id)
         {
             var echafaudage = _context.Echafaudages.Find(id);
@@ -287,6 +355,7 @@ namespace Batibatlocation.Controllers
 
         // POST: Admin/Echafaudage/Delete/{id}
         [HttpPost, ActionName("DeleteEchafaudage")]
+        [Authorize]
         public ActionResult DeleteConfirmed(int id)
         {
             var echafaudage = _context.Echafaudages.Find(id);
@@ -300,6 +369,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Accessoires
+        [Authorize]
+
         public ActionResult Accessoires()
         {
             var accessoires = _context.Accessoires.ToList();
@@ -307,12 +378,15 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Accessoire/Create
+        [Authorize]
+
         public ActionResult CreateAccessoire()
         {
             return View();
         }
 
         // POST: Admin/Accessoire/Create
+        [Authorize]
         [HttpPost]
         public ActionResult CreateAccessoire(Accessoire accessoire)
         {
@@ -326,6 +400,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Accessoire/Edit/{id}
+        [Authorize]
+
         public ActionResult EditAccessoire(int id)
         {
             var accessoire = _context.Accessoires.Find(id);
@@ -338,6 +414,8 @@ namespace Batibatlocation.Controllers
 
         // POST: Admin/Accessoire/Edit/{id}
         [HttpPost]
+        [Authorize]
+
         public ActionResult EditAccessoire(Accessoire accessoire)
         {
             if (ModelState.IsValid)
@@ -350,6 +428,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Accessoire/Delete/{id}
+        [Authorize]
+
         public ActionResult DeleteAccessoire(int id)
         {
             var accessoire = _context.Accessoires.Find(id);
@@ -362,6 +442,8 @@ namespace Batibatlocation.Controllers
 
         // POST: Admin/Accessoire/Delete/{id}
         [HttpPost, ActionName("DeleteAccessoire")]
+        [Authorize]
+
         public ActionResult DeleteAccessoireConfirmed(int id)
         {
             var accessoire = _context.Accessoires.Find(id);
@@ -375,6 +457,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Reservations
+        [Authorize]
+
         public ActionResult Reservations()
         {
             var reservations = _context.Reservations
@@ -385,6 +469,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Reservation/Details/{id}
+        [Authorize]
+
         public ActionResult Details(int id)
         {
             var reservation = _context.Reservations
@@ -399,6 +485,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Reservation/Confirm/{id}
+        [Authorize]
+
         public ActionResult Confirm(int id)
         {
             var reservation = _context.Reservations.Find(id);
@@ -411,6 +499,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Admin/Reservation/Cancel/{id}
+        [Authorize]
+
         public ActionResult Cancel(int id)
         {
             var reservation = _context.Reservations.Find(id);
@@ -423,6 +513,8 @@ namespace Batibatlocation.Controllers
         }
 
         // GET: Echafaudage/CreateReservation
+        [Authorize]
+
         public ActionResult CreateReservation(int echafaudageId)
         {
             ViewBag.EchafaudageId = echafaudageId;
@@ -433,6 +525,8 @@ namespace Batibatlocation.Controllers
 
         // POST: Echafaudage/CreateReservation
         [HttpPost]
+        [Authorize]
+
         public ActionResult CreateReservation(Reservation reservation, int echafaudageId, int[] selectedAccessoires, int[] quantites)
         {
             if (ModelState.IsValid)
@@ -477,42 +571,42 @@ namespace Batibatlocation.Controllers
 
         private void SendConfirmationEmail(string email, Reservation reservation)
         {
-            try
-            {
-                using (var mail = new MailMessage())
-                {
-                    mail.From = new MailAddress("your_email@example.com");
-                    mail.To.Add(email);
-                    mail.Subject = "Confirmation de Réservation";
+            //try
+            //{
+            //    using (var mail = new MailMessage())
+            //    {
+            //        mail.From = new MailAddress("your_email@example.com");
+            //        mail.To.Add(email);
+            //        mail.Subject = "Confirmation de Réservation";
 
-                    var body = $"Cher(e) {reservation.Nom},\n\nVotre réservation a été confirmée.\n\nDétails de la réservation:\nDate Début: {reservation.DateDebut.ToShortDateString()}\nDate Fin: {reservation.DateFin.ToShortDateString()}\n\nÉchafaudage: {reservation.Echafaudage.Nom}\n\nAccessoires Réservés:\n";
+            //        var body = $"Cher(e) {reservation.Nom},\n\nVotre réservation a été confirmée.\n\nDétails de la réservation:\nDate Début: {reservation.DateDebut.ToShortDateString()}\nDate Fin: {reservation.DateFin.ToShortDateString()}\n\nÉchafaudage: {reservation.Echafaudage.Nom}\n\nAccessoires Réservés:\n";
 
-                    foreach (var accessoire in reservation.ReservationAccessoires)
-                    {
-                        var accessoireObj = _context.Accessoires.Find(accessoire.AccessoireId);
-                        if (accessoireObj != null)
-                        {
-                            body += $"{accessoireObj.Nom} - Quantité: {accessoire.Quantite}\n";
-                        }
-                    }
+            //        foreach (var accessoire in reservation.ReservationAccessoires)
+            //        {
+            //            var accessoireObj = _context.Accessoires.Find(accessoire.AccessoireId);
+            //            if (accessoireObj != null)
+            //            {
+            //                body += $"{accessoireObj.Nom} - Quantité: {accessoire.Quantite}\n";
+            //            }
+            //        }
 
-                    mail.Body = body;
+            //        mail.Body = body;
 
-                    using (var smtp = new SmtpClient())
-                    {
-                        smtp.Host = "smtp.yourhost.com"; // Sostituisci con l'host SMTP fornito da Aruba
-                        smtp.Port = 587; // Porta SMTP
-                        smtp.EnableSsl = true;
-                        smtp.Credentials = new System.Net.NetworkCredential("your_username", "your_password"); // Credenziali SMTP
-                        smtp.Send(mail);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Gestisci eventuali eccezioni
-                // Puoi registrare l'errore in un file di log o inviarlo tramite altri mezzi
-            }
+            //        using (var smtp = new SmtpClient())
+            //        {
+            //            smtp.Host = "smtp.yourhost.com"; // Sostituisci con l'host SMTP fornito da Aruba
+            //            smtp.Port = 587; // Porta SMTP
+            //            smtp.EnableSsl = true;
+            //            smtp.Credentials = new System.Net.NetworkCredential("your_username", "your_password"); // Credenziali SMTP
+            //            smtp.Send(mail);
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Gestisci eventuali eccezioni
+            //    // Puoi registrare l'errore in un file di log o inviarlo tramite altri mezzi
+            //}
         }
 
 

@@ -35,4 +35,17 @@
     </div>
     <br />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="text-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessageDetail"] != null)
+    {
+        <div class="text-danger">
+            @TempData["ErrorMessageDetail"]
+        </div>
+    }
 </div>
