@@ -150,11 +150,12 @@ body, html {
     color: black;
     border-radius: 0 5px 5px 0;
     padding: 20px;
-    display: flex;
+/*    display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-start;*/
     align-items: flex-start;
     transition: all 0.3s ease;
+    overflow: auto;
 }
 
     .right-section.full-width {
@@ -237,3 +238,114 @@ body, html {
     .dropdown-item.text-danger {
         color: #dc3545; /* Rosso per l'opzione Supprimer */
     }
+
+/* Pagination style */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination {
+    display: inline-flex;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.page-item {
+    margin-left: 0.5rem;
+    background-color: #dedede;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+    .page-link:hover {
+        z-index: 2;
+        color: #0056b3;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .page-link:focus {
+        z-index: 3;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+.page-link.active {
+    z-index: 3;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-link.disabled {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: auto;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination-container .pagination {
+    margin-bottom: 0;
+    padding: 5px;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .form-group .custom-control-label {
+        color: #333;
+    }
+
+.custom-file-label::after {
+    content: "Parcourir";
+    background-color: #007bff;
+    color: white;
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+}
+/*
+.custom-file-label::before {
+    content: "Choisir fichier";
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px 0 0 5px;
+}*/

@@ -14,12 +14,16 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using System.Security.Cryptography;
 using Batibatlocation.Filters;
+using System.Drawing.Printing;
+using PagedList;
+using System.Web;
 
 namespace Batibatlocation.Controllers
 {
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        const int pageSize = 3;
 
         public AdminController(ApplicationDbContext context)
         {
@@ -289,9 +293,11 @@ namespace Batibatlocation.Controllers
 
         // GET: Admin/Echafaudages
         [Authorize]
-        public ActionResult ListeEchafaudages()
+        [HttpGet]
+        public ActionResult Echafaudages(int? page)
         {
-            var echafaudages = _context.Echafaudages.ToList();
+            int pageNumber = (page ?? 1);
+            var echafaudages = _context.Echafaudages.OrderBy(e=>e.Id).ToPagedList(pageNumber, pageSize);
             return View(echafaudages);
         }
 
@@ -331,10 +337,18 @@ namespace Batibatlocation.Controllers
         // POST: Admin/Echafaudage/Edit/{id}
         [HttpPost]
         [Authorize]
-        public ActionResult EditEchafaudage(Echafaudage echafaudage)
+        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecificheTechniques")] Echafaudage echafaudage, HttpPostedFileBase imageFile)
         {
             if (ModelState.IsValid)
             {
+                // Gestisci l'upload dell'immagine
+                if (imageFile != null && imageFile.ContentLength > 0)
+                {
+                    string fileName = $"produit-{echafaudage.Id}.png";
+                    string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages"), fileName);
+                    imageFile.SaveAs(path);
+                    echafaudage.ImageUrl = Url.Content($"~/Content/Images/Echafaudages/{fileName}");
+                }
                 _context.Entry(echafaudage).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Echafaudages");
@@ -474,15 +488,13 @@ namespace Batibatlocation.Controllers
 
         public ActionResult Details(int id)
         {
-            var reservation = _context.Reservations
-                .Include("Echafaudage")
-                .Include("ReservationAccessoires.Accessoire")
+            var echafaudage = _context.Echafaudages
                 .FirstOrDefault(r => r.Id == id);
-            if (reservation == null)
+            if (echafaudage == null)
             {
                 return HttpNotFound();
             }
-            return View(reservation);
+            return View(echafaudage);
         }
 
         // GET: Admin/Reservation/Confirm/{id}

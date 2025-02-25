@@ -3,7 +3,9 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-@model IEnumerable<Batibatlocation.Models.Echafaudage>
+@model PagedList.IPagedList<Batibatlocation.Models.Echafaudage>
+@using PagedList.Mvc
+@using PagedList
 
 <h3>Échafaudages</h3>
 <div class="table-responsive">
@@ -43,8 +45,8 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@echafaudage.Id">
                                 <a class="dropdown-item" href="@Url.Action("Details", "Admin", new { id = echafaudage.Id })">Détails</a>
-                                <a class="dropdown-item" href="@Url.Action("Edit", "Admin", new { id = echafaudage.Id })">Modifier</a>
-                                <a class="dropdown-item text-danger" href="@Url.Action("Delete", "Admin", new { id = echafaudage.Id })">Supprimer</a>
+                                <a class="dropdown-item" href="@Url.Action("EditEchafaudage", "Admin", new { id = echafaudage.Id })">Modifier</a>
+                                <a class="dropdown-item text-danger" href="@Url.Action("DeleteEchafaudage", "Admin", new { id = echafaudage.Id })">Supprimer</a>
                             </div>
                         </div>
                     </td>
@@ -52,4 +54,23 @@
             }
         </tbody>
     </table>
+</div>
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Echafaudages", new { page }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new List<string> { "page-link" },
+            UlElementClasses = new List<string> { "pagination" },
+            LinkToFirstPageFormat = "«« Première",
+            LinkToPreviousPageFormat = "« Précédente",
+            LinkToNextPageFormat = "Suivante »",
+            LinkToLastPageFormat = "Dernière »»",
+            DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+            EllipsesFormat = "...",
+        })
 </div>

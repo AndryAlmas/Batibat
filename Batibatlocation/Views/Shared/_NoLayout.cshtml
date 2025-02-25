@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Bati'Bat - Location d'Echaufaudages</title>
+    <!-- Bootstrap CSS -->
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Styles/dashboard.css">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    @RenderBody()
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/popper")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/fontawesome")
+    @Scripts.Render("~/bundles/glide")
+    <script src="~/Scripts/dashboard.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
