@@ -31,6 +31,16 @@ namespace Batibatlocation
                       "~/Styles/glide.core.min.css",
                       "~/Styles/glide.theme.min.css",
                       "~/Styles/site.css"));
+
+            // ADMIN
+            bundles.Add(new StyleBundle("~/admin/css").Include(
+                      "~/Styles/bootstrap-4.5.2.min.css",
+                      "~/Styles/glide.core.min.css",
+                      "~/Styles/glide.theme.min.css",
+                      "~/Styles/dashboard.css"));
+
+            bundles.Add(new ScriptBundle("~/admin/custom").Include(
+                    "~/Scripts/dashboard.js"));
         }
     }
 }

@@ -24,3 +24,19 @@
         hamburgerIconRight.classList.remove('visible');
     });
 });
+
+function updateFileName() {
+    var input = document.getElementById('imageFile');
+    var label = document.querySelector('label[for="imageFile"]');
+
+    // Controlla se un file è stato selezionato
+    if (input.files.length > 0) {
+        // Ottieni il nome del file
+        var fileName = input.files[0].name;
+        // Aggiorna il testo dell'etichetta con il nome del file
+        label.textContent = fileName;
+    } else {
+        // Ripristina il testo dell'etichetta se non è stato selezionato alcun file
+        label.textContent = "Choisir une image";
+    }
+}

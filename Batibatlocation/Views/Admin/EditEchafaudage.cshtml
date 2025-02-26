@@ -12,66 +12,95 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ImageUrl)
+    @Html.HiddenFor(model => model.PeriodiciteId)
 
     <p class="lead w-100">
         Vous pouvez modifier les champs et enregistrer pour appliquer les modifications.
     </p>
     <hr />
     <br />
-    <div class="form-group">
-        @Html.LabelFor(model => model.Nom, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage" } })
-            @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "4", placeholder = "Description de l'échafaudage" })
-            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Prix, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €" } })
-            @Html.ValidationMessageFor(model => model.Prix, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.ImageUrl, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <div class="custom-file">
-                <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/*">
-                <label class="custom-file-label" for="imageFile">Choisir une image</label>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nom, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage" } })
+                @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
             </div>
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <div class="mt-3">
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Prix, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €" } })
+                @Html.ValidationMessageFor(model => model.Prix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Visible, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.CheckBoxFor(model => model.Visible, new { @class = "form-control form-check-visible" })
+                @Html.ValidationMessageFor(model => model.Visible, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="offset-2"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage" })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.SpecifiquesTechniques, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques" })
+                @Html.ValidationMessageFor(model => model.SpecifiquesTechniques, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ImageUrl, "Image Principal", htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="custom-file">
+                    <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/*" onchange="updateFileName()">
+                    <label class="custom-file-label" for="imageFile">Choisir une image</label>
+                </div>
+            </div>
+        </div>
+        <div class="offset-md-6"></div>
+    </div>
+    <br />
+    if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
                     <img src="@Model.ImageUrl" alt="@Model.Nom" style="max-width: 100px; height: auto;" />
                     <p class="mt-2"><strong>URL de l'image:</strong> @Model.ImageUrl</p>
                 </div>
-            }
+            </div>
+            <div class="offset-md-6"></div>
         </div>
-    </div>
+    }
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.SpecificheTechniques, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextAreaFor(model => model.SpecificheTechniques, new { @class = "form-control", rows = "4", placeholder = "Spécifications techniques" })
-            @Html.ValidationMessageFor(model => model.SpecificheTechniques, "", new { @class = "text-danger" })
-        </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
+<div class="row">
+    <div class="col-12">
+        <div class="form-group float-md-right m-1">
             <input type="submit" value="Enregistrer" class="btn btn-primary" />
+        </div>
+        <div class="form-group float-md-right m-1">
             <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
         </div>
     </div>
+</div>
 }
 

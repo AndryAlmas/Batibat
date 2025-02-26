@@ -36,19 +36,17 @@
             <div class="info-container">
                 <h2>@Model.Nom</h2>
                 <dl class="dl-horizontal">
+                    <dt>Prix:</dt>
+                    <dd><strong>@Model.Prix €</strong> par  @Model.Periodicite.Nom.ToLower()</dd>
                     <dt>Description:</dt>
                     <dd>@Model.Description</dd>
-                    <dt>Prix:</dt>
-                    <dd>@Model.Prix €</dd>
-                    <dt>Disponibilité:</dt>
-                    <dd>@(Model.Disponible ? "Disponible" : "Non disponible")</dd>
                 </dl>
-                <a href="@Url.Action("CreateReservation", "Reservation", new { echafaudageId = Model.Id })" class="reserve-button">Réserver</a>
+                @*<a href="@Url.Action("CreateReservation", "Reservation", new { echafaudageId = Model.Id })" class="reserve-button">Réserver</a>*@
             </div>
         </div>
         <div class="specifications-container">
             <h3>Spécifications Techniques</h3>
-            <p>@Model.SpecificheTechniques</p>
+            <p>@Model.SpecifiquesTechniques</p>
         </div>
     </div>
     <br /><br />

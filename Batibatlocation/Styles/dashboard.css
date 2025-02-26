@@ -342,10 +342,16 @@ body, html {
     border-left: none;
     border-radius: 0 5px 5px 0;
 }
-/*
-.custom-file-label::before {
-    content: "Choisir fichier";
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px 0 0 5px;
-}*/
+
+.fa-eye {
+    color: black; /* Colore verde per visibile */
+}
+
+.fa-eye-slash {
+    color: #c2c2c2; /* Colore rosso per non visibile */
+}
+
+.form-check-visible {
+    width: 38px !important;
+    margin-left: 20px;
+}

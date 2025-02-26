@@ -337,7 +337,7 @@ namespace Batibatlocation.Controllers
         // POST: Admin/Echafaudage/Edit/{id}
         [HttpPost]
         [Authorize]
-        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecificheTechniques")] Echafaudage echafaudage, HttpPostedFileBase imageFile)
+        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecificheTechniques,PeriodiciteId,Visible")] Echafaudage echafaudage, HttpPostedFileBase imageFile)
         {
             if (ModelState.IsValid)
             {

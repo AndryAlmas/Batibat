@@ -22,7 +22,7 @@ namespace Batibatlocation.Controllers
         // GET: Echafaudage/Details/{id}
         public ActionResult Details(int id)
         {
-            var echafaudage = _context.Echafaudages.Find(id);
+            var echafaudage = _context.Echafaudages.Where(e => e.Visible && e.Id == id).SingleOrDefault();
             if (echafaudage == null)
             {
                 return HttpNotFound();

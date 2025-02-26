@@ -197,25 +197,22 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202502191532180_AddReservationAccessoireTable.cs" />
-    <Compile Include="Migrations\202502191532180_AddReservationAccessoireTable.Designer.cs">
-      <DependentUpon>202502191532180_AddReservationAccessoireTable.cs</DependentUpon>
+    <Compile Include="Data\Configuration.cs" />
+    <Compile Include="Migrations\202502260805576_prova.cs" />
+    <Compile Include="Migrations\202502260805576_prova.Designer.cs">
+      <DependentUpon>202502260805576_prova.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202502191720296_UpdateTableEchafaudage.cs" />
-    <Compile Include="Migrations\202502191720296_UpdateTableEchafaudage.Designer.cs">
-      <DependentUpon>202502191720296_UpdateTableEchafaudage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Periodicite.cs" />
     <Compile Include="Models\Reservation.cs" />
     <Compile Include="Models\Accessoire.cs" />
     <Compile Include="Models\Echafaudage.cs" />
     <Compile Include="Models\ReservationAccessoire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Enum\PeriodicityType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\otp.txt" />
     <Content Include="App_Data\users.txt" />
-    <Content Include="Content\PagedList.css" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Styles\dashboard.css" />
     <Content Include="Content\Images\Brand_Batibat_PNG.png" />
@@ -267,7 +264,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -288,11 +287,8 @@
     <Content Include="Views\Shared\_NoLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202502191532180_AddReservationAccessoireTable.resx">
-      <DependentUpon>202502191532180_AddReservationAccessoireTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202502191720296_UpdateTableEchafaudage.resx">
-      <DependentUpon>202502191720296_UpdateTableEchafaudage.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202502260805576_prova.resx">
+      <DependentUpon>202502260805576_prova.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

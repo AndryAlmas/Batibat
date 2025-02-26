@@ -14,9 +14,10 @@
             <tr>
                 <th>ID</th>
                 <th>Nom</th>
-                <th>Specifiques Techniques</th>
+                <th>Périodicité</th>
                 <th>Prix</th>
-                <th>Image</th>
+                <th>Visible</th>
+                <th>Image Principal</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -26,8 +27,11 @@
                 <tr>
                     <td>@echafaudage.Id</td>
                     <td>@echafaudage.Nom</td>
-                    <td>@echafaudage.SpecificheTechniques</td>
+                    <td>@echafaudage.Periodicite.Nom</td>
                     <td>@echafaudage.Prix €</td>
+                    <td>
+                        <i class="fas @(echafaudage.Visible ? "fa-eye" : "fa-eye-slash")"></i>
+                    </td>
                     <td>
                         @if (!string.IsNullOrEmpty(echafaudage.ImageUrl))
                         {
