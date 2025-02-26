@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Modifier Échafaudage";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
 }
 
 @model Batibatlocation.Models.Echafaudage
@@ -66,41 +67,88 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 @Html.LabelFor(model => model.ImageUrl, "Image Principal", htmlAttributes: new { @class = "control-label col-md-6" })
                 <div class="custom-file">
-                    <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/*" onchange="updateFileName()">
-                    <label class="custom-file-label" for="imageFile">Choisir une image</label>
+                    <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/png" onchange="updateImagePreview()">
+                    <label class="custom-file-label" for="imageFile">Choisir une image (.png)</label>
                 </div>
             </div>
-        </div>
-        <div class="offset-md-6"></div>
-    </div>
-    <br />
-    if (!string.IsNullOrEmpty(Model.ImageUrl))
-    {
-        <div class="row">
-            <div class="col-md-6">
+            <br />
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
                 <div class="form-group">
-                    <img src="@Model.ImageUrl" alt="@Model.Nom" style="max-width: 100px; height: auto;" />
+                    <img id="imagePreview" src="@Model.ImageUrl" alt="@Model.Nom" style="max-width: 100px; height: auto;" />
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeImage('@Model.ImageUrl')" style="margin-left: 10px;">X</button>
                     <p class="mt-2"><strong>URL de l'image:</strong> @Model.ImageUrl</p>
                 </div>
+            }
+        </div>
+        <div class="offset-md-2"></div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <p class="mt-2"><strong>Autres Images:</strong></p>
             </div>
-            <div class="offset-md-6"></div>
-        </div>
-    }
+            <div class="row">
+                @{
+                    // Converte ViewBag.Images in un array di stringhe per sicurezza
+                    string[] images = ViewBag.Images as string[] ?? new string[0];
+                    List<int> posizioniDisponibili = ViewBag.PosizioniDisp as List<int> ?? new List<int>();
+                    int contatoreImg = 0;
+                }
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="col-md-3 mb-3">
+                        @if (posizioniDisponibili.Count > contatoreImg && posizioniDisponibili.Count > 0 && posizioniDisponibili[contatoreImg] == i+1)
+                        {
+                            <div class="image-quadrant" id="quadrant-@i" onclick="document.getElementById('fileInput-@i').click()">
+                                <input type="file" name="fileInput[@i]" id="fileInput-@i" style="display: none;" accept="image/png" 
+                                       onchange="updateQuadrantImage(@i)"
+                                       onclick="this.value = null;">
 
 
-<div class="row">
-    <div class="col-12">
-        <div class="form-group float-md-right m-1">
-            <input type="submit" value="Enregistrer" class="btn btn-primary" />
-        </div>
-        <div class="form-group float-md-right m-1">
-            <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
+
+                                <img src="@Url.Content(images[contatoreImg])" id="preview-@i" class="quadrant-image image-filled" alt="Quadrant Image" />
+                                <span class="add-icon">+</span>
+                                <span class="remove-icon" id="remove-@i" onclick="event.stopPropagation(); removeQuadrantImage('@Url.Content(images[contatoreImg])',@i)">−</span>
+
+
+                            </div>
+                            <!-- Pulsante di eliminazione -->
+                            <button id="btnSuprimeAutreImg-@i" class="btn btn-danger btn-sm d-block mx-auto mt-2"  onclick="deleteImage(event,'@images[contatoreImg]', @i)">Supprimer</button>
+                            contatoreImg++;
+                        }
+                        else
+                        {
+                            <div class="image-quadrant" id="quadrant-@i" onclick="document.getElementById('fileInput-@i').click()">
+                                <input type="file" name="fileInput[@i]" id="fileInput-@i" style="display: none;" accept="image/png" 
+                                       onchange="updateQuadrantImage(@i)"
+                                       onclick="this.value = null;">
+
+
+                                <img src="" id="preview-@i" class="quadrant-image image-removed" alt="Quadrant Image" />
+                                <span class="add-icon">+</span>
+                                <span class="remove-icon" id="remove-@i" onclick="event.stopPropagation(); removeQuadrantImage(null,@i)">−</span>
+
+                            </div>
+                        }
+                    </div>
+
+                }
+            </div>
         </div>
     </div>
-</div>
-}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group float-md-right m-1">
+                    <input type="submit" value="Enregistrer" class="btn btn-primary" />
+                </div>
+                <div class="form-group float-md-right m-1">
+                    <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
+                </div>
+            </div>
+        </div>
+        }
 

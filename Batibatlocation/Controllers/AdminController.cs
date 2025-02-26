@@ -17,6 +17,11 @@ using Batibatlocation.Filters;
 using System.Drawing.Printing;
 using PagedList;
 using System.Web;
+using System.Web.Http;
+using HttpGetAttribute = System.Web.Mvc.HttpGetAttribute;
+using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
+using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
+using ActionNameAttribute = System.Web.Mvc.ActionNameAttribute;
 
 namespace Batibatlocation.Controllers
 {
@@ -331,13 +336,31 @@ namespace Batibatlocation.Controllers
             {
                 return HttpNotFound();
             }
+
+            var imageUrl = echafaudage.ImageUrl.Split('/').LastOrDefault().Split('.').FirstOrDefault();
+            string folderPath = Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + imageUrl + "/");
+
+            // Leggi tutti i file nella cartella
+            string[] imagePaths = Directory.GetFiles(folderPath); // Ottiene i percorsi completi dei file
+
+            List<int> posizioniImg = new List<int>();
+            for (int i = 0; i < imagePaths.Length; i++)
+            {
+                var nomeImg = imagePaths[i].Split('\\').LastOrDefault();
+                posizioniImg.Add(int.Parse(nomeImg.Split('.').First()));
+                imagePaths[i] = "~/Content/Images/Echafaudages/SlideGallery/" + imageUrl + "/" + nomeImg;
+            }
+            // Passa i percorsi alla vista tramite ViewBag
+            ViewBag.Images = imagePaths;
+            ViewBag.PosizioniDisp = posizioniImg;
+
             return View(echafaudage);
         }
 
         // POST: Admin/Echafaudage/Edit/{id}
         [HttpPost]
         [Authorize]
-        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecificheTechniques,PeriodiciteId,Visible")] Echafaudage echafaudage, HttpPostedFileBase imageFile)
+        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecifiquesTechniques,PeriodiciteId,Visible")] Echafaudage echafaudage, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
         {
             if (ModelState.IsValid)
             {
@@ -349,11 +372,52 @@ namespace Batibatlocation.Controllers
                     imageFile.SaveAs(path);
                     echafaudage.ImageUrl = Url.Content($"~/Content/Images/Echafaudages/{fileName}");
                 }
+                if (fileInput != null && fileInput.Count > 0)
+                {
+                    foreach (var photo in fileInput)
+                    {
+                        if(photo != null && photo.ContentLength > 0)
+                        {
+                            string fileName = $"{(fileInput.IndexOf(photo) + 1)}.png";
+                            string produitID = $"produit-{echafaudage.Id}";
+                            string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + produitID + "/"), fileName);
+                            photo.SaveAs(path);
+                        }
+                    }
+
+                }
                 _context.Entry(echafaudage).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Echafaudages");
             }
             return View(echafaudage);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult DeleteImage([FromBody] dynamic imagePath)
+        {
+            try
+            {
+                //string imagePath = data?.imagePath;
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    string fullPath = Server.MapPath(imagePath);
+
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                        return Json(new { success = true });
+                    }
+                    return Json(new { success = false, message = "Fichier introuvable." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = false, message = "Paramètre invalide." });
         }
 
         // GET: Admin/Echafaudage/Delete/{id}
@@ -458,7 +522,6 @@ namespace Batibatlocation.Controllers
         // POST: Admin/Accessoire/Delete/{id}
         [HttpPost, ActionName("DeleteAccessoire")]
         [Authorize]
-
         public ActionResult DeleteAccessoireConfirmed(int id)
         {
             var accessoire = _context.Accessoires.Find(id);

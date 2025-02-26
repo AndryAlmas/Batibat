@@ -355,3 +355,68 @@ body, html {
     width: 38px !important;
     margin-left: 20px;
 }
+
+/* Altre Immagini */
+.image-quadrant {
+    width: 100%;
+    height: 100px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.quadrant-image {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+}
+
+.add-icon {
+    font-size: 3vw;
+    color: hsl(0deg 0% 100% / 75%);
+    position: absolute;
+}
+
+.remove-icon {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    font-size: 17px;
+    color: #ffffff;
+    cursor: pointer;
+    display: none;
+    border-radius: 50%;
+    background-color: red;
+    padding: 1px 9px 2px 9px;
+}
+
+
+.image-filled {
+    display: block !important;
+}
+
+.image-removed {
+    display: none !important;
+}
+
+/*.image-filled .remove-icon {
+    display: block;
+}*/
+
+/*.image-filled .add-icon {
+    display: none;
+}*/
+
+/*    .image-filled .quadrant-image {
+        display: block;
+    }*/
+
+
+.hideBtnSuprime{
+    display: none !important;
+}

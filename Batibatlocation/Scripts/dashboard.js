@@ -25,18 +25,135 @@
     });
 });
 
-function updateFileName() {
+function updateImagePreview() {
     var input = document.getElementById('imageFile');
+    var preview = document.getElementById('imagePreview');
     var label = document.querySelector('label[for="imageFile"]');
 
     // Controlla se un file è stato selezionato
-    if (input.files.length > 0) {
-        // Ottieni il nome del file
-        var fileName = input.files[0].name;
-        // Aggiorna il testo dell'etichetta con il nome del file
-        label.textContent = fileName;
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        // Funzione di callback quando il file è caricato
+        reader.onload = function (e) {
+            // Aggiorna l'anteprima dell'immagine
+            preview.src = e.target.result;
+            // Aggiorna il testo dell'etichetta con il nome del file
+            label.textContent = input.files[0].name;
+        }
+
+        // Leggi il file come URL di dati
+        reader.readAsDataURL(input.files[0]);
     } else {
-        // Ripristina il testo dell'etichetta se non è stato selezionato alcun file
+        // Ripristina l'anteprima e l'etichetta se non è stato selezionato alcun file
+        preview.src = '@Model.ImageUrl'; // Ripristina l'anteprima originale
         label.textContent = "Choisir une image";
     }
+}
+
+function removeImage(src) {
+    // Rimuovi l'immagine e resetta il campo input
+    var preview = document.getElementById('imagePreview');
+    var input = document.getElementById('imageFile');
+    var label = document.querySelector('label[for="imageFile"]');
+
+    // Reset dell'anteprima dell'immagine
+    preview.src = src; // Ripristina l'anteprima originale
+    label.textContent = "Choisir une image"; // Ripristina il testo dell'etichetta
+
+    // Reset del campo input file
+    input.value = ''; // Resetta il valore del file
+}
+
+function updateQuadrantImage(index) {
+    var input = document.getElementById('fileInput-' + index);
+    var preview = document.getElementById('preview-' + index);
+    var quadrant = document.getElementById('quadrant-' + index);
+    var removeBtn = document.getElementById('remove-' + index);
+    var suprimeBtn = document.getElementById('btnSuprimeAutreImg-' + index);
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result; // Aggiorna l'anteprima dell'immagine nel quadrante
+            preview.classList.remove('image-removed'); // Rimuove la classe che mostra l'immagine
+            preview.classList.add('image-filled'); // Aggiungi classe per indicare che c'è un'immagine
+            removeBtn.style.display = "block"; // Mostra il pulsante di rimozione
+            suprimeBtn.classList.add('hideBtnSuprime');
+
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeQuadrantImage(src,index) {
+/*    var quadrant = document.getElementById('quadrant-' + index);*/
+    var preview = document.getElementById('preview-' + index);
+    var input = document.getElementById('fileInput-' + index);
+    var removeBtn = document.getElementById('remove-' + index);
+    var suprimeBtn = document.getElementById('btnSuprimeAutreImg-' + index);
+
+
+    // Reset dell'anteprima dell'immagine
+    preview.src = src; // Ripristina l'anteprima originale
+    //quadrant.classList.remove('image-removed'); // Rimuove la classe che mostra l'immagine
+    //quadrant.classList.add('image-filled'); // Aggiungi classe per indicare che c'è un'immagine
+    if (suprimeBtn == undefined) {
+        preview.classList.remove('image-filled'); // 
+        preview.classList.add('image-removed'); // nasconde l'immagine
+    }
+
+
+    removeBtn.style.display = "none"; // Nasconde il pulsante di rimozione
+    suprimeBtn.classList.remove('hideBtnSuprime'); // mostra il bottone
+
+
+    // Reset del campo input file
+    input.value = ''; // Resetta il valore del file
+}
+
+function deleteImage(event, imagePath, index) {
+    event.preventDefault(); // Previene il refresh della pagina
+    if (!imagePath) {
+        alert("Aucune image à supprimer.");
+        return;
+    }
+
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette image ?")) {
+        return;
+    }
+
+    fetch('/Admin/DeleteImage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imagePath: imagePath })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Response:", data); // Debug console
+            if (data.success) {
+                alert("Image supprimée avec succès!");
+
+                // Reset quadrante
+                document.getElementById('preview-' + index).src = "";
+                document.getElementById('preview-' + index).classList.remove('image-filled');
+                document.getElementById('preview-' + index).classList.add('image-removed');
+                document.getElementById('remove-' + index).style.display = "none";
+                var btn = document.getElementById('btnSuprimeAutreImg-' + index);
+                btn.parentNode.removeChild(btn);
+                
+            } else {
+                alert("Erreur lors de la suppression de l'image: " + (data.message || ''));
+            }
+        })
+        .catch(error => {
+            console.error("Erreur AJAX:", error);
+            alert("Une erreur est survenue lors de la suppression de l'image.");
+        });
+
+    return false;
 }
