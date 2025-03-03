@@ -1,32 +1,178 @@
-﻿@model Batibatlocation.Models.Echafaudage
+﻿@{
+    ViewBag.Title = "Créer Échafaudage";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
 
-<h2>Ajouter Échafaudage</h2>
+@model Batibatlocation.Models.Echafaudage
 
-<form method="post" action="@Url.Action("CreateEchafaudage", "Admin")">
-    <div>
-        <label for="Nom">Nom:</label>
-        <input type="text" id="Nom" name="Nom" required />
+
+<h3>Créer Échafaudage</h3>
+
+@using (Html.BeginForm("CreateEchafaudage", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @*@Html.HiddenFor(model => model.ImageUrl)*@
+
+    <div class="row">
+        <div class="col-md-10">
+            <p class="lead w-100">
+                Veuillez remplir tous les champs obligatoires.
+            </p>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Visible, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.CheckBoxFor(model => model.Visible, new { @class = "form-control form-check-visible" })
+                @Html.ValidationMessageFor(model => model.Visible, "", new { @class = "text-danger" })
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="Description">Description:</label>
-        <textarea id="Description" name="Description" required></textarea>
+
+    <hr />
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nom, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage" } })
+                @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Prix, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €" } })
+                @Html.ValidationMessageFor(model => model.Prix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Periodicite, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.DropDownListFor(model => model.PeriodiciteId, (SelectList)ViewBag.PeriodiciteList, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PeriodiciteId, "", new { @class = "text-danger" })
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="Prix">Prix:</label>
-        <input type="number" id="Prix" name="Prix" required step="0.01" />
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage" })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.SpecifiquesTechniques, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques" })
+                @Html.ValidationMessageFor(model => model.SpecifiquesTechniques, "", new { @class = "text-danger" })
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="Disponible">Disponibilité:</label>
-        <input type="checkbox" id="Disponible" name="Disponible" checked />
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ImageUrl, "Image Principal", htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="custom-file">
+                    <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/png" onchange="updateImagePreview()" />
+                    <label class="custom-file-label" for="imageFile">Choisir une image (.png)</label>
+                </div>
+            </div>
+
+            <br />
+            @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+            {
+                <div class="form-group">
+                    <img id="imagePreview" src="@Model.ImageUrl" alt="@Model.Nom" style="max-width: 100px; height: auto;" />
+
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeImage('@Model.ImageUrl')" style="margin-left: 10px;"> X </button>
+
+                    <p class="mt-2"><strong>URL de l'image:</strong> @Model.ImageUrl</p>
+                </div>
+            }
+        </div>
+        <div class="offset-md-2"></div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <p class="mt-2"><strong>Autres Images:</strong></p>
+            </div>
+            <div class="row">
+                @{
+                    // Converte ViewBag.Images in un array di stringhe per sicurezza
+                    string[] images = ViewBag.Images as string[] ?? new string[0];
+                    List<int> posizioniDisponibili = ViewBag.PosizioniDisp as List<int> ?? new List<int>();
+                    int contatoreImg = 0;
+                }
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="col-md-3 mb-3">
+                        @if (posizioniDisponibili.Count > contatoreImg && posizioniDisponibili.Count > 0 && posizioniDisponibili[contatoreImg] == i + 1)
+                        {
+                            <div class="image-quadrant" id="quadrant-@i" onclick="document.getElementById('fileInput-@i').click()">
+                                <input type="file" name="fileInput[@i]" id="fileInput-@i" style="display: none;" accept="image/png"
+                                       onchange="updateQuadrantImage(@i)"
+                                       onclick="this.value = null;">
+
+
+
+                                <img src="@Url.Content(images[contatoreImg])" id="preview-@i" class="quadrant-image image-filled" alt="Quadrant Image" />
+                                <span class="add-icon">+</span>
+                                <span class="remove-icon" id="remove-@i" onclick="event.stopPropagation(); removeQuadrantImage('@Url.Content(images[contatoreImg])',@i)">−</span>
+
+
+                            </div>
+                            <!-- Pulsante di eliminazione -->
+                            <button id="btnSuprimeAutreImg-@i" class="btn btn-danger btn-sm d-block mx-auto mt-2" onclick="deleteImage(event,'@images[contatoreImg]', @i)">Supprimer</button>
+                            contatoreImg++;
+
+                        }
+                        else
+                        {
+
+                            <div class="image-quadrant" id="quadrant-@i" onclick="document.getElementById('fileInput-@i').click()">
+                                <input type="file" name="fileInput[@i]" id="fileInput-@i" style="display: none;" accept="image/png"
+                                       onchange="updateQuadrantImage(@i)"
+                                       onclick="this.value = null;">
+
+
+                                <img src="" id="preview-@i" class="quadrant-image image-removed" alt="Quadrant Image" />
+                                <span class="add-icon">+</span>
+                                <span class="remove-icon" id="remove-@i" onclick="event.stopPropagation(); removeQuadrantImage(null,@i)">−</span>
+
+                            </div>
+
+
+                        }
+                    </div>
+
+                }
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="ImageUrl">URL de l'Image:</label>
-        <input type="text" id="ImageUrl" name="ImageUrl" required />
+    <hr />
+
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group float-md-right m-1">
+                <input type="submit" value="Créer" class="btn btn-primary" />
+            </div>
+            <div class="form-group float-md-right m-1">
+                <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="SpecificheTechniques">Spécifications Techniques:</label>
-        <textarea id="SpecificheTechniques" name="SpecificheTechniques" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-success">Enregistrer</button>
-    <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
-</form>
+
+}
+

@@ -8,6 +8,11 @@
 @using PagedList
 
 <h3>Échafaudages</h3>
+<div class="text-right mb-3">
+    <a href="@Url.Action("CreateEchafaudage", "Admin")" class="btn btn-success">
+        <i class="fas fa-plus"></i> Ajouter un Échafaudage
+    </a>
+</div>
 <div class="table-responsive">
     <table class="table table-striped">
         <thead class="thead-light">
@@ -29,8 +34,11 @@
                     <td>@echafaudage.Nom</td>
                     <td>@echafaudage.Periodicite.Nom</td>
                     <td>@echafaudage.Prix €</td>
-                    <td>
-                        <i class="fas @(echafaudage.Visible ? "fa-eye" : "fa-eye-slash")"></i>
+                    <td>                        
+                        <i class="fas @(echafaudage.Visible ? "fa-eye" : "fa-eye-slash")"
+                            data-id="@echafaudage.Id"
+                            data-visible="@echafaudage.Visible"
+                            onclick="toggleVisibility(this)"></i>
                     </td>
                     <td>
                         @if (!string.IsNullOrEmpty(echafaudage.ImageUrl))
@@ -48,9 +56,15 @@
                                 <i class="fa fa-cog"></i>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@echafaudage.Id">
-                                <a class="dropdown-item" href="@Url.Action("Details", "Admin", new { id = echafaudage.Id })">Détails</a>
+                                <a class="dropdown-item" href="@Url.Action("DetailsEchafaudage", "Admin", new { id = echafaudage.Id })">Détails</a>
                                 <a class="dropdown-item" href="@Url.Action("EditEchafaudage", "Admin", new { id = echafaudage.Id })">Modifier</a>
-                                <a class="dropdown-item text-danger" href="@Url.Action("DeleteEchafaudage", "Admin", new { id = echafaudage.Id })">Supprimer</a>
+                                @using (Html.BeginForm("DeleteEchafaudage", "Admin", new { id = echafaudage.Id, page = Model.PageNumber }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet échafaudage ?')">
+                                        Supprimer
+                                    </button>
+                                }
                             </div>
                         </div>
                     </td>

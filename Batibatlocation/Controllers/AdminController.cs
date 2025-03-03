@@ -310,27 +310,69 @@ namespace Batibatlocation.Controllers
         [Authorize]
         public ActionResult CreateEchafaudage()
         {
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom",2);
             return View();
         }
 
         // POST: Admin/Echafaudage/Create
         [HttpPost]
         [Authorize]
-        public ActionResult CreateEchafaudage(Echafaudage echafaudage)
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateEchafaudage([Bind(Exclude = "Id,ImageUrl")] Echafaudage echafaudage, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
         {
             if (ModelState.IsValid)
             {
+                // Genera un nuovo ID per l'échafaudage
+                echafaudage.Id = _context.Echafaudages.Any() ? _context.Echafaudages.Max(e => e.Id) + 1 : 1;
+
+                // Gestisci l'upload dell'immagine
+                if (imageFile != null && imageFile.ContentLength > 0)
+                {
+                    string fileName = $"produit-{echafaudage.Id}.png";
+                    string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages"), fileName);
+                    imageFile.SaveAs(path);
+                    echafaudage.ImageUrl = Url.Content($"~/Content/Images/Echafaudages/{fileName}");
+                }
+                if (fileInput != null && fileInput.Count > 0)
+                {
+                    foreach (var photo in fileInput)
+                    {
+                        if (photo != null && photo.ContentLength > 0)
+                        {
+                            string fileName = $"{(fileInput.IndexOf(photo) + 1)}.png";
+                            string produitID = $"produit-{echafaudage.Id}";
+                            string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + produitID + "/"), fileName);
+                            photo.SaveAs(path);
+                        }
+                    }
+
+                }
                 _context.Echafaudages.Add(echafaudage);
                 _context.SaveChanges();
                 return RedirectToAction("Echafaudages");
             }
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom",2);
+
             return View(echafaudage);
+        }
+
+        // GET: Admin/Reservation/Details/{id}
+        [Authorize]
+
+        public ActionResult DetailsEchafaudage(int id)
+        {
+            return RedirectToAction("EditEchafaudage", new { id = id, visualizza = true});
         }
 
         // GET: Admin/Echafaudage/Edit/{id}
         [Authorize]
-        public ActionResult EditEchafaudage(int id)
+        public ActionResult EditEchafaudage(int id, bool visualizza = false)
         {
+            if (visualizza)
+            {
+                ViewBag.IsReadOnly = true;
+            }
+
             var echafaudage = _context.Echafaudages.Find(id);
             if (echafaudage == null)
             {
@@ -353,6 +395,8 @@ namespace Batibatlocation.Controllers
             // Passa i percorsi alla vista tramite ViewBag
             ViewBag.Images = imagePaths;
             ViewBag.PosizioniDisp = posizioniImg;
+
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", echafaudage.PeriodiciteId);
 
             return View(echafaudage);
         }
@@ -395,6 +439,26 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [Authorize]
+        public JsonResult ToggleVisibility(int id)
+        {
+            using (var db = new ApplicationDbContext()) // Usa il tuo DbContext
+            {
+                var echafaudage = db.Echafaudages.Find(id);
+                if (echafaudage == null)
+                {
+                    return Json(new { success = false });
+                }
+
+                // Inverti lo stato
+                echafaudage.Visible = !echafaudage.Visible;
+                db.SaveChanges();
+
+                return Json(new { success = true });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
         public JsonResult DeleteImage([FromBody] dynamic imagePath)
         {
             try
@@ -420,22 +484,11 @@ namespace Batibatlocation.Controllers
             return Json(new { success = false, message = "Paramètre invalide." });
         }
 
-        // GET: Admin/Echafaudage/Delete/{id}
-        [Authorize]
-        public ActionResult DeleteEchafaudage(int id)
-        {
-            var echafaudage = _context.Echafaudages.Find(id);
-            if (echafaudage == null)
-            {
-                return HttpNotFound();
-            }
-            return View(echafaudage);
-        }
-
         // POST: Admin/Echafaudage/Delete/{id}
-        [HttpPost, ActionName("DeleteEchafaudage")]
+        [HttpPost]
         [Authorize]
-        public ActionResult DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteEchafaudage(int? id, int? page)
         {
             var echafaudage = _context.Echafaudages.Find(id);
             if (echafaudage == null)
@@ -444,7 +497,7 @@ namespace Batibatlocation.Controllers
             }
             _context.Echafaudages.Remove(echafaudage);
             _context.SaveChanges();
-            return RedirectToAction("Echafaudages");
+            return RedirectToAction("Echafaudages", new {page});
         }
 
         // GET: Admin/Accessoires
@@ -546,19 +599,7 @@ namespace Batibatlocation.Controllers
             return View(reservations);
         }
 
-        // GET: Admin/Reservation/Details/{id}
-        [Authorize]
 
-        public ActionResult Details(int id)
-        {
-            var echafaudage = _context.Echafaudages
-                .FirstOrDefault(r => r.Id == id);
-            if (echafaudage == null)
-            {
-                return HttpNotFound();
-            }
-            return View(echafaudage);
-        }
 
         // GET: Admin/Reservation/Confirm/{id}
         [Authorize]

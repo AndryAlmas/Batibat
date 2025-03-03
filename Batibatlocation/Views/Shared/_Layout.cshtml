@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="msvalidate.01" content="BD28ED4BE1B7008A410DEAC046B74E0C" />
+    <meta name="google-site-verification" content="rn9QmKp6l_mt4Mnj-UPRGS9gepdIFqGC42PCdqEszAo" />
     <title>Bati'Bat - Location d'Echaufaudages</title>
     <!-- Bootstrap CSS -->
     @* <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> *@
@@ -102,7 +103,7 @@
                             <li class="nav-item">
                                 <a id="homeBtn" class="nav-link" href="@Url.Action("Index","Home")">Accueil</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" id="nosProduits">
                                 <a class="nav-link" href="@Url.Action("Index","Home")#produits">Nos Produits</a>
                             </li>
                             <li class="nav-item">
@@ -122,7 +123,7 @@
             <button id="closeMenu" class="close-menu">&times;</button>
             <ul class="side-menu-nav">
                 <li><a id="homeBtn2" class="nav-link" href="@Url.Action("Index","Home")">Accueil</a></li>
-                <li><a class="nav-link" href="@Url.Action("Index","Home")#produits">Nos Produits</a></li>
+                <li id="nosProduitsSideBar"><a class="nav-link" href="@Url.Action("Index","Home")#produits">Nos Produits</a></li>
                 <li><a class="nav-link" href="@Url.Action("Index","Home")#services">Nos Services</a></li>
                 <li><a class="nav-link" href="@Url.Action("Index","Home")#contact">Contact</a></li>
             </ul>

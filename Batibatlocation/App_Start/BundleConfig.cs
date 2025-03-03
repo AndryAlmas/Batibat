@@ -9,7 +9,7 @@ namespace Batibatlocation
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-            "~/Scripts/jquery-3.5.1.slim.min.js"));
+            "~/Scripts/jquery-3.5.1.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
             "~/Scripts/bootstrap-4.5.2.min.js"));

@@ -157,3 +157,34 @@ function deleteImage(event, imagePath, index) {
 
     return false;
 }
+
+function toggleVisibility(icon) {
+    var id = icon.getAttribute("data-id");
+    var isVisible = icon.getAttribute("data-visible") === "True"; // Converti in boolean
+
+    $.ajax({
+        url: "/Admin/ToggleVisibility", // Cambia con la tua URL corretta
+        type: "POST",
+        data: { id: id },
+        success: function (response) {
+            if (response.success) {
+                // Cambia l'icona visibile/non visibile
+                if (isVisible) {
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                } else {
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                }
+                // Aggiorna il valore data-visible
+                icon.setAttribute("data-visible", isVisible ? "False" : "True");
+            } else {
+                alert("Errore durante l'aggiornamento.");
+            }
+        },
+        error: function () {
+            alert("Errore di connessione con il server.");
+        }
+    });
+}
+
