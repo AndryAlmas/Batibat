@@ -214,6 +214,7 @@
     <Content Include="App_Data\otp.txt" />
     <Content Include="App_Data\users.txt" />
     <Content Include="Scripts\dashboard.js" />
+    <Content Include="sitemap.xml" />
     <Content Include="Styles\dashboard.css" />
     <Content Include="Content\Images\Brand_Batibat_PNG.png" />
     <Content Include="Content\Images\Echafaudages\produit-1.png" />
