@@ -15,8 +15,8 @@ namespace Batibatlocation.Models
         public DateTime DateFin { get; set; }
 
         // Relazione 1:1 con Echafaudage
-        public int EchafaudageId { get; set; }
-        public virtual Echafaudage Echafaudage { get; set; }
+        public int ProduitId { get; set; }
+        public virtual Produit Produit { get; set; }
 
         // Relazione N:N con Accessoire
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

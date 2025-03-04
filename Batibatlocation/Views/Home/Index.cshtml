@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-@model IEnumerable<Batibatlocation.Models.Echafaudage>
+@model IEnumerable<Batibatlocation.Models.Produit>
 
 @*HERO Section*@
 <section id="hero" class="hero d-flex align-items-center justify-content-center">
@@ -23,21 +23,21 @@
             <h2 class="text-center mb-4">Nos Produits</h2>
             <hr><br>
             <div class="row">
-                @foreach (var echafaudage in Model)
+                @foreach (var produit in Model)
                 {
                     <div class="col-md-6 mb-4">
                         <figure class="snip-produit hover d-flex flex-column">
                             <div class="snip-image-area d-flex flex-column">
-                                <img src="@echafaudage.ImageUrl" alt="@echafaudage.Nom" />
+                                <img src="@produit.ImageUrl" alt="@produit.Nom" />
                                 <div class="add-to-cart"> <i class="fas fa-plus"></i><span>détails</span></div>
                             </div>
                             <figcaption>
-                                <h3>@echafaudage.Nom</h3>
-                                <p>@echafaudage.Description </p>
+                                <h3>@produit.Nom</h3>
+                                <p>@produit.Description </p>
                                 <div class="price">
-                                    @echafaudage.Prix€ <span class="snip-price-period">par @echafaudage.Periodicite.Nom.ToLower()</span>
+                                    @produit.Prix€ <span class="snip-price-period">par @produit.Periodicite.Nom.ToLower()</span>
                                 </div>
-                            </figcaption><a href="@Url.Action("Details", "Echafaudage", new { id = echafaudage.Id })"></a>
+                            </figcaption><a href="@Url.Action("Details", "Produit", new { id = produit.Id })"></a>
                         </figure>
                     </div>
 
@@ -48,15 +48,16 @@
 }
 else
 {
-<style>
+    <style>
 
-    #nosProduits{
-        display: none;
-    }
-    #nosProduitsSideBar{
-        display: none;
-    }
-</style>
+        #nosProduits {
+            display: none;
+        }
+
+        #nosProduitsSideBar {
+            display: none;
+        }
+    </style>
 }
 @*Service*@
 <br>

@@ -18,12 +18,23 @@ namespace Batibatlocation.Data
         {
             //  This method will be called after migrating to the latest version.
 
-            // Popola la tabella Periodicites
+            // Popola la tabella Periodicite
             if (!context.Periodicites.Any())
             {
                 context.Periodicites.AddRange(System.Enum.GetValues(typeof(PeriodicityType))
                     .Cast<PeriodicityType>()
                     .Select(e => new Periodicite { Id = (int)e, Nom = e.ToString() })
+                );
+
+                context.SaveChanges();
+            }
+
+            // Popola la tabella Category
+            if (!context.Categories.Any())
+            {
+                context.Categories.AddRange(System.Enum.GetValues(typeof(CategoryType))
+                    .Cast<CategoryType>()
+                    .Select(e => new Category { Id = (int)e, Nom = e.ToString() })
                 );
 
                 context.SaveChanges();

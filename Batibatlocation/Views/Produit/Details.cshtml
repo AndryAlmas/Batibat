@@ -1,10 +1,10 @@
-﻿@model Batibatlocation.Models.Echafaudage
+﻿@model Batibatlocation.Models.Produit
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
-    <title>Détails Échafaudage</title>
+    <title>Détails Produit</title>
 </head>
 <body>
     <div class="container container-echafaudage">
@@ -14,7 +14,8 @@
                     <div class="glide__track" data-glide-el="track">
                         <ul class="glide__slides">
                             <li class="glide__slide">
-                            <img src="@Model.ImageUrl" alt="@Model.Nom" /></li>
+                                <img src="@Model.ImageUrl" alt="@Model.Nom" />
+                            </li>
                             @if (ViewBag.ImagePaths != null)
                             {
                                 foreach (string imagePath in ViewBag.ImagePaths)

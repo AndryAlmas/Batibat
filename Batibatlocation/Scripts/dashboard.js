@@ -188,3 +188,13 @@ function toggleVisibility(icon) {
     });
 }
 
+$(document).ready(function () {
+    $('#categoryDropdown').change(function () {
+        // Recupera il valore selezionato dal dropdown
+        var selectedCategoryId = $(this).val();
+
+        // Reindirizza all'azione del controller con il parametro categoryId
+        window.location.href = '/Admin/Produits?page=1&categoryId=' + selectedCategoryId;
+    });
+});
+

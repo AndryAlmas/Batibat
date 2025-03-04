@@ -7,13 +7,13 @@ namespace Batibatlocation.Data
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class prova : IMigrationMetadata
+    public sealed partial class ImageUrl : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(prova));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ImageUrl));
         
         string IMigrationMetadata.Id
         {
-            get { return "202502260805576_prova"; }
+            get { return "202503041225329_ImageUrl"; }
         }
         
         string IMigrationMetadata.Source

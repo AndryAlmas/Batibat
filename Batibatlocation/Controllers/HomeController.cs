@@ -17,8 +17,8 @@ namespace Batibatlocation.Controllers
         }
         public ActionResult Index()
         {
-            var echafaudages = _context.Echafaudages.Where(e=>e.Visible).ToList();
-            return View(echafaudages);
+            var produits = _context.Produits.Where(e=>e.Visible).ToList();
+            return View(produits);
         }
 
         public ActionResult Reservation()

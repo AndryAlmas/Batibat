@@ -12,28 +12,35 @@ namespace Batibatlocation.Data
         {
         }
 
-        public DbSet<Echafaudage> Echafaudages { get; set; }
+        public DbSet<Produit> Produits { get; set; }
         public DbSet<Periodicite> Periodicites { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Accessoire> Accessoires { get; set; }
         public DbSet<ReservationAccessoire> ReservationAccessoires { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            // Configurazione della relazione uno-a-molti
+            //modelBuilder.Entity<Produit>()
+            //    .HasRequired(p => p.Category)
+            //    .WithMany(c => c.Produits)
+            //    .HasForeignKey(p => p.CategoryId);
 
-            // Configurazione della relazione 1:N tra Echafaudage e Periodicite
-            modelBuilder.Entity<Echafaudage>()
-            .HasRequired(i => i.Periodicite)  // Ogni Impalcatura deve avere una Periodicite
+            // Configurazione della relazione 1:N tra Produit e Periodicite
+            modelBuilder.Entity<Produit>()
+            .HasRequired(i => i.Periodicite)  // Ogni Produit deve avere una Periodicite
             .WithMany()
             .HasForeignKey(i => i.PeriodiciteId); // Definiamo la chiave esterna
 
-            // Configurazione della relazione 1:1 tra Echafaudage e Reservation
-            modelBuilder.Entity<Echafaudage>()
-                .HasRequired(e => e.Reservation)
-                .WithRequiredPrincipal(r => r.Echafaudage);
+            base.OnModelCreating(modelBuilder);
 
-            // Configurazione della relazione N:N tra Reservation e Accessoire
+            // Configurazione della relazione 1:1 tra Produit e Reservation
+            modelBuilder.Entity<Produit>()
+                .HasRequired(e => e.Reservation)
+                .WithRequiredPrincipal(r => r.Produit);
+
+            //// Configurazione della relazione N:N tra Reservation e Accessoire
             modelBuilder.Entity<Reservation>()
                 .HasMany(r => r.ReservationAccessoires)
                 .WithRequired(ra => ra.Reservation)

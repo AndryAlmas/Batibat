@@ -191,21 +191,31 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\EchafaudageController.cs" />
+    <Compile Include="Controllers\ProduitController.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
+    <Compile Include="Enum\CategoryType.cs" />
     <Compile Include="Filters\VerificaNumeroTentativiAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Data\Configuration.cs" />
-    <Compile Include="Migrations\202502260805576_prova.cs" />
-    <Compile Include="Migrations\202502260805576_prova.Designer.cs">
-      <DependentUpon>202502260805576_prova.cs</DependentUpon>
+    <Compile Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.cs" />
+    <Compile Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.Designer.cs">
+      <DependentUpon>202503041018255_AggiungiRelazioneCategoryProduit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202503041039304_asfjbaiga.cs" />
+    <Compile Include="Migrations\202503041039304_asfjbaiga.Designer.cs">
+      <DependentUpon>202503041039304_asfjbaiga.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202503041225329_ImageUrl.cs" />
+    <Compile Include="Migrations\202503041225329_ImageUrl.Designer.cs">
+      <DependentUpon>202503041225329_ImageUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Periodicite.cs" />
     <Compile Include="Models\Reservation.cs" />
     <Compile Include="Models\Accessoire.cs" />
-    <Compile Include="Models\Echafaudage.cs" />
+    <Compile Include="Models\Produit.cs" />
     <Compile Include="Models\ReservationAccessoire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enum\PeriodicityType.cs" />
@@ -213,25 +223,25 @@
   <ItemGroup>
     <Content Include="App_Data\otp.txt" />
     <Content Include="App_Data\users.txt" />
+    <Content Include="Content\Images\Produits\produit-1.png" />
+    <Content Include="Content\Images\Produits\produit-2.png" />
+    <Content Include="Content\Images\Produits\produit-3.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-1\1.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-1\2.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-1\3.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-1\4.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-2\1.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-2\2.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-2\3.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-2\4.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-3\1.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-3\2.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-3\3.png" />
+    <Content Include="Content\Images\Produits\SlideGallery\produit-3\4.png" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="sitemap.xml" />
     <Content Include="Styles\dashboard.css" />
     <Content Include="Content\Images\Brand_Batibat_PNG.png" />
-    <Content Include="Content\Images\Echafaudages\produit-1.png" />
-    <Content Include="Content\Images\Echafaudages\produit-2.png" />
-    <Content Include="Content\Images\Echafaudages\produit-3.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-1\1.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-1\2.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-1\3.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-1\4.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-2\1.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-2\2.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-2\3.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-2\4.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-3\1.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-3\2.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-3\3.png" />
-    <Content Include="Content\Images\Echafaudages\SlideGallery\produit-3\4.png" />
     <Content Include="Content\Images\ECHAFAUDAGE_FACADE.jpg" />
     <Content Include="Content\Images\LogoBatibatSVG.svg" />
     <Content Include="Content\Images\LogoBatibatSVGTetto.svg" />
@@ -274,22 +284,28 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
-    <Content Include="Views\Admin\Echafaudages.cshtml" />
-    <Content Include="Views\Echafaudage\Details.cshtml" />
+    <Content Include="Views\Admin\Produits.cshtml" />
+    <Content Include="Views\Produit\Details.cshtml" />
     <Content Include="Views\Reservation\CreateReservation.cshtml" />
-    <Content Include="Views\Admin\CreateEchafaudage.cshtml" />
+    <Content Include="Views\Admin\CreateProduit.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Admin\ForgotPassword.cshtml" />
     <Content Include="Views\Admin\VerifyOTP.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
-    <Content Include="Views\Admin\EditEchafaudage.cshtml" />
+    <Content Include="Views\Admin\EditProduit.cshtml" />
     <Content Include="Views\Shared\_NoLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202502260805576_prova.resx">
-      <DependentUpon>202502260805576_prova.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.resx">
+      <DependentUpon>202503041018255_AggiungiRelazioneCategoryProduit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202503041039304_asfjbaiga.resx">
+      <DependentUpon>202503041039304_asfjbaiga.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202503041225329_ImageUrl.resx">
+      <DependentUpon>202503041225329_ImageUrl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

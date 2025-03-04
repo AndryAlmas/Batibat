@@ -28,7 +28,7 @@ namespace Batibatlocation.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-        const int pageSize = 3;
+        const int pageSize = 10;
 
         public AdminController(ApplicationDbContext context)
         {
@@ -299,18 +299,34 @@ namespace Batibatlocation.Controllers
         // GET: Admin/Echafaudages
         [Authorize]
         [HttpGet]
-        public ActionResult Echafaudages(int? page)
+        public ActionResult Produits(int? page, int? categoryId)
         {
             int pageNumber = (page ?? 1);
-            var echafaudages = _context.Echafaudages.OrderBy(e=>e.Id).ToPagedList(pageNumber, pageSize);
-            return View(echafaudages);
+
+            IPagedList<Produit> produits = null;
+
+            if (categoryId.HasValue && categoryId.Value != 0)
+            {
+                produits = _context.Produits.Where(e => e.CategoryId == categoryId).OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
+            }
+            else
+            {
+                produits = _context.Produits.OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
+                categoryId = 0;
+            }
+            var categories = _context.Categories.ToList();
+            categories.Insert(0, new Category { Id = 0, Nom = "Tout" });
+            ViewBag.CategoryList = new SelectList(categories, "Id", "Nom", categoryId);
+
+            return View(produits);
         }
 
         // GET: Admin/Echafaudage/Create
         [Authorize]
-        public ActionResult CreateEchafaudage()
+        public ActionResult CreateProduit()
         {
             ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom",2);
+            ViewBag.CategoryList = new SelectList(_context.Categories.ToList(), "Id", "Nom");
             return View();
         }
 
@@ -318,21 +334,38 @@ namespace Batibatlocation.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateEchafaudage([Bind(Exclude = "Id,ImageUrl")] Echafaudage echafaudage, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
+        public ActionResult CreateProduit([Bind(Exclude = "Id,ImageUrl")] Produit produit, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
         {
+            if (imageFile != null && imageFile.ContentLength > 0)
+            {
+                ModelState.Remove("ImageUrl");
+            }
+            else
+            {
+                ModelState.AddModelError("ImageUrl", "L'ImageUrl est requis.");
+            }
             if (ModelState.IsValid)
             {
+                _context.Produits.Add(produit);
+                _context.SaveChanges();
+
                 // Genera un nuovo ID per l'échafaudage
-                echafaudage.Id = _context.Echafaudages.Any() ? _context.Echafaudages.Max(e => e.Id) + 1 : 1;
+                produit.Id = _context.Produits.Max(e => e.Id);
 
                 // Gestisci l'upload dell'immagine
                 if (imageFile != null && imageFile.ContentLength > 0)
                 {
-                    string fileName = $"produit-{echafaudage.Id}.png";
-                    string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages"), fileName);
+                    string fileName = $"produit-{produit.Id}.png";
+                    string path = Path.Combine(Server.MapPath("~/Content/Images/Produits"), fileName);
                     imageFile.SaveAs(path);
-                    echafaudage.ImageUrl = Url.Content($"~/Content/Images/Echafaudages/{fileName}");
+                    produit.ImageUrl = Url.Content($"~/Content/Images/Produits/{fileName}");
                 }
+
+                // Creazione della directory por gli altri file
+                string virtualPath = "~/Content/Images/Produits/SlideGallery/" + $"produit-{produit.Id}";
+                string physicalPath = Server.MapPath(virtualPath);
+                Directory.CreateDirectory(physicalPath);
+
                 if (fileInput != null && fileInput.Count > 0)
                 {
                     foreach (var photo in fileInput)
@@ -340,81 +373,95 @@ namespace Batibatlocation.Controllers
                         if (photo != null && photo.ContentLength > 0)
                         {
                             string fileName = $"{(fileInput.IndexOf(photo) + 1)}.png";
-                            string produitID = $"produit-{echafaudage.Id}";
-                            string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + produitID + "/"), fileName);
+                            string produitID = $"produit-{produit.Id}";
+                            string path = Path.Combine(Server.MapPath("~/Content/Images/Produits/SlideGallery/" + produitID + "/"), fileName);
                             photo.SaveAs(path);
                         }
                     }
 
                 }
-                _context.Echafaudages.Add(echafaudage);
+                _context.Entry(produit).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
-                return RedirectToAction("Echafaudages");
+                return RedirectToAction("Produits");
             }
-            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom",2);
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", produit.PeriodiciteId);
+            ViewBag.CategoryList = new SelectList(_context.Categories.ToList(), "Id", "Nom", produit.CategoryId);
 
-            return View(echafaudage);
+            return View(produit);
         }
 
         // GET: Admin/Reservation/Details/{id}
         [Authorize]
 
-        public ActionResult DetailsEchafaudage(int id)
+        public ActionResult DetailsProduit(int id)
         {
-            return RedirectToAction("EditEchafaudage", new { id = id, visualizza = true});
+            return RedirectToAction("EditProduit", new { id = id, visualizza = true});
         }
 
         // GET: Admin/Echafaudage/Edit/{id}
         [Authorize]
-        public ActionResult EditEchafaudage(int id, bool visualizza = false)
+        public ActionResult EditProduit(int id, bool visualizza = false)
         {
             if (visualizza)
             {
                 ViewBag.IsReadOnly = true;
             }
 
-            var echafaudage = _context.Echafaudages.Find(id);
-            if (echafaudage == null)
+            var produit = _context.Produits.Find(id);
+            if (produit == null)
             {
                 return HttpNotFound();
             }
 
-            var imageUrl = echafaudage.ImageUrl.Split('/').LastOrDefault().Split('.').FirstOrDefault();
-            string folderPath = Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + imageUrl + "/");
+            var imageUrl = produit.ImageUrl.Split('/').LastOrDefault().Split('.').FirstOrDefault();
+            string folderPath = Server.MapPath("~/Content/Images/Produits/SlideGallery/" + imageUrl + "/");
 
+            string[] imagePaths = {};
             // Leggi tutti i file nella cartella
-            string[] imagePaths = Directory.GetFiles(folderPath); // Ottiene i percorsi completi dei file
+            if (Directory.Exists(folderPath))
+            {
+                imagePaths = Directory.GetFiles(folderPath); // Ottiene i percorsi completi dei file
+            }
 
             List<int> posizioniImg = new List<int>();
             for (int i = 0; i < imagePaths.Length; i++)
             {
                 var nomeImg = imagePaths[i].Split('\\').LastOrDefault();
                 posizioniImg.Add(int.Parse(nomeImg.Split('.').First()));
-                imagePaths[i] = "~/Content/Images/Echafaudages/SlideGallery/" + imageUrl + "/" + nomeImg;
+                imagePaths[i] = "~/Content/Images/Produits/SlideGallery/" + imageUrl + "/" + nomeImg;
             }
             // Passa i percorsi alla vista tramite ViewBag
             ViewBag.Images = imagePaths;
             ViewBag.PosizioniDisp = posizioniImg;
 
-            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", echafaudage.PeriodiciteId);
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", produit.PeriodiciteId);
+            ViewBag.CategoryList = new SelectList(_context.Categories.ToList(), "Id", "Nom", produit.CategoryId);
 
-            return View(echafaudage);
+            return View(produit);
         }
 
         // POST: Admin/Echafaudage/Edit/{id}
         [HttpPost]
         [Authorize]
-        public ActionResult EditEchafaudage([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecifiquesTechniques,PeriodiciteId,Visible")] Echafaudage echafaudage, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
+        public ActionResult EditProduit([Bind(Include = "Id,Nom,Description,Prix,Disponible,ImageUrl,SpecifiquesTechniques,PeriodiciteId,CategoryId,Visible")] Produit produit, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
         {
+            if ((imageFile != null && imageFile.ContentLength > 0) || !string.IsNullOrEmpty(produit.ImageUrl))
+            {
+                ModelState.Remove("ImageUrl");
+            }
+            else
+            {
+                ModelState.AddModelError("ImageUrl", "L'ImageUrl est requis.");
+            }
             if (ModelState.IsValid)
             {
                 // Gestisci l'upload dell'immagine
                 if (imageFile != null && imageFile.ContentLength > 0)
                 {
-                    string fileName = $"produit-{echafaudage.Id}.png";
-                    string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages"), fileName);
+                    string fileName = $"produit-{produit.Id}.png";
+                    string path = Path.Combine(Server.MapPath("~/Content/Images/Produits"), fileName);
                     imageFile.SaveAs(path);
-                    echafaudage.ImageUrl = Url.Content($"~/Content/Images/Echafaudages/{fileName}");
+                    produit.ImageUrl = Url.Content($"~/Content/Images/Produits/{fileName}");
                 }
                 if (fileInput != null && fileInput.Count > 0)
                 {
@@ -423,18 +470,21 @@ namespace Batibatlocation.Controllers
                         if(photo != null && photo.ContentLength > 0)
                         {
                             string fileName = $"{(fileInput.IndexOf(photo) + 1)}.png";
-                            string produitID = $"produit-{echafaudage.Id}";
-                            string path = Path.Combine(Server.MapPath("~/Content/Images/Echafaudages/SlideGallery/" + produitID + "/"), fileName);
+                            string produitID = $"produit-{produit.Id}";
+                            string path = Path.Combine(Server.MapPath("~/Content/Images/Produits/SlideGallery/" + produitID + "/"), fileName);
                             photo.SaveAs(path);
                         }
                     }
 
                 }
-                _context.Entry(echafaudage).State = System.Data.Entity.EntityState.Modified;
+                _context.Entry(produit).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
-                return RedirectToAction("Echafaudages");
+                return RedirectToAction("Produits");
             }
-            return View(echafaudage);
+            ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", produit.PeriodiciteId);
+            ViewBag.CategoryList = new SelectList(_context.Categories.ToList(), "Id", "Nom", produit.CategoryId);
+
+            return View(produit);
         }
 
         [HttpPost]
@@ -443,7 +493,7 @@ namespace Batibatlocation.Controllers
         {
             using (var db = new ApplicationDbContext()) // Usa il tuo DbContext
             {
-                var echafaudage = db.Echafaudages.Find(id);
+                var echafaudage = db.Produits.Find(id);
                 if (echafaudage == null)
                 {
                     return Json(new { success = false });
@@ -488,16 +538,16 @@ namespace Batibatlocation.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteEchafaudage(int? id, int? page)
+        public ActionResult DeleteProduit(int? id, int? page)
         {
-            var echafaudage = _context.Echafaudages.Find(id);
-            if (echafaudage == null)
+            var produit = _context.Produits.Find(id);
+            if (produit == null)
             {
                 return HttpNotFound();
             }
-            _context.Echafaudages.Remove(echafaudage);
+            _context.Produits.Remove(produit);
             _context.SaveChanges();
-            return RedirectToAction("Echafaudages", new {page});
+            return RedirectToAction("Produits", new {page});
         }
 
         // GET: Admin/Accessoires
@@ -635,7 +685,7 @@ namespace Batibatlocation.Controllers
         public ActionResult CreateReservation(int echafaudageId)
         {
             ViewBag.EchafaudageId = echafaudageId;
-            ViewBag.Echafaudages = new SelectList(_context.Echafaudages, "Id", "Nom", echafaudageId);
+            ViewBag.Echafaudages = new SelectList(_context.Produits, "Id", "Nom", echafaudageId);
             ViewBag.Accessoires = new MultiSelectList(_context.Accessoires, "Id", "Nom");
             return View();
         }
@@ -648,7 +698,7 @@ namespace Batibatlocation.Controllers
         {
             if (ModelState.IsValid)
             {
-                reservation.EchafaudageId = echafaudageId;
+                reservation.ProduitId = echafaudageId;
                 reservation.ReservationAccessoires = new List<ReservationAccessoire>();
 
                 if (selectedAccessoires != null && quantites != null && selectedAccessoires.Length == quantites.Length)
@@ -680,7 +730,7 @@ namespace Batibatlocation.Controllers
             }
 
             ViewBag.EchafaudageId = echafaudageId;
-            ViewBag.Echafaudages = new SelectList(_context.Echafaudages, "Id", "Nom", echafaudageId);
+            ViewBag.Echafaudages = new SelectList(_context.Produits, "Id", "Nom", echafaudageId);
             ViewBag.Accessoires = new MultiSelectList(_context.Accessoires, "Id", "Nom");
             return View(reservation);
         }

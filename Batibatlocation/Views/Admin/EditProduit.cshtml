@@ -1,38 +1,37 @@
 ﻿@{
-    ViewBag.Title = "Modifier Échafaudage";
+    ViewBag.Title = "Modifier Produit";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     bool isReadOnly = ViewBag.IsReadOnly ?? false;  // Pass true to make it readonly
 
     if (isReadOnly)
     {
-        ViewBag.Title = "Détails Échafaudage";
+        ViewBag.Title = "Détails Produit";
     }
 }
 
-@model Batibatlocation.Models.Echafaudage
+@model Batibatlocation.Models.Produit
 
 @if (isReadOnly)
 {
-    <h3>Détails Échafaudage</h3>
+    <h3>Détails Produit</h3>
 }
 else
 {
-    <h3>Modifier Échafaudage</h3>
+    <h3>Modifier Produit</h3>
 }
-@using (Html.BeginForm("EditEchafaudage", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("EditProduit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ImageUrl)
-    @*@Html.HiddenFor(model => model.PeriodiciteId)*@
 
     <div class="row">
         <div class="col-md-10">
             @if (isReadOnly)
             {
                 <p class="lead w-100">
-                    Vous pouvez visioner les champs de détails pour cette echafaudage.
+                    Vous pouvez visioner les champs de détails pour cet produit.
                 </p>
             }
             else
@@ -61,7 +60,24 @@ else
     </div>
 
     <hr />
-    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
+                @if (isReadOnly)
+                {
+                    @Html.DropDownListFor(model => model.CategoryId, (SelectList)ViewBag.CategoryList, htmlAttributes: new { @class = "form-control", @readonly = "readonly", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.CategoryId, (SelectList)ViewBag.CategoryList, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                }
+
+            </div>
+        </div>
+        <div class="offset-md-8"></div>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -156,6 +172,7 @@ else
                     <div class="custom-file">
                         <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/png" onchange="updateImagePreview()" />
                         <label class="custom-file-label" for="imageFile">Choisir une image (.png)</label>
+                        @Html.ValidationMessageFor(model => model.ImageUrl, "", new { @class = "text-danger" })
                     </div>
                 </div>
             }
@@ -250,7 +267,7 @@ else
                     <input type="submit" value="Enregistrer" class="btn btn-primary" />
                 </div>
                 <div class="form-group float-md-right m-1">
-                    <a href="@Url.Action("Echafaudages", "Admin")" class="btn btn-secondary">Annuler</a>
+                    <a href="@Url.Action("Produits", "Admin")" class="btn btn-secondary">Annuler</a>
                 </div>
             </div>
         </div>
@@ -260,7 +277,7 @@ else
         <div class="row">
             <div class="col-12">
                 <div class="form-group float-md-right m-1">
-                    <a href="@Url.Action("EditEchafaudage", "Admin", new {id = Model.Id})" class="btn btn-primary">Modifier</a>
+                    <a href="@Url.Action("EditProduit", "Admin", new {id = Model.Id})" class="btn btn-primary">Modifier</a>
                 </div>
             </div>
         </div>
