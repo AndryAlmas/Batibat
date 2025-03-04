@@ -89,7 +89,7 @@ namespace Batibatlocation.Controllers
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -308,11 +308,11 @@ namespace Batibatlocation.Controllers
 
             if (categoryId.HasValue && categoryId.Value != 0)
             {
-                produits = _context.Produits.Where(e => e.CategoryId == categoryId).OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
+                produits = _context.Produits.Where(e => e.CategoryId == categoryId).OrderByDescending(e => e.Id).ToPagedList(pageNumber, pageSize);
             }
             else
             {
-                produits = _context.Produits.OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
+                produits = _context.Produits.OrderByDescending(e => e.Id).ToPagedList(pageNumber, pageSize);
                 categoryId = 0;
             }
             var categories = _context.Categories.ToList();
@@ -789,6 +789,90 @@ namespace Batibatlocation.Controllers
             //    // Gestisci eventuali eccezioni
             //    // Puoi registrare l'errore in un file di log o inviarlo tramite altri mezzi
             //}
+        }
+
+        // GET: Admin/Echafaudages
+        [Authorize]
+        [HttpGet]
+        public ActionResult Categories(int? page)
+        {
+            int pageNumber = (page ?? 1);
+
+            IPagedList<Category> categories = _context.Categories.OrderByDescending(c => c.Id).ToPagedList(pageNumber, pageSize);
+
+            return View(categories);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateCategorie(string Nom, int? page)
+        {
+            if (string.IsNullOrWhiteSpace(Nom))
+            {
+                TempData["ErrorMessage"]  = "Le nom de la catégorie est requis.";
+                return RedirectToAction("Categories", new {page});
+            }
+
+            var categoryExist = _context.Categories.Where(c => c.Nom.Equals(Nom)).Any();
+            
+            if (categoryExist)
+            {
+                // Mostra un messaggio di errore se ci sono prodotti associati
+                TempData["ErrorMessage"] = "Impossible de créer cette catégorie car elle existe déjà.";
+                return RedirectToAction("Categories", new { page });
+            }
+
+            var newCategory = new Category { Nom = Nom };
+            _context.Categories.Add(newCategory);
+            _context.SaveChanges();
+
+            return RedirectToAction("Categories", new { page });
+
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCategorie([Bind(Include = "Id,Nom")] Category category, int? page)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Entry(category).State = System.Data.Entity.EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction("Categories", new {page});
+            }
+            return View(category);
+        }
+
+        [HttpPost]
+        [Authorize]
+        //[ValidateAntiForgeryToken]
+        public ActionResult DeleteCategorie(int id, int? page)
+        {
+            // Trova la categoria da eliminare
+            var category = _context.Categories.Find(id);
+
+            if (category == null)
+            {
+                return HttpNotFound("Catégorie non trouvée.");
+            }
+
+            // Controlla se ci sono prodotti associati alla categoria
+            var produitsAssociés = _context.Produits.Any(p => p.CategoryId == id);
+
+            if (produitsAssociés)
+            {
+                // Mostra un messaggio di errore se ci sono prodotti associati
+                TempData["ErrorMessage"] = "Impossible de supprimer cette catégorie car elle est associée à des produits.";
+                return RedirectToAction("Categories", new { page });
+            }
+
+            // Se non ci sono prodotti associati, elimina la categoria
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+
+            return RedirectToAction("Categories", new { page });
         }
 
 

@@ -198,3 +198,112 @@ $(document).ready(function () {
     });
 });
 
+
+function mostraFormCategorie(categoriaId) {
+    // Nascondi il dropdown
+    const dropdownContainer = document.getElementById(`dropdownContainer-${categoriaId}`);
+    if (dropdownContainer) {
+        dropdownContainer.style.display = 'none';
+    }
+
+    // Mostra il form
+    const formContainer = document.getElementById(`formContainer-${categoriaId}`);
+    if (formContainer) {
+        formContainer.style.display = 'block';
+    }
+
+    var campo = document.querySelector(`#inputNom-${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campo) {
+        campo.removeAttribute('disabled');
+    }
+}
+
+function nascondiFormCategorie(categoriaId) {
+    // Nascondi il form
+    const formContainer = document.getElementById(`formContainer-${categoriaId}`);
+    if (formContainer) {
+        formContainer.style.display = 'none';
+    }
+
+    // Mostra il dropdown
+    const dropdownContainer = document.getElementById(`dropdownContainer-${categoriaId}`);
+    if (dropdownContainer) {
+        dropdownContainer.style.display = 'block';
+    }
+
+    var campo = document.querySelector(`#inputNom-${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campo) {
+        campo.setAttribute("disabled", "disabled");
+    }
+}
+
+// Variabile per tenere traccia dello stato del bottone "Nouvelle Catégorie"
+let isAddingCategory = false;
+
+// Funzione per aggiungere una nuova riga in cima alla tabella
+function addNewCategoryRow() {
+    if (isAddingCategory) {
+        return; // Ignora se una riga è già stata aggiunta
+    }
+
+    // Nascondi il bottone "Nouvelle Catégorie"
+    $('#btnAddCategory').hide();
+
+    // Crea una nuova riga HTML con il campo ID vuoto
+    const newRow = `
+            <tr id="tempCategory">
+                <td></td> <!-- Campo ID vuoto -->
+                <td>
+                    <input type="text" class="form-control" id="categoryInput" placeholder="Nom de la catégorie" />
+                </td>
+                <td class="text-right">
+                    <button class="btn btn-primary btn-create">Creer</button>
+                    <button class="btn btn-secondary btn-cancel">Annuler</button>
+                </td>
+            </tr>
+        `;
+
+    // Aggiungi la riga in cima alla tabella usando .prepend()
+    $('#categoriesTable tbody').prepend(newRow);
+
+    // Imposta lo stato per indicare che una riga è stata aggiunta
+    isAddingCategory = true;
+}
+
+// Gestione del click sul bottone "Nouvelle Catégorie"
+$('#btnAddCategory').on('click', function () {
+    addNewCategoryRow();
+});
+
+// Gestione del click sul pulsante "Creer"
+$(document).on('click', '.btn-create', function () {
+    const inputField = $('#categoryInput');
+    const categoryName = inputField.val().trim();
+
+    if (categoryName === '') {
+        alert('Veuillez entrer un nom pour la catégorie.');
+        return;
+    }
+
+    // Imposta il valore del campo nascosto nel form
+    $('#newCategoryName').val(categoryName);
+
+    // Invia il form per creare la nuova categoria
+    $('#createCategoryForm').submit();
+});
+
+// Gestione del click sul pulsante "Annuler"
+$(document).on('click', '.btn-cancel', function () {
+    // Rimuovi la riga temporanea
+    $('#tempCategory').remove();
+
+    // Mostra nuovamente il bottone "Nouvelle Catégorie"
+    $('#btnAddCategory').show();
+
+    // Resetta lo stato
+    isAddingCategory = false;
+});

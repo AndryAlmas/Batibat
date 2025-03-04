@@ -291,6 +291,7 @@
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\EditProduit.cshtml" />
     <Content Include="Views\Shared\_NoLayout.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.resx">

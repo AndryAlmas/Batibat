@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Produits";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@model PagedList.IPagedList<Batibatlocation.Models.Category>
+
+@using PagedList.Mvc
+@using PagedList
+
+<h3>Categories</h3>
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+    </div>
+    <div class="col-md-2 d-flex align-items-end justify-content-end">
+        <div class="col-md-12 text-right">
+            <button id="btnAddCategory" class="btn btn-success mb-3">
+                <i class="fas fa-plus"></i> Nouvelle Catégorie
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Form nascosto per creare una nuova categoria -->
+<form id="createCategoryForm" action="@Url.Action("CreateCategorie", "Admin", new { page = Model.PageNumber })" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Nom" id="newCategoryName" />
+</form>
+
+<div class="table-responsive">
+    <table id="categoriesTable" class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{ int i = 0;}
+
+            @foreach (var categorie in Model)
+            {
+                <tr>
+                    <td>@categorie.Id</td>
+                    <td>
+                        @using (Html.BeginForm("EditCategorie", "Admin", new { page = Model.PageNumber }, FormMethod.Post, new { @id = $"editForm-{categorie.Id}" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(model => Model.ElementAtOrDefault(i).Id)
+                            @Html.EditorFor(model => Model.ElementAtOrDefault(i).Nom, new { htmlAttributes = new { @id = $"inputNom-{categorie.Id}", @class = "form-control", placeholder = "Nom de l'échafaudage", disabled = "disabled" } })
+                            i++;
+                        }
+                    </td>
+                    <td class="text-right">
+                        <div id="dropdownContainer-@categorie.Id" class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-@categorie.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@categorie.Id">
+                                <a class="btn dropdown-item" onclick="mostraFormCategorie('@categorie.Id')">Modifier</a>
+                                @using (Html.BeginForm("DeleteCategorie", "Admin", new { id = categorie.Id, page = Model.PageNumber }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette categorie ?')">
+                                        Supprimer
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <div id="formContainer-@categorie.Id" style="display:none">
+                            <div class="form-group float-md-right m-1">
+                                <a href="#" onclick="nascondiFormCategorie('@categorie.Id')" class="btn btn-secondary">Annuler</a>
+                            </div>
+                            <div class="form-group float-md-right m-1">
+                                <input type="submit" form="editForm-@categorie.Id" value="Enregistrer" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Categories", new { page }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new List<string> { "page-link" },
+            UlElementClasses = new List<string> { "pagination" },
+            LinkToFirstPageFormat = "«« Première",
+            LinkToPreviousPageFormat = "« Précédente",
+            LinkToNextPageFormat = "Suivante »",
+            LinkToLastPageFormat = "Dernière »»",
+            DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+            EllipsesFormat = "...",
+        })
+</div>

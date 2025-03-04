@@ -17,9 +17,24 @@
                     <i class="fa-solid fa-earth-americas fa-2x home-icon" id="homeIcon"></i> <!-- Icona Home -->
                 </a>
             </div>
-            <div class="header-items-right">
-                <i class="fa-solid fa-house fa-2x notification-icon"></i>
-                <i class="fa fa-user-circle-o fa-2x account-icon"></i>
+            <div class="header-items-left">
+
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle-inverted" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-house fa-2x notification-icon"></i>
+                    </button>
+                    @*<div class="dropdown-menu left35" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="@Url.Action("Logout", "Admin")">Logout</a>
+                    </div>*@
+                </div>
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle dropdown-toggle-inverted" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user-circle-o fa-2x account-icon"></i>
+                    </button>
+                    <div class="dropdown-menu left35" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="@Url.Action("Logout", "Admin")">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="content">
@@ -30,6 +45,9 @@
                 </div>
                 <div class="menu-buttons">
                     <a href="@Url.Action("Produits", "Admin")" class="menu-button">Produits</a>
+                </div>
+                <div class="menu-buttons">
+                    <a href="@Url.Action("Categories", "Admin")" class="menu-button">Categories</a>
                 </div>
             </div>
             <div class="right-section" id="rightSection">

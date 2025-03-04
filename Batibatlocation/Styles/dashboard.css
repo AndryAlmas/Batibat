@@ -223,6 +223,16 @@ body, html {
         background-color: #0056b3; /* Effetto hover più scuro */
     }
 
+.dropdown-toggle-inverted {
+    background-color: white !important; 
+    border: none;
+    color: black !important;
+}
+
+.left35 {
+    left: -35px !important;
+}
+
 .dropdown-menu {
     min-width: 150px; /* Larghezza minima del menù */
 }
