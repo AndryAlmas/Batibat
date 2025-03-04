@@ -234,10 +234,6 @@
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\2.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\3.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\4.png" />
-    <Content Include="Content\Images\Produits\SlideGallery\produit-3\1.png" />
-    <Content Include="Content\Images\Produits\SlideGallery\produit-3\2.png" />
-    <Content Include="Content\Images\Produits\SlideGallery\produit-3\3.png" />
-    <Content Include="Content\Images\Produits\SlideGallery\produit-3\4.png" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="sitemap.xml" />
     <Content Include="Styles\dashboard.css" />
@@ -276,6 +272,8 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\Produits\SlideGallery\produit-3\" />
+    <Folder Include="Content\Images\Produits\SlideGallery\produit-9\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>

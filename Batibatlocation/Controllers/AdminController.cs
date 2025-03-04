@@ -22,6 +22,7 @@ using HttpGetAttribute = System.Web.Mvc.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
 using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
 using ActionNameAttribute = System.Web.Mvc.ActionNameAttribute;
+using System.Web.UI.WebControls;
 
 namespace Batibatlocation.Controllers
 {
@@ -547,6 +548,20 @@ namespace Batibatlocation.Controllers
             }
             _context.Produits.Remove(produit);
             _context.SaveChanges();
+
+            string virtualPathAutreImages = "~/Content/Images/Produits/SlideGallery/" + $"produit-{produit.Id}";
+            if (System.IO.Directory.Exists(Server.MapPath(virtualPathAutreImages)))
+            {
+                Directory.Delete(Server.MapPath(virtualPathAutreImages), true);
+            }
+
+            string fileName = $"produit-{produit.Id}.png";
+            string fullPath = Path.Combine(Server.MapPath("~/Content/Images/Produits"), fileName);
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
             return RedirectToAction("Produits", new {page});
         }
 
