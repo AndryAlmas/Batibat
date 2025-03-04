@@ -225,7 +225,6 @@
     <Content Include="App_Data\users.txt" />
     <Content Include="Content\Images\Produits\produit-1.png" />
     <Content Include="Content\Images\Produits\produit-2.png" />
-    <Content Include="Content\Images\Produits\produit-3.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-1\1.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-1\2.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-1\3.png" />
@@ -272,8 +271,6 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\Produits\SlideGallery\produit-3\" />
-    <Folder Include="Content\Images\Produits\SlideGallery\produit-9\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
