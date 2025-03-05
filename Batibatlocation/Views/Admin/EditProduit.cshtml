@@ -9,6 +9,9 @@
     }
 }
 
+@Html.AntiForgeryToken()
+
+
 @model Batibatlocation.Models.Produit
 
 @if (isReadOnly)
@@ -183,7 +186,15 @@ else
                     <img id="imagePreview" src="@Model.ImageUrl" alt="@Model.Nom" style="max-width: 100px; height: auto;" />
                     @if (!isReadOnly)
                     {
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeImage('@Model.ImageUrl')" style="margin-left: 10px;"> X </button>
+                        <button type="button" class="btn btn-danger btn-sm trigger-modal" style="margin-left: 10px;"
+                                data-function="removeImage"
+                                data-params='["@Model.ImageUrl"]'
+                                data-title="Supprimer l'image"
+                                data-message="Êtes-vous sûr de vouloir supprimer cette image ? L'image précédente sera restaurée."
+                                data-confirm-button="Oui, supprimer"
+                                data-cancel-button="Annuler">
+                            X
+                        </button>
                     }
                     <p class="mt-2"><strong>URL de l'image:</strong> @Model.ImageUrl</p>
                 </div>
@@ -230,7 +241,15 @@ else
 
                                 </div>
                                 <!-- Pulsante di eliminazione -->
-                                <button id="btnSuprimeAutreImg-@i" class="btn btn-danger btn-sm d-block mx-auto mt-2" onclick="deleteImage(event,'@images[contatoreImg]', @i)">Supprimer</button>
+                                <button type="button" id="btnSuprimeAutreImg-@i" class="btn btn-danger btn-sm d-block mx-auto mt-2 trigger-modal"
+                                        data-function="deleteImage"
+                                        data-params='["@images[contatoreImg]", @i]'
+                                        data-title="Supprimer l'image"
+                                        data-message="Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible."
+                                        data-confirm-button="Oui, supprimer"
+                                        data-cancel-button="Annuler">
+                                    Supprimer
+                                </button>
                                 contatoreImg++;
                             }
                         }

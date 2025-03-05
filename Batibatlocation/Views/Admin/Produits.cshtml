@@ -7,6 +7,7 @@
 @using PagedList.Mvc
 @using PagedList
 
+@Html.AntiForgeryToken()
 <h3>Produits</h3>
 <hr />
 <div class="row">
@@ -26,84 +27,85 @@
     </div>
 </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead class="thead-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Categorie</th>
-                    <th>Nom</th>
-                    <th>Prix</th>
-                    <th>Périodicité</th>
-                    <th>Visible</th>
-                    <th>Image Principal</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var produit in Model)
-                {
-                    <tr>
-                        <td>@produit.Id</td>
-                        <td>@produit.Category.Nom</td>
-                        <td>@produit.Nom</td>
-                        <td>@produit.Prix €</td>
-                        <td>@produit.Periodicite.Nom</td>
-                        <td>
-                            <i class="fas @(produit.Visible ? "fa-eye" : "fa-eye-slash")"
-                               data-id="@produit.Id"
-                               data-visible="@produit.Visible"
-                               onclick="toggleVisibility(this)"></i>
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(produit.ImageUrl))
-                            {
-                                <img src="@produit.ImageUrl" alt="@produit.Nom" style="max-width: 100px; height: auto;" />
-                            }
-                            else
-                            {
-                                <span>Aucune image</span>
-                            }
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-@produit.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-cog"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@produit.Id">
-                                    <a class="dropdown-item" href="@Url.Action("DetailsProduit", "Admin", new { id = produit.Id })">Détails</a>
-                                    <a class="dropdown-item" href="@Url.Action("EditProduit", "Admin", new { id = produit.Id })">Modifier</a>
-                                    @using (Html.BeginForm("DeleteProduit", "Admin", new { id = produit.Id, page = Model.PageNumber }, FormMethod.Post))
-                                    {
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet produit ?')">
-                                            Supprimer
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination-container">
-        @Html.PagedListPager(Model, page => Url.Action("Produits", new { page }),
-            new PagedListRenderOptions
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Categorie</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Périodicité</th>
+                <th>Visible</th>
+                <th>Image Principal</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var produit in Model)
             {
-                LiElementClasses = new List<string> { "page-link" },
-                UlElementClasses = new List<string> { "pagination" },
-                LinkToFirstPageFormat = "«« Première",
-                LinkToPreviousPageFormat = "« Précédente",
-                LinkToNextPageFormat = "Suivante »",
-                LinkToLastPageFormat = "Dernière »»",
-                DisplayLinkToFirstPage = PagedListDisplayMode.Never,
-                DisplayLinkToLastPage = PagedListDisplayMode.Never,
-                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                DisplayLinkToNextPage = PagedListDisplayMode.Always,
-                MaximumPageNumbersToDisplay = 5,
-                DisplayEllipsesWhenNotShowingAllPageNumbers = true,
-                EllipsesFormat = "...",
-            })
-    </div>
+                <tr>
+                    <td>@produit.Id</td>
+                    <td>@produit.Category.Nom</td>
+                    <td>@produit.Nom</td>
+                    <td>@produit.Prix €</td>
+                    <td>@produit.Periodicite.Nom</td>
+                    <td>
+                        <i class="fas @(produit.Visible ? "fa-eye" : "fa-eye-slash")"
+                           data-id="@produit.Id"
+                           data-visible="@produit.Visible"
+                           onclick="toggleVisibility(this)"></i>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(produit.ImageUrl))
+                        {
+                            <img src="@produit.ImageUrl" alt="@produit.Nom" style="max-width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>Aucune image</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-@produit.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@produit.Id">
+                                <a class="dropdown-item" href="@Url.Action("DetailsProduit", "Admin", new { id = produit.Id })">Détails</a>
+                                <a class="dropdown-item" href="@Url.Action("EditProduit", "Admin", new { id = produit.Id })">Modifier</a>
+                                <button type="button" class="dropdown-item text-danger trigger-modal"
+                                        data-action="@Url.Action("DeleteProduit", "Admin", new { id = produit.Id, page = Model.PageNumber })"
+                                        data-title="Supprimer le produit"
+                                        data-message="Êtes-vous sûr de vouloir supprimer cet produit ? Cette action est irréversible."
+                                        data-confirm-button="Oui, supprimer"
+                                        data-cancel-button="Annuler">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Produits", new { page }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new List<string> { "page-link" },
+            UlElementClasses = new List<string> { "pagination" },
+            LinkToFirstPageFormat = "«« Première",
+            LinkToPreviousPageFormat = "« Précédente",
+            LinkToNextPageFormat = "Suivante »",
+            LinkToLastPageFormat = "Dernière »»",
+            DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+            EllipsesFormat = "...",
+        })
+</div>

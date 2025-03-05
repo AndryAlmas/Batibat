@@ -114,14 +114,9 @@ function removeQuadrantImage(src,index) {
     input.value = ''; // Resetta il valore del file
 }
 
-function deleteImage(event, imagePath, index) {
-    event.preventDefault(); // Previene il refresh della pagina
+function deleteImage(imagePath, index) {
     if (!imagePath) {
         alert("Aucune image à supprimer.");
-        return;
-    }
-
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette image ?")) {
         return;
     }
 
@@ -154,8 +149,6 @@ function deleteImage(event, imagePath, index) {
             console.error("Erreur AJAX:", error);
             alert("Une erreur est survenue lors de la suppression de l'image.");
         });
-
-    return false;
 }
 
 function toggleVisibility(icon) {

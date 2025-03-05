@@ -24,8 +24,8 @@
                         <i class="fa-solid fa-house fa-2x notification-icon"></i>
                     </button>
                     @*<div class="dropdown-menu left35" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="@Url.Action("Logout", "Admin")">Logout</a>
-                    </div>*@
+                            <a class="dropdown-item" href="@Url.Action("Logout", "Admin")">Logout</a>
+                        </div>*@
                 </div>
                 <div class="dropdown">
                     <button class="btn dropdown-toggle dropdown-toggle-inverted" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -66,5 +66,7 @@
     @Scripts.Render("~/bundles/glide")
     @Scripts.Render("~/admin/custom")
     @RenderSection("Scripts", required: false)
+
+    @Html.Partial("_ModalConfirm")
 </body>
 </html>

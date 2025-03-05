@@ -1,0 +1,100 @@
+﻿@{
+    var title = ViewData["ModalTitle"]?.ToString() ?? "Confirmez l'action";
+    var message = ViewData["ModalMessage"]?.ToString() ?? "Êtes-vous sûr de vouloir procéder ?";
+    var confirmButtonText = ViewData["ModalConfirmButtonText"]?.ToString() ?? "Oui, confirmer";
+    var cancelButtonText = ViewData["ModalCancelButtonText"]?.ToString() ?? "Annuler";
+}
+<style>
+    .modal-content {
+        background-color: hsl(0deg 0% 100% / 90%);
+        background-clip: content-box;
+        border: 5px solid hsl(0deg 0% 0% / 7%);
+        border-radius: 1rem;
+    }
+</style>
+<!-- Modal di Conferma -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @message
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@cancelButtonText</button>
+                <button type="button" class="btn btn-danger confirm-action">@confirmButtonText</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script per gestire il modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Gestisci i pulsanti con classe "trigger-modal"
+        document.querySelectorAll('.trigger-modal').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Impedisce il comportamento predefinito
+
+                // Recupera gli attributi dati dal pulsante
+                const actionUrl = this.getAttribute('data-action');
+                const modalTitle = this.getAttribute('data-title') || 'Confirmez l\'action';
+                const modalMessage = this.getAttribute('data-message') || 'Êtes-vous sûr de vouloir procéder ?';
+                const confirmButtonText = this.getAttribute('data-confirm-button') || 'Oui, confirmer';
+                const cancelButtonText = this.getAttribute('data-cancel-button') || 'Annuler';
+
+                // Recupera la funzione da eseguire (se presente)
+                const functionName = this.getAttribute('data-function');
+                const params = JSON.parse(this.getAttribute('data-params') || '[]'); // Parametri come array JSON
+
+                // Aggiorna il contenuto del modal dinamicamente
+                document.querySelector('#confirmModal .modal-title').textContent = modalTitle;
+                document.querySelector('#confirmModal .modal-body').textContent = modalMessage;
+                document.querySelector('#confirmModal .confirm-action').textContent = confirmButtonText;
+                document.querySelector('#confirmModal .btn-secondary').textContent = cancelButtonText;
+
+                // Mostra il modal
+                $('#confirmModal').modal('show');
+
+                // Gestisci il click su "Conferma"
+                document.querySelector('#confirmModal .confirm-action').addEventListener('click', function () {
+                    if (functionName) {
+                        // Se è specificata una funzione, eseguila con i parametri
+                        if (typeof window[functionName] === 'function') {
+                            window[functionName].apply(null, params); // Esegue la funzione con i parametri
+                            setTimeout(function () {
+                                $('#confirmModal').modal('hide');
+                            }, 0); 
+                        } else {
+                            console.error(`La fonction "${functionName}" n'existe pas.`);
+                        }
+                    } else if (actionUrl) {
+                        // Se non è specificata una funzione, invia il form o esegue l'azione specificata
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = actionUrl;
+                        form.style.display = 'none';
+
+                        // Aggiungi il token anti-falsificazione (se necessario)
+                        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                        if (token) {
+                            form.appendChild(token.cloneNode(true));
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+
+                        // Chiudi il modal prima di inviare il form
+                        $('#confirmModal').modal('hide');
+                    }
+                });
+            });
+        });
+    });
+</script>
+

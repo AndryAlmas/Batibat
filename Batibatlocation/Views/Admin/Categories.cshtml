@@ -2,7 +2,7 @@
     ViewBag.Title = "Produits";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
+@Html.AntiForgeryToken()
 @model PagedList.IPagedList<Batibatlocation.Models.Category>
 
 @using PagedList.Mvc
@@ -67,13 +67,15 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@categorie.Id">
                                 <a class="btn dropdown-item" onclick="mostraFormCategorie('@categorie.Id')">Modifier</a>
-                                @using (Html.BeginForm("DeleteCategorie", "Admin", new { id = categorie.Id, page = Model.PageNumber }, FormMethod.Post))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette categorie ?')">
-                                        Supprimer
-                                    </button>
-                                }
+                                <button type="button" class="dropdown-item text-danger trigger-modal"
+                                        data-action="@Url.Action("DeleteCategorie", "Admin", new { id = categorie.Id, page = Model.PageNumber })"
+                                        data-title="Supprimer la catégorie"
+                                        data-message="Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible."
+                                        data-confirm-button="Oui, supprimer"
+                                        data-cancel-button="Annuler">
+                                    Supprimer
+                                </button>
+
                             </div>
                         </div>
 
