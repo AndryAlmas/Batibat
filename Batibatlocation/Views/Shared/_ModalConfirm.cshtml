@@ -61,8 +61,11 @@
                 // Mostra il modal
                 $('#confirmModal').modal('show');
 
+                // Rimuovi eventuali gestori di eventi precedenti
+                $('#confirmModal .confirm-action').off('click');
+
                 // Gestisci il click su "Conferma"
-                document.querySelector('#confirmModal .confirm-action').addEventListener('click', function () {
+                $('#confirmModal .confirm-action').on('click', function () {
                     if (functionName) {
                         // Se è specificata una funzione, eseguila con i parametri
                         if (typeof window[functionName] === 'function') {
