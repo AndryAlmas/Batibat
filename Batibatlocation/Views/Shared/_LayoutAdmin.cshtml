@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Bati'Bat - Location d'Echaufaudages</title>
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
     <!-- Bootstrap CSS -->
     @Styles.Render("~/admin/css")
     @RenderSection("Styles", required: false)
@@ -65,8 +66,12 @@
     @Scripts.Render("~/bundles/fontawesome")
     @Scripts.Render("~/bundles/glide")
     @Scripts.Render("~/admin/custom")
-    @RenderSection("Scripts", required: false)
 
     @Html.Partial("_ModalConfirm")
+    @Html.Partial("_AlertMessage")
+
+    @RenderSection("Scripts", required: false)
+
+
 </body>
 </html>

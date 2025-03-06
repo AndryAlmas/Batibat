@@ -18,6 +18,9 @@
     @Scripts.Render("~/bundles/fontawesome")
     @Scripts.Render("~/bundles/glide")
     <script src="~/Scripts/dashboard.js"></script>
+
+    @Html.Partial("_ModalConfirm")
+    @Html.Partial("_AlertMessage")
     @RenderSection("Scripts", required: false)
 </body>
 </html>

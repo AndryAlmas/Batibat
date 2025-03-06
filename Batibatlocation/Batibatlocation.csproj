@@ -189,6 +189,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ProvaController.cs" />
     <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProduitController.cs" />
@@ -199,6 +200,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Data\Configuration.cs" />
+    <Compile Include="Helpers\AlertData.cs" />
     <Compile Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.cs" />
     <Compile Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.Designer.cs">
       <DependentUpon>202503041018255_AggiungiRelazioneCategoryProduit.cs</DependentUpon>
@@ -293,6 +295,8 @@
     <Content Include="Views\Shared\_NoLayout.cshtml" />
     <Content Include="Views\Admin\Categories.cshtml" />
     <Content Include="Views\Shared\_ModalConfirm.cshtml" />
+    <Content Include="Views\Shared\_AlertMessage.cshtml" />
+    <Content Include="Views\Prova\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202503041018255_AggiungiRelazioneCategoryProduit.resx">

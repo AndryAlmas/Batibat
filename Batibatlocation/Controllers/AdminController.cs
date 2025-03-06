@@ -23,6 +23,8 @@ using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
 using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
 using ActionNameAttribute = System.Web.Mvc.ActionNameAttribute;
 using System.Web.UI.WebControls;
+using System.Web.Helpers;
+using Batibatlocation.Helpers;
 
 namespace Batibatlocation.Controllers
 {
@@ -411,7 +413,8 @@ namespace Batibatlocation.Controllers
             var produit = _context.Produits.Find(id);
             if (produit == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun produit trouvé.", "danger");
+                return RedirectToAction("Produits");
             }
 
             var imageUrl = produit.ImageUrl.Split('/').LastOrDefault().Split('.').FirstOrDefault();
@@ -544,7 +547,8 @@ namespace Batibatlocation.Controllers
             var produit = _context.Produits.Find(id);
             if (produit == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun produit trouvé.", "danger");
+                return RedirectToAction("Produits");
             }
             _context.Produits.Remove(produit);
             _context.SaveChanges();
@@ -562,6 +566,8 @@ namespace Batibatlocation.Controllers
             {
                 System.IO.File.Delete(fullPath);
             }
+
+            TempData.SetAlert("Alert", "Produit supprimé avec succès.", "success");
             return RedirectToAction("Produits", new {page});
         }
 
@@ -604,7 +610,9 @@ namespace Batibatlocation.Controllers
             var accessoire = _context.Accessoires.Find(id);
             if (accessoire == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun accessoire trouvé.", "danger");
+
+                return RedirectToAction("Accessoires");
             }
             return View(accessoire);
         }
@@ -632,7 +640,8 @@ namespace Batibatlocation.Controllers
             var accessoire = _context.Accessoires.Find(id);
             if (accessoire == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun accessoire trouvé.", "danger");
+                return RedirectToAction("Accessoires");
             }
             return View(accessoire);
         }
@@ -645,7 +654,8 @@ namespace Batibatlocation.Controllers
             var accessoire = _context.Accessoires.Find(id);
             if (accessoire == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun accessoire trouvé.", "danger");
+                return RedirectToAction("Accessoires");
             }
             _context.Accessoires.Remove(accessoire);
             _context.SaveChanges();
@@ -674,7 +684,8 @@ namespace Batibatlocation.Controllers
             var reservation = _context.Reservations.Find(id);
             if (reservation == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun reservation trouvé.", "danger");
+                return RedirectToAction("Reservations");
             }
             // Logica per confermare la prenotazione
             return RedirectToAction("Reservations");
@@ -688,7 +699,8 @@ namespace Batibatlocation.Controllers
             var reservation = _context.Reservations.Find(id);
             if (reservation == null)
             {
-                return HttpNotFound();
+                TempData.SetAlert("Alert", "Aucun reservation trouvé.", "danger");
+                return RedirectToAction("Reservations");
             }
             // Logica per annullare la prenotazione
             return RedirectToAction("Reservations");
@@ -800,7 +812,7 @@ namespace Batibatlocation.Controllers
 
             IPagedList<Category> categories = _context.Categories.OrderByDescending(c => c.Id).ToPagedList(pageNumber, pageSize);
 
-            return View(categories);
+            return View(categories); 
         }
 
         [HttpPost]
@@ -810,7 +822,7 @@ namespace Batibatlocation.Controllers
         {
             if (string.IsNullOrWhiteSpace(Nom))
             {
-                TempData["ErrorMessage"]  = "Le nom de la catégorie est requis.";
+                TempData.SetAlert("Alert", "Le nom de la catégorie est requis.", "warning");
                 return RedirectToAction("Categories", new {page});
             }
 
@@ -819,7 +831,7 @@ namespace Batibatlocation.Controllers
             if (categoryExist)
             {
                 // Mostra un messaggio di errore se ci sono prodotti associati
-                TempData["ErrorMessage"] = "Impossible de créer cette catégorie car elle existe déjà.";
+                TempData.SetAlert("Alert", "Impossible de créer cette catégorie car elle existe déjà.", "danger");
                 return RedirectToAction("Categories", new { page });
             }
 
@@ -855,7 +867,8 @@ namespace Batibatlocation.Controllers
 
             if (category == null)
             {
-                return HttpNotFound("Catégorie non trouvée.");
+                TempData.SetAlert("Alert", "Catégorie non trouvée.", "warning");
+                return RedirectToAction("Categories", new { page });
             }
 
             // Controlla se ci sono prodotti associati alla categoria
@@ -864,7 +877,7 @@ namespace Batibatlocation.Controllers
             if (produitsAssociés)
             {
                 // Mostra un messaggio di errore se ci sono prodotti associati
-                TempData["ErrorMessage"] = "Impossible de supprimer cette catégorie car elle est associée à des produits.";
+                TempData.SetAlert("Alert", "Impossible de supprimer cette catégorie car elle est associée à des produits.", "danger");
                 return RedirectToAction("Categories", new { page });
             }
 

@@ -2,23 +2,16 @@
     ViewBag.Title = "Produits";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-@Html.AntiForgeryToken()
 @model PagedList.IPagedList<Batibatlocation.Models.Category>
 
 @using PagedList.Mvc
 @using PagedList
+@Html.AntiForgeryToken()
 
 <h3>Categories</h3>
 <hr />
 <div class="row">
-    <div class="col-md-10">
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
-        }
-    </div>
+    <div class="offset-md-10"></div>
     <div class="col-md-2 d-flex align-items-end justify-content-end">
         <div class="col-md-12 text-right">
             <button id="btnAddCategory" class="btn btn-success mb-3">

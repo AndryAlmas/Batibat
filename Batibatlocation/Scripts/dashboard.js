@@ -116,7 +116,7 @@ function removeQuadrantImage(src,index) {
 
 function deleteImage(imagePath, index) {
     if (!imagePath) {
-        alert("Aucune image à supprimer.");
+        showAlert("Attention! Aucune image à supprimer.", "warning");
         return;
     }
 
@@ -131,7 +131,7 @@ function deleteImage(imagePath, index) {
         .then(data => {
             console.log("Response:", data); // Debug console
             if (data.success) {
-                alert("Image supprimée avec succès!");
+                showAlert("Image supprimée avec succès!", "success");
 
                 // Reset quadrante
                 document.getElementById('preview-' + index).src = "";
@@ -142,12 +142,12 @@ function deleteImage(imagePath, index) {
                 btn.parentNode.removeChild(btn);
                 
             } else {
-                alert("Erreur lors de la suppression de l'image: " + (data.message || ''));
+                showAlert("Une erreur est survenue.", "danger");
             }
         })
         .catch(error => {
             console.error("Erreur AJAX:", error);
-            alert("Une erreur est survenue lors de la suppression de l'image.");
+            showAlert("Une erreur est survenue.", "danger");
         });
 }
 
@@ -172,11 +172,11 @@ function toggleVisibility(icon) {
                 // Aggiorna il valore data-visible
                 icon.setAttribute("data-visible", isVisible ? "False" : "True");
             } else {
-                alert("Errore durante l'aggiornamento.");
+                showAlert("Une erreur est survenue.", "danger");
             }
         },
         error: function () {
-            alert("Errore di connessione con il server.");
+            showAlert("Une erreur est survenue.", "danger");
         }
     });
 }
@@ -278,7 +278,7 @@ $(document).on('click', '.btn-create', function () {
     const categoryName = inputField.val().trim();
 
     if (categoryName === '') {
-        alert('Veuillez entrer un nom pour la catégorie.');
+        showAlert("Veuillez entrer un nom pour la catégorie.", "warning");
         return;
     }
 

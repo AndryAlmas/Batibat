@@ -1,0 +1,153 @@
+﻿@using Batibatlocation.Helpers;
+@{
+    var message = "";
+    var alertType = "";
+
+    if (string.IsNullOrEmpty(TempData.GetAlert("Alert")))
+    {
+        alertType = "info";
+        message = "Aucun message disponible.";
+    }
+}
+
+<div id="alertContainer" class="d-none position-fixed alert-top-center">
+    <div class="alert alert-@alertType alert-dismissible fade show" role="alert">
+        <strong>@message</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+
+<style>
+
+    /* Stile per posizionare l'alert in alto al centro */
+    .alert-top-center {
+        top: 20px; /* Posiziona l'alert a 20px dall'alto */
+        left: 50%; /* Centra orizzontalmente */
+        transform: translateX(-50%); /* Corregge la posizione orizzontale */
+        z-index: 1060; /* Assicura che sia sopra altri elementi */
+        width: fit-content; /* Dimensione automatica basata sul contenuto */
+        max-width: 400px; /* Larghezza massima */
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Effetto ombra */
+    }
+
+        .alert-top-center .alert {
+            margin: 0; /* Rimuove la margine predefinito */
+            width: 100%; /* Occupa tutta la larghezza del container */
+            text-align: center; /* Allinea il testo al centro */
+            border-radius: 8px; /* Arrotonda i bordi dell'alert */
+        }
+</style>
+
+<script>
+    /*---------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------*/
+    // USAGE 1
+    /*---------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------*/
+
+    //// Mostra un alert di successo
+    //showAlert("Opération réussie!", "success");
+
+    //// Mostra un alert di errore
+    //showAlert("Une erreur est survenue.", "danger");
+
+    //// Mostra un alert informativo
+    //showAlert("Ceci est un message d'information.", "info");
+
+    //// Mostra un alert di avvertimento
+    //showAlert("Attention! Veuillez vérifier les données.", "warning");
+
+
+    /*---------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------*/
+    // USAGE 2
+    /*---------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------*/
+
+
+    //public ActionResult MyAction()
+    //{
+    //    // Passa il messaggio alla vista
+    //    TempData["AlertMessage"] = "Opération effectuée avec succès.";
+    //    TempData["AlertType"] = "success";
+
+    //    return RedirectToAction("Index");
+    //}
+
+    // Funzione per decodificare le entità HTML
+    function decodeHtmlEntities(text) {
+        var doc = new DOMParser().parseFromString(text, "text/html");
+        return doc.documentElement.textContent || doc.documentElement.innerText;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Verifica se ci sono messaggi da visualizzare
+        var dataAlert = '@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData.GetAlert("Alert")))';
+        if (dataAlert) {
+            const { Message: CodedAlertMessage, Type: alertType } = JSON.parse(dataAlert);
+
+            // Decodifica le entità HTML nel messaggio
+            const alertMessage = decodeHtmlEntities(CodedAlertMessage);
+            console.log(alertMessage);  // Dovresti vedere il messaggio corretto senza &#233;
+            console.log(alertType);       // "danger"
+
+            if (alertMessage && alertType) {
+                // Mostra l'alert con il messaggio e il tipo specificati
+                showAlert(alertMessage, alertType);
+            }
+        }        
+    });
+
+    function showAlert(message, type = 'info') {
+        // Pulisci eventuali alert precedenti
+        clearAlert();
+
+        // Aggiorna il contenuto dell'alert
+        const alertContainer = document.getElementById('alertContainer');
+        const alertElement = alertContainer.querySelector('.alert');
+
+        // Imposta il tipo di alert (success, danger, warning, info)
+        alertElement.classList.remove('alert-success', 'alert-danger', 'alert-warning', 'alert-info');
+        alertElement.classList.add(`alert-${type}`);
+
+        // Imposta il messaggio
+        alertElement.querySelector('strong').textContent = message;
+
+        // Mostra l'alert
+        alertContainer.classList.remove('d-none');
+        alertElement.classList.add('show');
+
+        // Nascondi l'alert dopo 5 secondi (opzionale)
+        setTimeout(function () {
+            hideAlert();
+        }, 5000); // 5000 ms = 5 secondi
+    }
+
+    // Funzione per nascondere l'alert
+    function hideAlert() {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertElement = alertContainer.querySelector('.alert');
+
+        if (alertElement) {
+            alertElement.classList.remove('show'); // Rimuove la classe "show" per nascondere l'alert
+            setTimeout(function () {
+                alertContainer.classList.add('d-none'); // Nasconde completamente il container dopo l'animazione
+            }, 300); // Attesa per l'animazione di fade-out (300 ms)
+        }
+    }
+
+    // Funzione per pulire l'alert
+    function clearAlert() {
+        const alertContainer = document.getElementById('alertContainer');
+        if (alertContainer) {
+            alertContainer.classList.add('d-none'); // Nasconde il container
+            const alertElement = alertContainer.querySelector('.alert');
+            if (alertElement) {
+                alertElement.classList.remove('show'); // Rimuove la classe "show"
+                alertElement.querySelector('strong').textContent = ''; // Pulisce il messaggio
+            }
+        }
+    }
+</script>
