@@ -90,8 +90,6 @@
 
             // Decodifica le entità HTML nel messaggio
             const alertMessage = decodeHtmlEntities(CodedAlertMessage);
-            console.log(alertMessage);  // Dovresti vedere il messaggio corretto senza &#233;
-            console.log(alertType);       // "danger"
 
             if (alertMessage && alertType) {
                 // Mostra l'alert con il messaggio e il tipo specificati
