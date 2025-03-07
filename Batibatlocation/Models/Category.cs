@@ -10,7 +10,7 @@ namespace Batibatlocation.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required(ErrorMessage = "Le Nom est requis.")]
+        [Required(ErrorMessage = "Le Nom de la catégorie est requis.")]
         public string Nom { get; set; }
 
 

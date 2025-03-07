@@ -853,9 +853,8 @@ namespace Batibatlocation.Controllers
                 _context.Entry(category).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Categories", new {page});
-            }
-
-            TempData.SetAlert("Alert", "Le nom de la catégorie est requis.", "warning");
+            }            
+            TempData.SetAlert("Alert", ModelState.Values.SelectMany(e => e.Errors).FirstOrDefault()?.ErrorMessage, "warning");
             return RedirectToAction("Categories", new { page });
         }
 
