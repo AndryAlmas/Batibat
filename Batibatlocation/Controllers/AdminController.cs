@@ -854,7 +854,9 @@ namespace Batibatlocation.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Categories", new {page});
             }
-            return View(category);
+
+            TempData.SetAlert("Alert", "Le nom de la catégorie est requis.", "warning");
+            return RedirectToAction("Categories", new { page });
         }
 
         [HttpPost]
