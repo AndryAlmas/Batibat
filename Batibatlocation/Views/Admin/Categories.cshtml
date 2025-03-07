@@ -49,8 +49,8 @@
                         {
                             @Html.AntiForgeryToken()
                             @Html.HiddenFor(model => Model.ElementAtOrDefault(i).Id)
-                            @Html.EditorFor(model => Model.ElementAtOrDefault(i).Nom, new { htmlAttributes = new { @id = $"inputNom-{categorie.Id}", @class = "form-control", placeholder = "Nom de l'échafaudage", disabled = "disabled" } })
-                            i++;
+                            @Html.EditorFor(model => Model.ElementAtOrDefault(i).Nom, new { htmlAttributes = new { @id = $"inputNom-{categorie.Id}", @class = "form-control", placeholder = "Nom de l'échafaudage", disabled = "disabled", required = "required"} })
+
                         }
                     </td>
                     <td class="text-right">
@@ -74,7 +74,7 @@
 
                         <div id="formContainer-@categorie.Id" style="display:none">
                             <div class="form-group float-md-right m-1">
-                                <a href="#" onclick="nascondiFormCategorie('@categorie.Id')" class="btn btn-secondary">Annuler</a>
+                                <a href="#" onclick="nascondiFormCategorie('@categorie.Id','@Model.ElementAtOrDefault(i).Nom')" class="btn btn-secondary">Annuler</a>
                             </div>
                             <div class="form-group float-md-right m-1">
                                 <input type="submit" form="editForm-@categorie.Id" value="Enregistrer" class="btn btn-primary" />
@@ -82,6 +82,7 @@
                         </div>
                     </td>
                 </tr>
+                i++;
             }
         </tbody>
     </table>

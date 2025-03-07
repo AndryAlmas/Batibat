@@ -213,7 +213,7 @@ function mostraFormCategorie(categoriaId) {
     }
 }
 
-function nascondiFormCategorie(categoriaId) {
+function nascondiFormCategorie(categoriaId, nom) {
     // Nascondi il form
     const formContainer = document.getElementById(`formContainer-${categoriaId}`);
     if (formContainer) {
@@ -231,14 +231,15 @@ function nascondiFormCategorie(categoriaId) {
     // Rimuovi l'attributo "disabled" per abilitare il campo
     if (campo) {
         campo.setAttribute("disabled", "disabled");
+        campo.value = nom;
     }
 }
 
 // Variabile per tenere traccia dello stato del bottone "Nouvelle Catégorie"
 let isAddingCategory = false;
 
-// Funzione per aggiungere una nuova riga in cima alla tabella
-function addNewCategoryRow() {
+// Gestione del click sul bottone "Nouvelle Catégorie"
+$('#btnAddCategory').on('click', function () {
     if (isAddingCategory) {
         return; // Ignora se una riga è già stata aggiunta
     }
@@ -251,7 +252,7 @@ function addNewCategoryRow() {
             <tr id="tempCategory">
                 <td></td> <!-- Campo ID vuoto -->
                 <td>
-                    <input type="text" class="form-control" id="categoryInput" placeholder="Nom de la catégorie" />
+                    <input type="text" required class="form-control" id="categoryInput" placeholder="Nom de la catégorie" />
                 </td>
                 <td class="text-right">
                     <button class="btn btn-primary btn-create">Creer</button>
@@ -265,27 +266,31 @@ function addNewCategoryRow() {
 
     // Imposta lo stato per indicare che una riga è stata aggiunta
     isAddingCategory = true;
-}
-
-// Gestione del click sul bottone "Nouvelle Catégorie"
-$('#btnAddCategory').on('click', function () {
-    addNewCategoryRow();
 });
 
-// Gestione del click sul pulsante "Creer"
+// gestione del click sul pulsante "creer"
 $(document).on('click', '.btn-create', function () {
-    const inputField = $('#categoryInput');
-    const categoryName = inputField.val().trim();
+    const inputField = document.getElementById('categoryInput');
+    const categoryName = inputField.value.trim();
 
-    if (categoryName === '') {
-        showAlert("Veuillez entrer un nom pour la catégorie.", "warning");
-        return;
+    // Imposta un messaggio di errore personalizzato
+    if (inputField.value.trim() === '') {
+        inputField.setCustomValidity("Le nom de la catégorie ne peut pas être vide.");
+    } else {
+        inputField.setCustomValidity(""); // Resetta il messaggio di errore
     }
 
-    // Imposta il valore del campo nascosto nel form
+    // Controlla la validità del campo
+    if (!inputField.checkValidity()) {
+        // Scatena il messaggio di validazione nativo
+        inputField.reportValidity();
+        return; // Interrompi l'esecuzione se il campo non è valido
+    }
+
+    // imposta il valore del campo nascosto nel form
     $('#newCategoryName').val(categoryName);
 
-    // Invia il form per creare la nuova categoria
+    // invia il form per creare la nuova categoria
     $('#createCategoryForm').submit();
 });
 

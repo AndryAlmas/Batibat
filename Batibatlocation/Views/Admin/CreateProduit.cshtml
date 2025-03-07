@@ -47,7 +47,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Nom, htmlAttributes: new { @class = "control-label col-md-2" })
 
-                @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage" } })
+                @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage", required = "required" } })
                 @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Prix, htmlAttributes: new { @class = "control-label col-md-2" })
 
-                @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €" } })
+                @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €", required = "required" } })
                 @Html.ValidationMessageFor(model => model.Prix, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -75,7 +75,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
 
-                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage" })
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage", required = "required" })
                 @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -83,7 +83,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.SpecifiquesTechniques, htmlAttributes: new { @class = "control-label col-md-2" })
 
-                @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques" })
+                @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques", required = "required" })
                 @Html.ValidationMessageFor(model => model.SpecifiquesTechniques, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -95,7 +95,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.ImageUrl, "Image Principal", htmlAttributes: new { @class = "control-label col-md-6" })
                 <div class="custom-file">
-                    <input type="file" name="imageFile" id="imageFile" class="custom-file-input" accept="image/png" onchange="updateImagePreview()" />
+                    <input type="file" name="imageFile" id="imageFile" required class="custom-file-input" accept="image/png" onchange="updateImagePreview()" />
                     <label class="custom-file-label" for="imageFile">Choisir une image (.png)</label>
                     @Html.ValidationMessageFor(model => model.ImageUrl, "", new { @class = "text-danger" })
                 </div>

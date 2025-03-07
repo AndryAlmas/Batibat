@@ -92,7 +92,7 @@ else
                 }
                 else
                 {
-                    @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage" } })
+                    @Html.EditorFor(model => model.Nom, new { htmlAttributes = new { @class = "form-control", placeholder = "Nom de l'échafaudage", required = "required" } })
                     @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
                 }
 
@@ -108,7 +108,7 @@ else
                 }
                 else
                 {
-                    @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €" } })
+                    @Html.EditorFor(model => model.Prix, new { htmlAttributes = new { @class = "form-control", placeholder = "Prix en €", required = "required" } })
                     @Html.ValidationMessageFor(model => model.Prix, "", new { @class = "text-danger" })
                 }
 
@@ -142,7 +142,7 @@ else
                 }
                 else
                 {
-                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage" })
+                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "8", placeholder = "Description de l'échafaudage", required = "required" })
                     @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                 }
 
@@ -158,7 +158,7 @@ else
                 }
                 else
                 {
-                    @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques" })
+                    @Html.TextAreaFor(model => model.SpecifiquesTechniques, new { @class = "form-control", rows = "8", placeholder = "Spécifications techniques", required = "required" })
                     @Html.ValidationMessageFor(model => model.SpecifiquesTechniques, "", new { @class = "text-danger" })
                 }
 
