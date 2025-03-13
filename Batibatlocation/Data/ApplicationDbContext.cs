@@ -13,32 +13,49 @@ namespace Batibatlocation.Data
         }
 
         public DbSet<Produit> Produits { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Particulier> Particuliers { get; set; }
+        public DbSet<Professionnel> Professionnels { get; set; }
+        public DbSet<Document> Documents { get; set; }
         public DbSet<Periodicite> Periodicites { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Models.CategoryDocument> CategoriesDocuments { get; set; }
+        public DbSet<Models.CategoryClient> CategoriesClients { get; set; }
+        public DbSet<Models.EtatFacture> EtatFactures { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Accessoire> Accessoires { get; set; }
         public DbSet<ReservationAccessoire> ReservationAccessoires { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            // Configurazione della relazione uno-a-molti
+            modelBuilder.Entity<Client>()
+                        .Map<Particulier>(m => m.Requires("Discriminator").HasValue("Particulier"))  // 👈 Usa una colonna "Discriminator"
+                        .Map<Professionnel>(m => m.Requires("Discriminator").HasValue("Professionnel"));
+
+
+            //// Configurazione della relazione 1:1 tra Client e Document
+            //modelBuilder.Entity<Client>()
+            //.HasRequired(i => i.Document)  
+            //.WithMany()
+            //.HasForeignKey(c => c.DocumentId); // Chiave esterna su Client
+
+            //// Configurazione della relazione 1:N tra Produit e Periodicite
             //modelBuilder.Entity<Produit>()
-            //    .HasRequired(p => p.Category)
-            //    .WithMany(c => c.Produits)
-            //    .HasForeignKey(p => p.CategoryId);
+            //.HasRequired(i => i.Periodicite)  // Ogni Produit deve avere una Periodicite
+            //.WithMany()
+            //.HasForeignKey(i => i.PeriodiciteId); // Definiamo la chiave esterna
 
-            // Configurazione della relazione 1:N tra Produit e Periodicite
-            modelBuilder.Entity<Produit>()
-            .HasRequired(i => i.Periodicite)  // Ogni Produit deve avere una Periodicite
-            .WithMany()
-            .HasForeignKey(i => i.PeriodiciteId); // Definiamo la chiave esterna
+            // Configura la relazione tra Client e Reservation
+            modelBuilder.Entity<Reservation>()
+                .HasOptional(r => r.Client)  // 🔹 HasOptional perché ClientId è nullable
+                .WithMany(c => c.Reservations)  // 🔹 Un Client può avere più Reservation
+                .HasForeignKey(r => r.ClientId)  // 🔹 Chiave esterna
+                .WillCascadeOnDelete(false);  // 🚫 Disattiva l'eliminazione a cascata
 
-            base.OnModelCreating(modelBuilder);
-
-            // Configurazione della relazione 1:1 tra Produit e Reservation
-            modelBuilder.Entity<Produit>()
-                .HasRequired(e => e.Reservation)
-                .WithRequiredPrincipal(r => r.Produit);
+            //// Configurazione della relazione 1:1 tra Produit e Reservation
+            //modelBuilder.Entity<Produit>()
+            //    .HasRequired(e => e.Reservation)
+            //    .WithRequiredPrincipal(r => r.Produit);
 
             //// Configurazione della relazione N:N tra Reservation e Accessoire
             modelBuilder.Entity<Reservation>()
@@ -50,6 +67,8 @@ namespace Batibatlocation.Data
                 .HasMany(a => a.ReservationAccessoires)
                 .WithRequired(ra => ra.Accessoire)
                 .HasForeignKey(ra => ra.AccessoireId);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

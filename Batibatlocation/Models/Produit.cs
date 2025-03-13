@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -34,16 +35,17 @@ namespace Batibatlocation.Models
         public string SpecifiquesTechniques { get; set; }
 
         [Required(ErrorMessage = "La périodicité est requise.")]
-        public int PeriodiciteId { get; set; }  // Chiave esterna
+        public int PeriodiciteId { get; set; } 
 
-        // Chiave esterna per Category
+        [ForeignKey("PeriodiciteId")]
+        public virtual Periodicite Periodicite { get; set; }
+
         [Required(ErrorMessage = "La category est requise.")]
         public int CategoryId { get; set; }
 
-        // Proprietà di navigazione per Category
+        [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
 
-        public virtual Reservation Reservation { get; set; }
-        public virtual Periodicite Periodicite { get; set; }
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

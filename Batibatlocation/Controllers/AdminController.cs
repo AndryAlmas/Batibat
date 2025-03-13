@@ -751,7 +751,7 @@ namespace Batibatlocation.Controllers
                 _context.SaveChanges();
 
                 // Invia conferma via email
-                SendConfirmationEmail(reservation.Email, reservation);
+                SendConfirmationEmail(reservation.Client.Email, reservation);
 
                 return RedirectToAction("Index", "Admin");
             }
