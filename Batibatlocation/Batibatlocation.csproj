@@ -232,6 +232,7 @@
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\2.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\3.png" />
     <Content Include="Content\Images\Produits\SlideGallery\produit-2\4.png" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="sitemap.xml" />
     <Content Include="Styles\dashboard.css" />
