@@ -25,22 +25,25 @@ using ActionNameAttribute = System.Web.Mvc.ActionNameAttribute;
 using System.Web.UI.WebControls;
 using System.Web.Helpers;
 using Batibatlocation.Helpers;
+using Batibatlocation.Utils;
 
 namespace Batibatlocation.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
-        private readonly ApplicationDbContext _context;
         const int pageSize = 10;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         [HttpGet]
         public ActionResult Login()
         {
+            var a = GenerateUniqueCode(DateTime.Now);
+            var b = GenerateUniqueCode(DateTime.Now.AddDays(1));
+            var c = GenerateUniqueCode(DateTime.Now);
+
             return View();
         }
 

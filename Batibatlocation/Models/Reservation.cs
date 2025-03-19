@@ -23,13 +23,10 @@ namespace Batibatlocation.Models
         public int ProduitId { get; set; }
         [ForeignKey("ProduitId")]
         public virtual Produit Produit { get; set; }
-        public virtual Facture Facture { get; set; }
+        public virtual ICollection<Facture> Factures { get; set; }
 
-        // Relazione N:N con Accessoire
-        public virtual ICollection<ReservationAccessoire> ReservationAccessoires { get; set; } = new HashSet<ReservationAccessoire>();
-
-        // Proprietà di navigazione per Accessoires
-        public virtual ICollection<Accessoire> Accessoires { get; set; } = new HashSet<Accessoire>();
+        public virtual ICollection<ReservationAccessoire> ReservationAccessoires { get; set; }
+        public virtual ICollection<Accessoire> Accessoires { get; set; }
 
     }
 }

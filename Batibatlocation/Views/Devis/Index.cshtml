@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Prova";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>Devis</h2>
+@if (ViewBag.Localisation == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let prodId = @ViewBag.ProdID; // Sostituisci con il valore corretto del prodotto
+            sendLocation(prodId);
+        });
+    </script>
+}

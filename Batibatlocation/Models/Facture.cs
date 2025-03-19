@@ -9,32 +9,37 @@ namespace Batibatlocation.Models
     public class Facture
     {
         [Key]
-        [ForeignKey("Reservation")]
         public int Id { get; set; }
 
         // Progressivo della fattura
-        public int Progressivo { get; set; }
+        public int ProgressivoAnnuo { get; set; }
 
         // Anno della fattura
         public int Anno { get; set; }
 
-        // NumeroFattura (combinazione di Progressivo/Anno)
-        public string NumeroFattura => $"{Progressivo}/{Anno}";
+        // NumeroFattura (funzione GenerateUniqueCode)
+        public string NumeroFattura { get; set; }
 
         // Data di emissione della fattura
         public DateTime DataEmissione { get; set; }
 
         // Importo totale della fattura
-        public decimal Cauzione { get; set; }
-        public decimal ImportoTotale { get; set; }
+        public decimal Caution { get; set; }
+        public decimal TotaleTTC { get; set; }
+        public decimal RemiseEuro { get; set; }
+        [Range(0,100)]
+        public decimal RemisePercentage { get; set; }
 
         // Note opzionali
         public string Note { get; set; }
 
+        public int IdReserevation { get; set; } // Chiave esterna verso Reservation
         public int EtatFactureId { get; set; } // Chiave esterna verso StatiFattura
 
         [ForeignKey("EtatFactureId")]
         public virtual EtatFacture EtatFacture { get; set; }
+
+        [ForeignKey("IdReserevation")]
         public virtual Reservation Reservation { get; set; }
     }
 }

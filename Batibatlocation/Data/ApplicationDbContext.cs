@@ -12,19 +12,20 @@ namespace Batibatlocation.Data
         {
         }
 
-        public DbSet<Produit> Produits { get; set; }
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Particulier> Particuliers { get; set; }
-        public DbSet<Professionnel> Professionnels { get; set; }
-        public DbSet<Document> Documents { get; set; }
-        public DbSet<Periodicite> Periodicites { get; set; }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Models.Produit> Produits { get; set; }
+        public DbSet<Models.Client> Clients { get; set; }
+        public DbSet<Models.Particulier> Particuliers { get; set; }
+        public DbSet<Models.Professionnel> Professionnels { get; set; }
+        public DbSet<Models.Document> Documents { get; set; }
+        public DbSet<Models.Periodicite> Periodicites { get; set; }
+        public DbSet<Models.Category> Categories { get; set; }
         public DbSet<Models.CategoryDocument> CategoriesDocuments { get; set; }
         public DbSet<Models.CategoryClient> CategoriesClients { get; set; }
         public DbSet<Models.EtatFacture> EtatFactures { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<Accessoire> Accessoires { get; set; }
-        public DbSet<ReservationAccessoire> ReservationAccessoires { get; set; }
+        public DbSet<Models.Reservation> Reservations { get; set; }
+        public DbSet<Models.Devis> Devis { get; set; }
+        public DbSet<Models.Accessoire> Accessoires { get; set; }
+        public DbSet<Models.ReservationAccessoire> ReservationAccessoires { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

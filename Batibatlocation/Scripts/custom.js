@@ -148,3 +148,30 @@ if (glideSlide != null) {
     }).mount();
 }
 
+function sendLocation(prodId) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                let latitude = position.coords.latitude;
+                let longitude = position.coords.longitude;
+
+                // Invia al server la posizione GPS
+                fetch(`/Devis/TrackVisit?prodId=${prodId}&lat=${latitude}&lon=${longitude}`)
+                    .then(response => response.json())
+                    .catch(error => console.error("Errore tracking GPS", error));
+            },
+            function (error) {
+                console.warn("GPS non disponibile, uso solo IP");
+
+                // Se il GPS è bloccato, invia solo la richiesta con IP
+                fetch(`/Devis/TrackVisit?prodId=${prodId}`)
+                    .catch(error => console.error("Errore tracking IP", error));
+            }
+        );
+    } else {
+        console.warn("Geolocalizzazione non supportata, uso solo IP");
+        fetch(`/Devis/TrackVisit?prodId=${prodId}`)
+            .catch(error => console.error("Errore tracking IP", error));
+    }
+}
+
