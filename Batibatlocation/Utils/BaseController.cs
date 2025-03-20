@@ -21,34 +21,56 @@ namespace Batibatlocation.Utils
         {
             _context = context;
         }
-        protected string GenerateUniqueCode(DateTime date)
+        public static string EncodeDate(DateTime date)
         {
-            // Trasforma la data in formato "ddMMyyyy"
-            string dateString = date.ToString("ddMMyyyy");
+            // Calcola il giorno dell'anno (1-366)
+            int dayOfYear = date.DayOfYear;
 
-            // Converti la data in un hash SHA256
-            string hash = GetHash(dateString).ToUpper();
+            // Offset per far partire le lettere da "FA"
+            int offset = 5; // "F" è la lettera che corrisponde al 5° indice (A=0, B=1, ..., F=5)
+            dayOfYear -= offset; // Ora il giorno 1 è rappresentato da "FA"
 
-            // Estrai le prime due lettere dall'hash
-            string firstTwoLetters = new string(hash.Where(char.IsLetter).Take(2).ToArray());
+            // Codifica il giorno dell'anno in una combinazione di due lettere
+            int firstLetterIndex = dayOfYear / 26;  // Prima lettera
+            int secondLetterIndex = dayOfYear % 26; // Seconda lettera
 
-            // Estrai i primi quattro numeri dall'hash
-            string lastFourNumbers = new string(hash.Where(char.IsDigit).Take(4).ToArray());
+            char firstLetter = (char)('A' + firstLetterIndex);
+            char secondLetter = (char)('A' + secondLetterIndex);
 
-            // Se mancano lettere o numeri, rimpiazza con valori di default
-            firstTwoLetters = firstTwoLetters.PadRight(2, 'X'); // "X" se mancano lettere
-            lastFourNumbers = lastFourNumbers.PadRight(4, '0'); // "0" se mancano numeri
+            // Genera un numero a 4 cifre univoco dall'anno
+            int yearCode = GenerateYearCode(date.Year);
 
-            return firstTwoLetters + lastFourNumbers;
+            return $"{firstLetter}{secondLetter}{yearCode:D4}";
         }
 
-        static string GetHash(string dateTime)
+        public static DateTime? DecodeDate(string code)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            if (code.Length != 6)
+                return null; // Codice non valido
+
+            // Decodifica le lettere per ottenere il giorno dell'anno
+            int firstLetterIndex = code[0] - 'A';
+            int secondLetterIndex = code[1] - 'A';
+            int dayOfYear = firstLetterIndex * 26 + secondLetterIndex;
+
+            // Offset per "FA" come primo giorno
+            int offset = 5;
+            dayOfYear += offset; // Ripristina il giorno originale
+
+            // Decodifica il numero nell'anno originale
+            if (int.TryParse(code.Substring(2), out int year))
             {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(dateTime));
-                return BitConverter.ToString(hashBytes).Replace("-", "").Substring(0, 16);
+                // Calcola il mese e il giorno dalla data
+                DateTime date = new DateTime(year, 1, 1).AddDays(dayOfYear - 1);  // -1 per partire dal giorno 1
+                return date;
             }
+
+            return null; // Errore di conversione
+        }
+
+        public static int GenerateYearCode(int year)
+        {
+            return (year * 7) % 10000; // Codifica l'anno in un numero a 4 cifre
         }
 
         protected ActionResult TrackVisit(int prodId, double? lat, double? lon)

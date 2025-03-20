@@ -26,6 +26,7 @@ using System.Web.UI.WebControls;
 using System.Web.Helpers;
 using Batibatlocation.Helpers;
 using Batibatlocation.Utils;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Batibatlocation.Controllers
 {
@@ -40,10 +41,13 @@ namespace Batibatlocation.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            var a = GenerateUniqueCode(DateTime.Now);
-            var b = GenerateUniqueCode(DateTime.Now.AddDays(1));
-            var c = GenerateUniqueCode(DateTime.Now);
+            var a = EncodeDate(DateTime.Now);
+            var b = EncodeDate(DateTime.Now.AddDays(1));
+            var c = EncodeDate(DateTime.Now);
 
+            DateTime? decodedDateA = DecodeDate(a);
+            DateTime? decodedDateB = DecodeDate(b);
+            DateTime? decodedDateC = DecodeDate(c);
             return View();
         }
 
