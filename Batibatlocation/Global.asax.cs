@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Batibatlocation.Data;
+using Unity.AspNet.Mvc;
 
 namespace Batibatlocation
 {
@@ -21,7 +23,7 @@ namespace Batibatlocation
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            UnityConfig.RegisterComponents();
+            DependencyResolver.SetResolver(new UnityDependencyResolver(UnityConfig.Container));
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
 
         }

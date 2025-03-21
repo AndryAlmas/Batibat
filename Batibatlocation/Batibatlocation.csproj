@@ -148,13 +148,16 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Abstractions, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.11.1\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Unity.Abstractions.5.11.1\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Container, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.11.1\lib\net47\Unity.Container.dll</HintPath>
+      <HintPath>..\packages\Unity.Container.5.11.1\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Mvc5, Version=1.4.0.0, Culture=neutral, PublicKeyToken=43da31bc42a85347, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Mvc5.1.4.0\lib\net45\Unity.Mvc5.dll</HintPath>
+    <Reference Include="Unity.Mvc, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Mvc.5.11.1\lib\net47\Unity.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -187,6 +190,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
+    <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DevisController.cs" />
@@ -194,6 +198,7 @@
     <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProduitController.cs" />
+    <Compile Include="Controllers\SitemapController.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Enum\CategoryClient.cs" />
     <Compile Include="Enum\CategoryDocument.cs" />
@@ -204,7 +209,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Data\Configuration.cs" />
+    <Compile Include="Helpers\SlugName.cs" />
     <Compile Include="Helpers\AlertData.cs" />
+    <Compile Include="Migrations\202503211345402_Produit.cs" />
+    <Compile Include="Migrations\202503211345402_Produit.Designer.cs">
+      <DependentUpon>202503211345402_Produit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Devis.cs" />
     <Compile Include="Models\EtatFacture.cs" />
     <Compile Include="Models\CategoryClient.cs" />
@@ -238,7 +248,6 @@
     <Content Include="logo-batibat.png" />
     <Content Include="robots.txt" />
     <Content Include="Scripts\dashboard.js" />
-    <Content Include="sitemap.xml" />
     <Content Include="Styles\dashboard.css" />
     <Content Include="Content\Images\Brand_Batibat_PNG.png" />
     <Content Include="Content\Images\ECHAFAUDAGE_FACADE.jpg" />
@@ -275,8 +284,8 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Sitemap\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -301,6 +310,11 @@
     <Content Include="Views\Shared\_AlertMessage.cshtml" />
     <Content Include="Views\Prova\Index.cshtml" />
     <Content Include="Views\Devis\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202503211345402_Produit.resx">
+      <DependentUpon>202503211345402_Produit.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

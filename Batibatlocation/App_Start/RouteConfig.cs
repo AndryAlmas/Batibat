@@ -14,6 +14,18 @@ namespace Batibatlocation
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "Sitemap",
+                url: "sitemap.xml",
+                defaults: new { controller = "Sitemap", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "ProduitDetails",
+                url: "Produit/{slug}",
+                defaults: new { controller = "Produit", action = "Details" }
+            );
+
+            routes.MapRoute(
                 name: "AdminRoute",
                 url: "Admin",
                 defaults: new { controller = "Admin", action = "Dashboard" }

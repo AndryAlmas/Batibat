@@ -1,4 +1,5 @@
 ﻿using Batibatlocation.Enum;
+using Batibatlocation.Filters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -33,6 +34,7 @@ namespace Batibatlocation.Models
         [Required(ErrorMessage = "Les spécifications techniques sont requises.")]
         [StringLength(500)]
         public string SpecifiquesTechniques { get; set; }
+        public DateTime LastMod { get; internal set; }
 
         [Required(ErrorMessage = "La périodicité est requise.")]
         public int PeriodiciteId { get; set; } 

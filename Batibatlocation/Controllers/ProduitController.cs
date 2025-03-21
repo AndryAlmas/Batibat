@@ -7,6 +7,7 @@ using Batibatlocation.Data;
 using Batibatlocation.Models;
 using System.IO;
 using WebGrease.Css.Extensions;
+using Batibatlocation.Helpers;
 
 namespace Batibatlocation.Controllers
 {
@@ -19,10 +20,32 @@ namespace Batibatlocation.Controllers
             _context = context;
         }
 
-        // GET: Produit/Details/{id}
-        public ActionResult Details(int id)
+        [Obsolete]
+        public ActionResult Detail(int id)
         {
-            var produit = _context.Produits.Where(e => e.Visible && e.Id == id).SingleOrDefault();
+            // Cerca il prodotto tramite ID
+            var produit = _context.Produits.FirstOrDefault(p => p.Id == id);
+            if (produit == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Genera lo slug corretto
+            string slug = SlugName.GenerateSlug(id, produit.Nom);
+
+            // Redirigi verso il nuovo URL con lo slug
+            return RedirectToActionPermanent("Details", "Produit", new { slug });
+        }
+
+        public ActionResult Details(string slug)
+        {
+            if (string.IsNullOrEmpty(slug))
+            {
+                return HttpNotFound();
+            }
+
+            // Cerca il prodotto tramite slug
+            var produit = _context.Produits.ToList().FirstOrDefault(p => SlugName.GenerateSlug(p.Id, p.Nom) == slug);
             if (produit == null)
             {
                 return HttpNotFound();
@@ -42,6 +65,7 @@ namespace Batibatlocation.Controllers
             // Passa i percorsi alla vista tramite ViewBag
             ViewBag.ImagePaths = imagePaths;
 
+            // Restituisci la vista con il prodotto
             return View(produit);
         }
 

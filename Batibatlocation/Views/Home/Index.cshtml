@@ -38,7 +38,7 @@
                                 <div class="price">
                                     @produit.Prix€ <span class="snip-price-period">par @produit.Periodicite.Nom.ToLower()</span>
                                 </div>
-                            </figcaption><a href="@Url.Action("Details", "Produit", new { id = produit.Id })"></a>
+                            </figcaption><a href="@Url.Action("Details", "Produit", new { slug = Batibatlocation.Helpers.SlugName.GenerateSlug(produit.Id, produit.Nom) })"></a>
                         </figure>
                     </div>
 

@@ -27,6 +27,7 @@ using System.Web.Helpers;
 using Batibatlocation.Helpers;
 using Batibatlocation.Utils;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
+using Produit = Batibatlocation.Models.Produit;
 
 namespace Batibatlocation.Controllers
 {
@@ -41,13 +42,6 @@ namespace Batibatlocation.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            var a = EncodeDate(DateTime.Now);
-            var b = EncodeDate(DateTime.Now.AddDays(1));
-            var c = EncodeDate(DateTime.Now);
-
-            DateTime? decodedDateA = DecodeDate(a);
-            DateTime? decodedDateB = DecodeDate(b);
-            DateTime? decodedDateC = DecodeDate(c);
             return View();
         }
 
@@ -344,7 +338,7 @@ namespace Batibatlocation.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProduit([Bind(Exclude = "Id,ImageUrl")] Produit produit, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
+        public ActionResult CreateProduit([Bind(Exclude = "Id,ImageUrl,LastMod")] Produit produit, HttpPostedFileBase imageFile, List<HttpPostedFileBase> fileInput)
         {
             if (imageFile != null && imageFile.ContentLength > 0)
             {
@@ -356,6 +350,7 @@ namespace Batibatlocation.Controllers
             }
             if (ModelState.IsValid)
             {
+                produit.LastMod = DateTime.UtcNow;
                 _context.Produits.Add(produit);
                 _context.SaveChanges();
 
@@ -390,8 +385,10 @@ namespace Batibatlocation.Controllers
                     }
 
                 }
+
                 _context.Entry(produit).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
+
                 return RedirectToAction("Produits");
             }
             ViewBag.PeriodiciteList = new SelectList(_context.Periodicites.ToList(), "Id", "Nom", produit.PeriodiciteId);
@@ -488,6 +485,8 @@ namespace Batibatlocation.Controllers
                     }
 
                 }
+
+                produit.LastMod = DateTime.UtcNow;
                 _context.Entry(produit).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Produits");
