@@ -1,5 +1,6 @@
 ﻿using Batibatlocation.Data;
 using Batibatlocation.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -16,6 +17,9 @@ namespace Batibatlocation.Utils
     public class BaseController : Controller
     {
         protected readonly ApplicationDbContext _context;
+        protected static readonly string graphHopperApiKey = "d8982cc1-5af1-4e3d-87b6-911136fcd815";
+        protected static readonly double latCoord_Rouvray = 47.893291;
+        protected static readonly double lonCoord_Rouvray = 3.6687607;
 
         public BaseController(ApplicationDbContext context)
         {
@@ -194,5 +198,72 @@ namespace Batibatlocation.Utils
                 return "Unknown";
             }
         }
+
+        // Azione per calcolare la distanza
+        [HttpGet]
+        protected async Task<ActionResult> CalculateDistance(double startLat, double startLon, double endLat, double endLon)
+        {
+            try
+            {
+                string startLatF = startLat.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string startLonF = startLon.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string endLatF = endLat.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string endLonF = endLon.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+
+                string url = $"https://graphhopper.com/api/1/route?point={startLatF},{startLonF}&point={endLatF},{endLonF}&vehicle=car&key={graphHopperApiKey}";
+
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetStringAsync(url);
+                    var result = JObject.Parse(response);
+
+                    if (result["paths"].HasValues)
+                    {
+                        var distance = result["paths"][0]["distance"].Value<double>() / 1000; // Converti metri in chilometri
+                        distance = Math.Round(distance, 0, MidpointRounding.AwayFromZero);
+                        return Json(new { distance }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { error = "Errore nel calcolo della distanza." }, JsonRequestBehavior.AllowGet);
+        }
+
+        protected async Task<int> CalculateDistanceKm(double startLat, double startLon, double endLat, double endLon)
+        {
+            try
+            {
+                string startLatF = startLat.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string startLonF = startLon.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string endLatF = endLat.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string endLonF = endLon.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+
+                string url = $"https://graphhopper.com/api/1/route?point={startLatF},{startLonF}&point={endLatF},{endLonF}&vehicle=car&key={graphHopperApiKey}";
+
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetStringAsync(url);
+                    var result = JObject.Parse(response);
+
+                    if (result["paths"].HasValues)
+                    {
+                        var distance = result["paths"][0]["distance"].Value<double>() / 1000; // Converti metri in chilometri
+                        distance = Math.Round(distance, 0, MidpointRounding.AwayFromZero);
+                        return Convert.ToInt32(distance);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+
+            return -2;
+        }
+
     }
 }
