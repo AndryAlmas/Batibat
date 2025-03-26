@@ -17,10 +17,44 @@
 <!-- Includi Flatpickr per il calendario -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 <style>
     .disabled-calendar {
         pointer-events: none; /* Disabilita tutti i clic */
         opacity: 0.4 !important;
+    }
+
+    .flatpickr-weekdays {
+        height: 60px !important;
+    }
+
+    .flatpickr-days {
+        width: 100% !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+        align-content: center !important;
+        justify-content: center !important;
+        flex-direction: column !important;
+    }
+
+    /* Allinea i giorni su colonne da 7 e aumenta lo spazio tra gli elementi */
+    .dayContainer {
+        width: auto !important;
+        min-width: auto !important;
+        max-width: none !important;
+        display: grid !important;
+        grid-template-columns: repeat(7, 1fr) !important; /* 7 colonne uguali */
+        justify-content: center !important; /* Centra la griglia */
+    }
+
+    .flatpickr-day {
+        width: auto !important;
+        height: 40px !important; /* Altezza fissa */
+        line-height: 40px !important; /* Allinea il testo al centro verticalmente */
+        font-size: 16px !important; /* Dimensione del testo */
+        text-align: center !important; /* Allinea il testo al centro orizzontalmente */
+        max-width: none !important;
+        border-radius: 0 !important;
     }
 
     .flatpickr-day {
@@ -38,8 +72,48 @@
         position: static !important;
         margin: 0 auto !important;
         width: auto !important;
-        max-width: 307.875px !important;
+        /*max-width: 307.875px !important;*/
         margin-top: 1rem !important;
+    }
+
+    .flatpickr-calendar {
+        padding: 0.5vw !important;
+        border: 2px solid black !important;
+    }
+
+    .flatpickr-innerContainer {
+        flex-direction: column-reverse;
+        justify-content: center;
+    }
+
+    .flatpickr-months .flatpickr-prev-month.flatpickr-next-month, .flatpickr-months .flatpickr-next-month.flatpickr-next-month {
+        right: 34px !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month.flatpickr-prev-month, .flatpickr-months .flatpickr-next-month.flatpickr-prev-month {
+        left: 34px !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
+        top: 60px !important;
+        border-radius: 50% !important;
+        background: #dedede !important;
+    }
+
+    .flatpickr-next-month svg {
+        vertical-align: top;
+    }
+
+    .flatpickr-prev-month svg {
+        vertical-align: top;
+    }
+
+    .flatpickr-day.selected {
+        background: #569ff7!important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        color: #ffff !important;
+        border-color: #569ff7 !important;
     }
 
     /* Stile per il toggle switch */
@@ -309,6 +383,7 @@
                         const endDatePicker = flatpickrInstances[endDateInputId + "Picker"];
 
                         if (isStartDate) {
+                            //elimino tutti i selected dai due calendari
                             if (endDateInput && endDatePicker) {
                                 endDateInput.value = '';
                                 $("#" + endDateCalendarId).nextAll("div").removeClass("disabled-calendar");
@@ -344,6 +419,23 @@
                                 }
 
 
+                            }
+                        }
+                        else {
+                            // Aggiungi i selected su tutti e due i calendari
+                            startDateStr = document.getElementById(inputId.replace('EndDate', 'StartDate')).value;
+                            const startDate = parseDate(startDateStr);
+                            const endDate = parseDate(dateStr);
+
+                            // Calcola l'intervallo di date
+                            if (startDate && endDate && startDate <= endDate) {
+                                // Applica la classe .selected al primo calendario
+                                const startCalendarElement = document.getElementById(calendarId.replace('EndDate', 'StartDate'));
+                                addSelectedClassToDates(startCalendarElement, startDate, endDate);
+
+                                // Applica la classe .selected al secondo calendario
+                                const endCalendarElement = document.getElementById(calendarId);
+                                addSelectedClassToDates(endCalendarElement, startDate, endDate);
                             }
                         }
                     }
@@ -399,12 +491,67 @@
                 resetCalendars();
             });
 
-            //// Inizialmente disabilita tutti gli input di fine
-            //document.querySelectorAll('input[data-type]').forEach(input => {
-            //    if (input.id.includes('EndDate')) {
-            //        input.disabled = true;
-            //    }
-            //});
+            function addSelectedClassToDates(calendarElement, startDate, endDate) {
+                // Seleziona tutti gli elementi .flatpickr-day nel calendario
+                const flatpickrCalendar = calendarElement.nextElementSibling;
+                const dayElements = flatpickrCalendar.querySelectorAll(".flatpickr-day");
+                console.dir(dayElements);
+                dayElements.forEach(day => {
+                    // Ignora gli elementi con la classe .nextMonth o .prevMonth
+                    if (day.classList.contains("nextMonthDay") || day.classList.contains("prevMonthDay")) {
+                        return;
+                    }
+
+                    // Ottieni la data associata all'elemento
+                    const dateStr = day.getAttribute("aria-label");
+                    if (!dateStr) return;
+
+                    const parsedDate = parseFrenchDate(dateStr);
+                    const date = new Date(parsedDate);
+
+                    // Verifica se la data è compresa nell'intervallo
+                    if (date >= startDate && date <= endDate) {
+                        day.classList.add("selected");
+                    } else {
+                        day.classList.remove("selected");
+                    }
+                });
+            }
+            // Funzione per convertire una stringa dd/mm/yyyy in un oggetto Date
+            function parseDate(dateStr) {
+                const [day, month, year] = dateStr.split("/").map(Number); // Dividi la stringa e converti in numeri
+                return new Date(year, month - 1, day); // Crea un oggetto Date (mese è zero-based)
+            }
+
+            function parseFrenchDate(dateStr) {
+                // Mapping dei nomi dei mesi francesi
+                const frenchMonths = {
+                    "janvier": 0, "février": 1, "mars": 2, "avril": 3,
+                    "mai": 4, "juin": 5, "juillet": 6, "août": 7,
+                    "septembre": 8, "octobre": 9, "novembre": 10, "décembre": 11
+                };
+
+                // Estrai il mese, il giorno e l'anno dalla stringa
+                const parts = dateStr.toLowerCase().split(" ");
+                if (parts.length !== 3) {
+                    console.error("Formato della data non valido:", dateStr);
+                    return null;
+                }
+
+                const monthName = parts[0]; // Mese in francese
+                const day = parseInt(parts[1].replace(",", ""), 10); // Giorno (rimuovi la virgola)
+                const year = parseInt(parts[2], 10); // Anno
+
+                // Trova il numero del mese corrispondente
+                const month = frenchMonths[monthName];
+                if (month === undefined) {
+                    console.error("Mese non riconosciuto:", monthName);
+                    return null;
+                }
+
+                // Crea un oggetto Date (il mese è zero-based in JavaScript)
+                return new Date(year, month, day);
+            }
         });
 
         let selectedStart = null;
