@@ -116,6 +116,14 @@
         border-color: #569ff7 !important;
     }
 
+    .selected-max {
+        background: #569ff7 !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        color: black !important;
+        border-color: #569ff7 !important;
+    }
+
     /* Stile per il toggle switch */
     .custom-checkbox {
         display: flex;
@@ -374,6 +382,9 @@
                     locale: "fr",
                     inline: true,
                     minDate: "today",
+                    onMonthChange: function (selectedDates, dateStr, instance) {
+                        checkAndApplySelectedClasses(calendarId, inputId);
+                    },
                     onChange: function (selectedDates, dateStr) {
                         inputElement.value = dateStr;
 
@@ -421,23 +432,8 @@
 
                             }
                         }
-                        else {
-                            // Aggiungi i selected su tutti e due i calendari
-                            startDateStr = document.getElementById(inputId.replace('EndDate', 'StartDate')).value;
-                            const startDate = parseDate(startDateStr);
-                            const endDate = parseDate(dateStr);
-
-                            // Calcola l'intervallo di date
-                            if (startDate && endDate && startDate <= endDate) {
-                                // Applica la classe .selected al primo calendario
-                                const startCalendarElement = document.getElementById(calendarId.replace('EndDate', 'StartDate'));
-                                addSelectedClassToDates(startCalendarElement, startDate, endDate);
-
-                                // Applica la classe .selected al secondo calendario
-                                const endCalendarElement = document.getElementById(calendarId);
-                                addSelectedClassToDates(endCalendarElement, startDate, endDate);
-                            }
-                        }
+                        // Controlla se entrambi gli input sono valorizzati
+                        checkAndApplySelectedClasses(calendarId, inputId);
                     }
                 });
                 return picker;
@@ -491,6 +487,29 @@
                 resetCalendars();
             });
 
+            function checkAndApplySelectedClasses(calendarId, inputId) {
+                const startDateInputId = inputId.replace('EndDate', 'StartDate');
+                const endDateInputId = inputId.replace('StartDate', 'EndDate');
+
+                const startDateStr = document.getElementById(startDateInputId).value;
+                const endDateStr = document.getElementById(endDateInputId).value;
+
+                if (startDateStr && endDateStr) {
+                    const startDate = parseDate(startDateStr);
+                    const endDate = parseDate(endDateStr);
+
+                    if (startDate && endDate && startDate <= endDate) {
+                        // Applica la classe .selected al primo calendario
+                        const startCalendarElement = document.getElementById(calendarId.replace('EndDate', 'StartDate'));
+                        addSelectedClassToDates(startCalendarElement, startDate, endDate);
+
+                        // Applica la classe .selected al secondo calendario
+                        const endCalendarElement = document.getElementById(calendarId.replace('StartDate', 'EndDate'));
+                        addSelectedClassToDates(endCalendarElement, startDate, endDate);
+                    }
+                }
+            }
+
             function addSelectedClassToDates(calendarElement, startDate, endDate) {
                 // Seleziona tutti gli elementi .flatpickr-day nel calendario
                 const flatpickrCalendar = calendarElement.nextElementSibling;
@@ -511,7 +530,12 @@
 
                     // Verifica se la data è compresa nell'intervallo
                     if (date >= startDate && date <= endDate) {
-                        day.classList.add("selected");
+                        if (!day.getAttribute("tabindex")) // controllare che non ci sia nextMonth o prevMonth perché altrimenti lo colora nella parte di calendario sbagliata
+                            day.classList.add("selected");
+                        else {
+                            day.classList.remove("selected");
+                            day.classList.add("selected-max");
+                        }
                     } else {
                         day.classList.remove("selected");
                     }
