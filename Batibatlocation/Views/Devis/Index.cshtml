@@ -19,6 +19,14 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 <style>
+
+    .prevMonthDay, .prevMonthDay:hover, .nextMonthDay, .nextMonthDay:hover {
+        color: white !important;
+        cursor: not-allowed !important;
+        background: white !important;
+        border: 0px !important;
+    }
+    
     .disabled-calendar {
         pointer-events: none; /* Disabilita tutti i clic */
         opacity: 0.4 !important;
@@ -62,7 +70,7 @@
         font-size: large;
     }
     .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
-        color: #c8c8c8 !important;
+        color: #c8c8c8;
     }
     .flatpickr-day.today{
         color: red !important;
@@ -109,11 +117,17 @@
     }
 
     .flatpickr-day.selected {
-        background: #569ff7!important;
+        background: #9bc8ff !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
         color: #ffff !important;
-        border-color: #569ff7 !important;
+    }
+
+    .selected-first {
+        background: #569ff7 !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        color: black !important;
     }
 
     .selected-max {
@@ -121,7 +135,7 @@
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
         color: black !important;
-        border-color: #569ff7 !important;
+        /*border-color: transparent !important;*/
     }
 
     /* Stile per il toggle switch */
@@ -501,7 +515,8 @@
                     if (startDate && endDate && startDate <= endDate) {
                         // Applica la classe .selected al primo calendario
                         const startCalendarElement = document.getElementById(calendarId.replace('EndDate', 'StartDate'));
-                        addSelectedClassToDates(startCalendarElement, startDate, endDate);
+                        // TODO - applica stile personalizzato alla data selezionata. 
+                        addSelectedClassToFirstDate(startCalendarElement, startDate, endDate);
 
                         // Applica la classe .selected al secondo calendario
                         const endCalendarElement = document.getElementById(calendarId.replace('StartDate', 'EndDate'));
@@ -510,14 +525,54 @@
                 }
             }
 
+            function addSelectedClassToFirstDate(calendarElement, startDate, endDate) {
+                // Seleziona tutti gli elementi .flatpickr-day nel calendario
+                const flatpickrCalendar = calendarElement.nextElementSibling;
+                const dayElements = flatpickrCalendar.querySelectorAll(".flatpickr-day");
+
+                dayElements.forEach(day => {
+                    // Ignora gli elementi con la classe .nextMonth o .prevMonth
+                    //if (day.classList.contains("nextMonthDay") || day.classList.contains("prevMonthDay")) {
+                    //    day.classList.remove("selected"); // rimuovo in caso sia già stato selezionato in precedenza
+                    //    return;
+                    //}
+
+                    // Ottieni la data associata all'elemento
+                    const dateStr = day.getAttribute("aria-label");
+                    if (!dateStr) return;
+
+                    const parsedDate = parseFrenchDate(dateStr);
+                    const date = new Date(parsedDate);
+
+                    // Verifica se la data è compresa nell'intervallo
+                    if (areDatesEqual(date,startDate)) {
+                        day.classList.remove("selected");
+                        day.classList.add("selected-first");
+                    } else {
+                        day.classList.remove("selected-first");
+                    }
+                });
+            }
+
+            function areDatesEqual(date1, date2) {
+                if (!date1 || !date2) return false;
+
+                return (
+                    date1.getFullYear() === date2.getFullYear() &&
+                    date1.getMonth() === date2.getMonth() &&
+                    date1.getDate() === date2.getDate()
+                );
+            }
+
             function addSelectedClassToDates(calendarElement, startDate, endDate) {
                 // Seleziona tutti gli elementi .flatpickr-day nel calendario
                 const flatpickrCalendar = calendarElement.nextElementSibling;
                 const dayElements = flatpickrCalendar.querySelectorAll(".flatpickr-day");
-                console.dir(dayElements);
+
                 dayElements.forEach(day => {
                     // Ignora gli elementi con la classe .nextMonth o .prevMonth
                     if (day.classList.contains("nextMonthDay") || day.classList.contains("prevMonthDay")) {
+                        day.classList.remove("selected"); // rimuovo in caso sia già stato selezionato in precedenza
                         return;
                     }
 
