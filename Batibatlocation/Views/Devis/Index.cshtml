@@ -18,6 +18,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+
+<!-- Fogli di stile di Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Script di Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <style>
 
     .prevMonthDay, .prevMonthDay:hover, .nextMonthDay, .nextMonthDay:hover {
@@ -247,6 +253,7 @@
         border-bottom: 2px solid #ff8900;
         border-radius: 0;
     }
+
     .spinner {
         display: none;
         text-align: center;
@@ -368,6 +375,8 @@
                                     </div>
                                 </ul>
                             </div>
+                            <div id="map" style="height: 300px; width: 100%; margin-top: 20px;"></div>
+                            @*<button id="reloadMap" class="btn btn-primary mt-2">Ricarica Mappa</button>*@
                         </div>
                         <br />
                         <!-- Pulsante Calcola Preventivo -->
@@ -386,6 +395,81 @@
 @section Scripts{
     <script>
         let deliveryEnabled = false;
+
+        // Variabili globali per la mappa e il marker
+        let map;
+        let marker;
+
+        // Funzione per inizializzare la mappa
+        function initializeMap() {
+            map = L.map('map').setView([48.8566, 2.3522], 15); // Coordinate di default (Parigi)
+
+            // Aggiungi un layer di tile (stile Stadia Maps)
+            L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20,
+                attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+            }).addTo(map);
+
+            //// Aggiungi un marker iniziale
+            //marker = L.marker([48.8566, 2.3522]).addTo(map);
+        }
+
+        // Funzione per rimuovere il marker e ricaricare la mappa
+        function clearMap() {
+            if (map) {
+                // Rimuovi il marker corrente (se esiste)
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null; // Resetta il marker
+                }
+
+                // Forza il ricalcolo delle dimensioni della mappa
+                map.invalidateSize();
+
+                // Reimposta la vista della mappa su Parigi (o altre coordinate di default)
+                map.setView([48.8566, 2.3522], 15); // Coordinate di Parigi
+            }
+        }
+
+        // Funzione per aggiornare la mappa con nuove coordinate
+        function updateMap(lat, lon) {
+            if (!map) return;
+
+            // Validazione delle coordinate
+            if (isNaN(lat) || isNaN(lon)) {
+                console.error("Coordinate non valide:", { lat, lon });
+                return;
+            }
+
+            // Rimuovi il marker precedente (se esiste)
+            if (marker) map.removeLayer(marker);
+
+            // Aggiorna il centro della mappa
+            map.setView([lat, lon], 15);
+
+            // Aggiorna le dimensioni della mappa (se necessario)
+            map.invalidateSize();
+
+            // Aggiungi un nuovo marker
+            marker = L.marker([lat, lon]).addTo(map);
+        }
+
+        function reloadMap() {
+            if (map) {
+                map.invalidateSize(); // Aggiorna le dimensioni della mappa
+                map.eachLayer(layer => {
+                    if (layer instanceof L.TileLayer) {
+                        layer.redraw(); // Forza il ricaricamento delle tiles
+                    }
+                });
+            }
+        }
+
+
+        // Inizializza la mappa all'avvio
+        $(document).ready(function () {
+            initializeMap();
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             // Oggetto globale per tenere traccia dei calendari
@@ -687,6 +771,9 @@
         document.getElementById('avecLivraison').addEventListener('click', function () {
             this.classList.add('active-devis');
             $('#deliverySection').show();
+            $('#result').hide();
+            clearMap();
+            reloadMap();
             document.getElementById('sansLivraison').classList.remove('active-devis');
             deliveryEnabled = true;
         });
@@ -694,6 +781,7 @@
         document.getElementById('sansLivraison').addEventListener('click', function () {
             this.classList.add('active-devis');
             $('#deliverySection').hide();
+            $('#result').hide();
             selectedStart = null;
             selectedEnd = null;
             $('#endAddress').val("");
@@ -742,6 +830,9 @@
                                 suggestion.click(function () {
                                     $('#' + inputId).val(item.display_name);
                                     suggestionsList.empty().append(spinner).hide();
+                                    const lat = parseFloat(item.lat);
+                                    const lon = parseFloat(item.lon);
+                                    updateMap(lat, lon);
                                     callback({ lat: item.lat, lon: item.lon });
                                 });
 
@@ -814,6 +905,7 @@
             const validationErrors = validateFields(userType);
             if (validationErrors.length > 0) {
                 $('#result').html(`<div class="alert alert-danger">${validationErrors.join("<br>")}</div>`);
+                $('#result').show();
                 return;
             }
 
@@ -839,6 +931,7 @@
                 success: function (response) {
                     if (response.error) {
                         $('#result').html(`<div class="alert alert-danger">${response.error}</div>`);
+                        $('#result').show();
                     } else {
                         // Struttura del risultato come una fattura
                         const resultText = `
@@ -885,10 +978,12 @@
                             <button id="reserveButton" class="btn btn-lg btn-success w-100" style="margin-top: 15px;">Réserver Maintenant</button>
                 `;
                         $('#result').html(resultText);
+                        $('#result').show();
                     }
                 },
                 error: function () {
                     $('#result').html('<div class="alert alert-danger">Une erreur est survenue lors du calcul du devis.</div>');
+                    $('#result').show();
                 }
             });
         });
@@ -914,7 +1009,7 @@
                 EndLat: deliveryEnabled ? selectedEnd.lat : null,
                 EndLon: deliveryEnabled ? selectedEnd.lon : null
             };
-        
+
             // Invia i dati al server tramite AJAX
             $.ajax({
                 url: '/Devis/Reserve',
