@@ -138,6 +138,14 @@
         /*border-color: transparent !important;*/
     }
 
+    .selected-option {
+        background: #9bc8ff !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        color: black !important;
+        /*border-color: transparent !important;*/
+    }
+
     /* Stile per il toggle switch */
     .custom-checkbox {
         display: flex;
@@ -589,10 +597,19 @@
                             day.classList.add("selected");
                         else {
                             day.classList.remove("selected");
-                            day.classList.add("selected-max");
+                            if (areDatesEqual(date, endDate)) {
+                                day.classList.remove("selected-option");
+                                day.classList.add("selected-max");
+                            }
+                            else {
+                                day.classList.remove("selected-max");
+                                day.classList.add("selected-option");
+                            }
                         }
                     } else {
                         day.classList.remove("selected");
+                        day.classList.remove("selected-max");
+                        day.classList.remove("selected-option");
                     }
                 });
             }
@@ -755,7 +772,7 @@
                                         <td>@ViewBag.ProdName</td>
                                     </tr>
                                     <tr>
-                                        <th>Type d'utilisateur</th>
+                                        <th>Type de Client</th>
                                         <td>${userType === 'private' ? 'Privé' : 'Professionnel'}</td>
                                     </tr>
                                     <tr>
@@ -784,13 +801,13 @@
                                     </tr>` : ''}
                                     <tr>
                                         <th>Prix Total</th>
-                                        <td>${response.price.toFixed(2)} €</td>
+                                        <td><b>${response.price.toFixed(2)} €</b></td>
                                     </tr>
                                 </tbody>
                             </table>
                 `;
                         $('#result').html(resultText);
-                    }
+                    }   
                 },
                 error: function () {
                     $('#result').html('<div class="alert alert-danger">Une erreur est survenue lors du calcul du devis.</div>');
