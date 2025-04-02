@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -26,6 +28,13 @@ namespace Batibatlocation
             DependencyResolver.SetResolver(new UnityDependencyResolver(UnityConfig.Container));
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
 
+        }
+
+        protected void Application_BeginRequest()
+        {
+            // Imposta la cultura invariante per l'applicazione
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         }
     }
 }

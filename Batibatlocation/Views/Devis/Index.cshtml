@@ -26,7 +26,7 @@
         background: white !important;
         border: 0px !important;
     }
-    
+
     .disabled-calendar {
         pointer-events: none; /* Disabilita tutti i clic */
         opacity: 0.4 !important;
@@ -69,12 +69,15 @@
         font-weight: bold;
         font-size: large;
     }
-    .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
-        color: #c8c8c8;
-    }
-    .flatpickr-day.today{
-        color: red !important;
-    }
+
+        .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
+            color: #c8c8c8;
+        }
+
+        .flatpickr-day.today {
+            color: red !important;
+        }
+
     .flatpickr-calendar.inline {
         display: block !important;
         position: static !important;
@@ -244,6 +247,23 @@
         border-bottom: 2px solid #ff8900;
         border-radius: 0;
     }
+    .spinner {
+        display: none;
+        text-align: center;
+        padding: 10px;
+        font-style: italic;
+        color: #6c757d;
+    }
+
+    .list-group-item.text-muted {
+        color: #6c757d;
+        cursor: default;
+    }
+
+    .list-group-item.text-danger {
+        color: #dc3545;
+        cursor: default;
+    }
 </style>
 
 <section id="hero" class="hero-devis">
@@ -341,7 +361,12 @@
                             <div class="mb-3">
                                 <label for="endAddress" class="form-label text-bold">Adresse de Livraison <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="endAddress" placeholder="Entrez l'adresse d'arrivée" required>
-                                <ul id="endSuggestions" class="suggestions-list"></ul>
+                                <ul id="endSuggestions" class="suggestions-list" style="display: none;">
+                                    <!-- Spinner di caricamento -->
+                                    <div class="spinner" style="display: none; text-align: center; padding: 10px;">
+                                        <i class="fas fa-spinner fa-spin"></i> Veuillez patienter pendant le chargement...
+                                    </div>
+                                </ul>
                             </div>
                         </div>
                         <br />
@@ -360,6 +385,8 @@
 </section>
 @section Scripts{
     <script>
+        let deliveryEnabled = false;
+
         document.addEventListener("DOMContentLoaded", function () {
             // Oggetto globale per tenere traccia dei calendari
             const flatpickrInstances = {};
@@ -507,6 +534,10 @@
                     $('#professionalForm').show();
                 }
                 resetCalendars();
+                $('#sansLivraison').click();
+                $('#endAddress').val("");
+                $('#endAddress').text("");
+                $('#result').html("");
             });
 
             function checkAndApplySelectedClasses(calendarId, inputId) {
@@ -523,7 +554,7 @@
                     if (startDate && endDate && startDate <= endDate) {
                         // Applica la classe .selected al primo calendario
                         const startCalendarElement = document.getElementById(calendarId.replace('EndDate', 'StartDate'));
-                        // TODO - applica stile personalizzato alla data selezionata. 
+                        // TODO - applica stile personalizzato alla data selezionata.
                         addSelectedClassToFirstDate(startCalendarElement, startDate, endDate);
 
                         // Applica la classe .selected al secondo calendario
@@ -657,6 +688,7 @@
             this.classList.add('active-devis');
             $('#deliverySection').show();
             document.getElementById('sansLivraison').classList.remove('active-devis');
+            deliveryEnabled = true;
         });
 
         document.getElementById('sansLivraison').addEventListener('click', function () {
@@ -664,30 +696,76 @@
             $('#deliverySection').hide();
             selectedStart = null;
             selectedEnd = null;
+            $('#endAddress').val("");
+            $('#endAddress').text("");
             document.getElementById('avecLivraison').classList.remove('active-devis');
+            deliveryEnabled = false;
         });
+
+        let debounceTimer; // Variabile per memorizzare il timer
 
         // Funzione per ottenere suggerimenti di indirizzi tramite Nominatim
         function getSuggestions(inputId, suggestionsId, callback) {
             const query = $('#' + inputId).val();
             if (query.length < 3) return; // Attiva la ricerca solo dopo 3 caratteri
 
-            $.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`, function (data) {
-                const suggestionsList = $('#' + suggestionsId);
-                suggestionsList.empty().hide(); // Nascondi se non ci sono risultati
-                if (data.length > 0) {
-                    data.forEach(item => {
-                        const suggestion = $('<li>').addClass('list-group-item').text(item.display_name);
-                        suggestion.click(function () {
-                            $('#' + inputId).val(item.display_name);
-                            suggestionsList.empty().hide();
-                            callback({ lat: item.lat, lon: item.lon });
-                        });
-                        suggestionsList.append(suggestion);
-                    });
-                    suggestionsList.show();
-                }
-            });
+            const suggestionsList = $('#' + suggestionsId);
+            const spinner = suggestionsList.find('.spinner'); // Trova lo spinner
+
+            // Mostra lo spinner e nascondi eventuali risultati precedenti
+            suggestionsList.empty().append(spinner).show();
+            spinner.show();
+
+
+            // Cancella il timer precedente (se esiste)
+            clearTimeout(debounceTimer);
+
+            // Imposta un nuovo timer per ritardare la chiamata API
+            // Imposta un nuovo timer per ritardare la chiamata API
+            debounceTimer = setTimeout(() => {
+                $.ajax({
+                    url: `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=fr`,
+                    method: 'GET',
+                    beforeSend: function () {
+                        // Mostra lo spinner prima di inviare la richiesta
+                        suggestionsList.empty().append(spinner).show();
+                        spinner.show();
+                    },
+                    success: function (data) {
+                        suggestionsList.empty().append(spinner);
+                        if (data && data.length > 0) {
+                            data.forEach(item => {
+                                const suggestion = $('<li>')
+                                    .addClass('list-group-item')
+                                    .text(item.display_name);
+
+                                suggestion.click(function () {
+                                    $('#' + inputId).val(item.display_name);
+                                    suggestionsList.empty().append(spinner).hide();
+                                    callback({ lat: item.lat, lon: item.lon });
+                                });
+
+                                suggestionsList.append(suggestion);
+                            });
+                        } else {
+                            // Nessun risultato trovato
+                            suggestionsList.empty().append(spinner).append(
+                                $('<li>').addClass('list-group-item text-muted').text('Aucun résultat trouvé')
+                            );
+                        }
+                    },
+                    error: function () {
+                        // Errore durante la ricerca
+                        suggestionsList.empty().append(spinner).append(
+                            $('<li>').addClass('list-group-item text-danger').text('Erreur lors de la recherche')
+                        );
+                    },
+                    complete: function () {
+                        // Nascondi lo spinner alla fine della richiesta (successo o errore)
+                        spinner.hide();
+                    }
+                });
+            }, 300); // Ritardo di 300 ms prima di inviare la richiesta
         }
 
         // Gestione dell'input di arrivo
@@ -716,8 +794,8 @@
             }
 
             // Validazione generale per la consegna
-            if ($('#deliverySwitch').is(':checked')) {
-                if (!selectedEnd) errors.push("Veuillez sélectionner les adresses de départ et d'arrivée.");
+            if (deliveryEnabled) {
+                if (!selectedEnd || selectedEnd == 0) errors.push("Veuillez sélectionner l'adresses de livraison.");
             }
 
             return errors;
@@ -727,7 +805,6 @@
         $('#calculateQuote').click(function () {
             // Determina il tipo di utente
             const userType = $('input[name="userType"]:checked').val();
-            const deliveryEnabled = $('#deliverySwitch').is(':checked');
 
             // Dati comuni
             const startDate = userType === 'private' ? $('#privateStartDate').val() : $('#companyStartDate').val();
@@ -805,12 +882,52 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <button id="reserveButton" class="btn btn-lg btn-success w-100" style="margin-top: 15px;">Réserver Maintenant</button>
                 `;
                         $('#result').html(resultText);
-                    }   
+                    }
                 },
                 error: function () {
                     $('#result').html('<div class="alert alert-danger">Une erreur est survenue lors du calcul du devis.</div>');
+                }
+            });
+        });
+
+        // Delegazione dell'evento per il pulsante dinamico
+        $('#result').on('click', '#reserveButton', function () {
+            // Determina il tipo di utente
+            const userType = $('input[name="userType"]:checked').val();
+
+            // Dati comuni
+            const startDate = userType === 'private' ? $('#privateStartDate').val() : $('#companyStartDate').val();
+            const endDate = userType === 'private' ? $('#privateEndDate').val() : $('#companyEndDate').val();
+
+            // Prepara i dati da inviare al server
+            const reservationData = {
+                ProdName: "@ViewBag.ProdName",
+                UserType: userType,
+                Name: userType === 'private' ? $('#privateName').val() : $('#companyName').val(),
+                Email: userType === 'private' ? $('#privateEmail').val() : $('#companyEmail').val() || '',
+                StartDate: startDate,
+                EndDate: endDate,
+                DeliveryEnabled: deliveryEnabled,
+                EndLat: deliveryEnabled ? selectedEnd.lat : null,
+                EndLon: deliveryEnabled ? selectedEnd.lon : null
+            };
+        
+            // Invia i dati al server tramite AJAX
+            $.ajax({
+                url: '/Devis/Reserve',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(reservationData),
+                success: function (response) {
+                    alert('Réservation réussie!');
+                    console.log(response);
+                },
+                error: function (error) {
+                    alert('Erreur lors de la réservation.');
+                    console.error(error);
                 }
             });
         });

@@ -1,5 +1,6 @@
 ﻿using Batibatlocation.Data;
 using Batibatlocation.Utils;
+using Batibatlocation.ViewModels;
 using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json.Linq;
 using System;
@@ -114,5 +115,16 @@ namespace Batibatlocation.Controllers
             return await base.CalculateDistance(startLat, startLon, endLat, endLon);
         }
 
+        [HttpPost]
+        public ActionResult Reserve([Bind(Include = "ProdName,UserType,Name,Email,StartDate,EndDate,DeliveryEnabled,EndLat,EndLon")] ReservationVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Salva i dati nel database o esegui altre operazioni
+                return Json(new { success = true, message = "Réservation réussie!" });
+            }
+
+            return Json(new { success = false, message = "Erreur lors de la réservation." });
+        }
     }
 }
