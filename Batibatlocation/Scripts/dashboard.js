@@ -88,8 +88,8 @@ function updateQuadrantImage(index) {
     }
 }
 
-function removeQuadrantImage(src,index) {
-/*    var quadrant = document.getElementById('quadrant-' + index);*/
+function removeQuadrantImage(src, index) {
+    /*    var quadrant = document.getElementById('quadrant-' + index);*/
     var preview = document.getElementById('preview-' + index);
     var input = document.getElementById('fileInput-' + index);
     var removeBtn = document.getElementById('remove-' + index);
@@ -140,7 +140,7 @@ function deleteImage(imagePath, index) {
                 document.getElementById('remove-' + index).style.display = "none";
                 var btn = document.getElementById('btnSuprimeAutreImg-' + index);
                 btn.parentNode.removeChild(btn);
-                
+
             } else {
                 showAlert("Une erreur est survenue.", "danger");
             }
@@ -211,9 +211,23 @@ function mostraFormCategorie(categoriaId) {
     if (campo) {
         campo.removeAttribute('disabled');
     }
+
+    var campoPrixKm = document.querySelector(`#PrixAuKm_${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campoPrixKm) {
+        campoPrixKm.removeAttribute('disabled');
+    }
+
+    var campoPrixMin = document.querySelector(`#PrixMin_${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campoPrixMin) {
+        campoPrixMin.removeAttribute('disabled');
+    }
 }
 
-function nascondiFormCategorie(categoriaId, nom) {
+function nascondiFormCategorie(categoriaId, nom, prixKm, prixMin) {
     // Nascondi il form
     const formContainer = document.getElementById(`formContainer-${categoriaId}`);
     if (formContainer) {
@@ -232,6 +246,22 @@ function nascondiFormCategorie(categoriaId, nom) {
     if (campo) {
         campo.setAttribute("disabled", "disabled");
         campo.value = nom;
+    }
+
+    var campoPrixKm = document.querySelector(`#PrixAuKm_${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campoPrixKm) {
+        campoPrixKm.setAttribute("disabled", "disabled");
+        campoPrixKm.value = prixKm;
+    }
+
+    var campoPrixMin = document.querySelector(`#PrixMin_${categoriaId}`);
+
+    // Rimuovi l'attributo "disabled" per abilitare il campo
+    if (campoPrixMin) {
+        campoPrixMin.setAttribute("disabled", "disabled");
+        campoPrixMin.value = prixMin;
     }
 }
 
@@ -252,7 +282,13 @@ $('#btnAddCategory').on('click', function () {
             <tr id="tempCategory">
                 <td></td> <!-- Campo ID vuoto -->
                 <td>
-                    <input type="text" required class="form-control" id="categoryInput" placeholder="Nom de la catégorie" />
+                    <input type="text" required class="form-control" id="categoryName_New" placeholder="Nom de la catégorie" />
+                </td>
+                <td>
+                    <input type="number" step="0.01" required class="form-control" id="prixAuKm_New" placeholder="Prix Au Km" />
+                </td>
+                <td>
+                    <input type="number" step="0.01" required class="form-control" id="prixMin_New" placeholder="Prix Minimum" />
                 </td>
                 <td class="text-right">
                     <button class="btn btn-primary btn-create">Creer</button>
@@ -270,8 +306,13 @@ $('#btnAddCategory').on('click', function () {
 
 // gestione del click sul pulsante "creer"
 $(document).on('click', '.btn-create', function () {
-    const inputField = document.getElementById('categoryInput');
+    const inputField = document.getElementById('categoryName_New');
+    const inputPrixKm = document.getElementById('prixAuKm_New');
+    const inputPrixMin = document.getElementById('prixMin_New');
+
     const categoryName = inputField.value.trim();
+    const PrixKm = inputPrixKm.value.trim();
+    const PrixMin = inputPrixMin.value.trim();
 
     // Imposta un messaggio di errore personalizzato
     if (inputField.value.trim() === '') {
@@ -287,8 +328,45 @@ $(document).on('click', '.btn-create', function () {
         return; // Interrompi l'esecuzione se il campo non è valido
     }
 
+    // Imposta un messaggio di errore personalizzato
+    if (inputField.value.trim() === '') {
+        inputField.setCustomValidity("Le nom de la catégorie ne peut pas être vide.");
+    } else {
+        inputField.setCustomValidity(""); // Resetta il messaggio di errore
+    }
+
+    // Controlla la validità del campo Prix
+    if (!inputPrixKm.checkValidity()) {
+        // Scatena il messaggio di validazione nativo
+        inputPrixKm.reportValidity();
+        return; // Interrompi l'esecuzione se il campo non è valido
+    }
+
+    // Imposta un messaggio di errore personalizzato
+    if (inputPrixKm.value.trim() === '') {
+        inputPrixKm.setCustomValidity("Le Prix au Km ne peut pas être vide.");
+    } else {
+        inputPrixKm.setCustomValidity(""); // Resetta il messaggio di errore
+    }
+
+    // Controlla la validità del campo PrixMin
+    if (!inputPrixMin.checkValidity()) {
+        // Scatena il messaggio di validazione nativo
+        inputPrixMin.reportValidity();
+        return; // Interrompi l'esecuzione se il campo non è valido
+    }
+
+    // Imposta un messaggio di errore personalizzato
+    if (inputPrixMin.value.trim() === '') {
+        inputPrixMin.setCustomValidity("Le Prix Minimum ne peut pas être vide.");
+    } else {
+        inputPrixMin.setCustomValidity(""); // Resetta il messaggio di errore
+    }
+
     // imposta il valore del campo nascosto nel form
     $('#newCategoryName').val(categoryName);
+    $('#newPrixKm').val(PrixKm);
+    $('#newPrixMin').val(PrixMin);
 
     // invia il form per creare la nuova categoria
     $('#createCategoryForm').submit();

@@ -266,5 +266,69 @@ namespace Batibatlocation.Utils
             return -2;
         }
 
+        public static int GetMonthsBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            endDate.AddDays(1);
+            int months = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);
+            if (endDate.Day < startDate.Day)
+            {
+                months--;
+            }
+            return months;
+        }
+
+        public static int GetFullWeeksBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            // Calcola la differenza totale in giorni
+            int totalDays = (int)(endDate - startDate).TotalDays+1;
+
+            // Calcola il numero di settimane complete
+            return totalDays / 7;
+        }
+
+        protected decimal CalculatePrixLivraison(double distance, int catID)
+        {
+            distance = distance * 4; // aller-retour
+            var costi = _context.CostiLivraisons.ToList()
+                .Where(c => c.CategoryId == catID
+                        && ((c.DateDebutValidite ?? DateTime.Now) <= DateTime.Now
+                        && (c.DateFinValidite ?? DateTime.Now) >= DateTime.Now))
+                .FirstOrDefault();
+            if (costi != null)
+            {
+                decimal prezzoPerDistanza = (costi.PrixAuKm ?? 0) * Convert.ToDecimal(distance);
+                return Math.Max((costi.PrixMin ?? 0), prezzoPerDistanza);
+            }
+            return Math.Max(80, Convert.ToDecimal(distance)); // default nel caso in cui non trova la categoria o il prodotto
+        }
+
+        protected decimal CalculatePrice(string userType, int prodID, DateTime startDate, DateTime endDate, decimal priceLivraison)
+        {
+            var prodotto = _context.Produits.Where(p => p.Id == prodID).FirstOrDefault();
+            if (prodotto != null)
+            {
+                int duration = 0;
+                switch (prodotto.Periodicite.Id)
+                {
+                    case (int)Enum.PeriodicityType.Jour:
+                        duration = (int)(endDate - startDate).TotalDays + 1;
+                        break;
+                    case (int)Enum.PeriodicityType.Semaine:
+                        duration = GetFullWeeksBetweenDates(startDate, endDate);
+                        break;
+                    case (int)Enum.PeriodicityType.Mois:
+                        duration = GetMonthsBetweenDates(startDate, endDate);
+                        break;
+                    default:
+                        duration = 0;
+                        break;
+                }
+
+                return (prodotto.Prix * duration + priceLivraison);
+
+            }
+            return -1;
+        }
+
     }
 }

@@ -26,6 +26,7 @@ namespace Batibatlocation.Data
         public DbSet<Models.Devis> Devis { get; set; }
         public DbSet<Models.Accessoire> Accessoires { get; set; }
         public DbSet<Models.ReservationAccessoire> ReservationAccessoires { get; set; }
+        public DbSet<Models.CostiLivraison> CostiLivraisons { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

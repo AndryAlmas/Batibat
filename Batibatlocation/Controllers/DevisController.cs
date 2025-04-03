@@ -70,9 +70,8 @@ namespace Batibatlocation.Controllers
                     string email = data.Email;
                     string StartDate = data.StartDate; // Data in formato gg/mm/yyyy
                     string EndDate = data.EndDate; // Data in formato gg/mm/yyyy
-                    string format = "dd/MM/yyyy";    // Formato specifico
-                    DateTime startDate = DateTime.ParseExact(StartDate, format, CultureInfo.InvariantCulture);
-                    DateTime endDate = DateTime.ParseExact(EndDate, format, CultureInfo.InvariantCulture);
+                    DateTime startDate = DateTime.Parse(StartDate);
+                    DateTime endDate = DateTime.Parse(EndDate);
                     bool deliveryEnabled = data.DeliveryEnabled;
                     double startLat = latCoord_Rouvray;
                     double startLon = lonCoord_Rouvray;
@@ -88,10 +87,14 @@ namespace Batibatlocation.Controllers
                     }
 
                     // Calcolo del prezzo (esempio fittizio)
-                    double price = CalculatePrice(userType, prodID, startDate, endDate, distance);
+                    int catID = _context.Produits.Where(p => p.Id == prodID).FirstOrDefault().CategoryId;
+                    decimal priceLivraison = 0; 
+                    if (deliveryEnabled)
+                        priceLivraison = CalculatePrixLivraison(distance, catID); 
+                    decimal priceTotal = CalculatePrice(userType, prodID, startDate, endDate, priceLivraison);
 
                     // Restituisci il risultato
-                    return Json(new { distance, price });
+                    return Json(new { priceLivraison, priceTotal });
                 }
             }
             catch (Exception ex)
@@ -99,17 +102,6 @@ namespace Batibatlocation.Controllers
                 return Json(new { error = ex.Message });
             }
         }
-        private double CalculatePrice(string userType, int prodID, DateTime startDate, DateTime endDate, double distance)
-        {
-            // Implementa la logica di calcolo del prezzo in base al tipo di utente, durata e distanza
-            double basePrice = userType == "private" ? 50 : 100; // Prezzo base per privati o professionisti
-            double durationDays = (endDate - startDate).TotalDays;
-            double pricePerDay = 10; // Prezzo giornaliero
-            double deliveryCost = distance * 0.5; // Costo di consegna per chilometro
-
-            return basePrice + (pricePerDay * durationDays) + deliveryCost;
-        }
-
         private new async Task<ActionResult> CalculateDistance(double startLat, double startLon, double endLat, double endLon)
         {
             return await base.CalculateDistance(startLat, startLon, endLat, endLon);

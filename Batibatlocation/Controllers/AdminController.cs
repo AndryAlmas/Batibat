@@ -28,6 +28,7 @@ using Batibatlocation.Helpers;
 using Batibatlocation.Utils;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using Produit = Batibatlocation.Models.Produit;
+using System.Globalization;
 
 namespace Batibatlocation.Controllers
 {
@@ -823,13 +824,22 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateCategorie(string Nom, int? page)
+        public ActionResult CreateCategorie(string Nom, string PrixKm, string PrixMin, int? page)
         {
             if (string.IsNullOrWhiteSpace(Nom))
             {
                 TempData.SetAlert("Alert", "Le nom de la catégorie est requis.", "warning");
                 return RedirectToAction("Categories", new {page});
+            }
+            if (string.IsNullOrWhiteSpace(PrixKm))
+            {
+                TempData.SetAlert("Alert", "Le Prix au Km est requis.", "warning");
+                return RedirectToAction("Categories", new { page });
+            }
+            if (string.IsNullOrWhiteSpace(Nom))
+            {
+                TempData.SetAlert("Alert", "Le Prix Minimum est requis.", "warning");
+                return RedirectToAction("Categories", new { page });
             }
 
             var categoryExist = _context.Categories.Where(c => c.Nom.Equals(Nom)).Any();
@@ -841,8 +851,30 @@ namespace Batibatlocation.Controllers
                 return RedirectToAction("Categories", new { page });
             }
 
+            // Sostituisci il punto con la virgola
+            PrixKm = PrixKm.Replace('.', ',');
+            PrixMin = PrixMin.Replace('.', ',');
+
+            // Usa una cultura che supporta la virgola come separatore decimale (es. it-IT)
+            CultureInfo culture = new CultureInfo("it-IT");
+
+            // Converti i valori in decimal
+            decimal prixAuKm = Convert.ToDecimal(PrixKm, culture);
+            decimal prixMin = Convert.ToDecimal(PrixMin, culture);
+
             var newCategory = new Category { Nom = Nom };
             _context.Categories.Add(newCategory);
+            _context.SaveChanges();
+
+            var costiLivraison = new CostiLivraison
+            {
+                PrixAuKm = prixAuKm,
+                PrixMin = prixMin,
+                CategoryId = newCategory.Id
+            };
+
+            _context.CostiLivraisons.Add(costiLivraison);
+
             _context.SaveChanges();
 
             return RedirectToAction("Categories", new { page });
@@ -851,13 +883,55 @@ namespace Batibatlocation.Controllers
 
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditCategorie([Bind(Include = "Id,Nom")] Category category, int? page)
+        //[ValidateAntiForgeryToken]
+        public ActionResult EditCategorie(Category category, int? page)
         {
             if (ModelState.IsValid)
             {
-                _context.Entry(category).State = System.Data.Entity.EntityState.Modified;
-                _context.SaveChanges();
+                var existingCategory = _context.Categories.Include("CostiLivraisons").FirstOrDefault(c => c.Id == category.Id);
+                if (existingCategory != null)
+                {
+                    existingCategory.Nom = category.Nom;
+
+                    // Recupera i valori dal form
+                    string prixAuKmString = Request.Form[$"PrixAuKm_{category.Id}"];
+                    string prixMinString = Request.Form[$"PrixMin_{category.Id}"];
+
+                    // Sostituisci il punto con la virgola
+                    prixAuKmString = prixAuKmString.Replace('.', ',');
+                    prixMinString = prixMinString.Replace('.', ',');
+
+                    // Usa una cultura che supporta la virgola come separatore decimale (es. it-IT)
+                    CultureInfo culture = new CultureInfo("it-IT");
+
+                    // Converti i valori in decimal
+                    decimal prixAuKm = Convert.ToDecimal(prixAuKmString, culture);
+                    decimal prixMin = Convert.ToDecimal(prixMinString, culture);
+
+                    var costiLivraison = existingCategory.CostiLivraisons.FirstOrDefault();
+                    if (costiLivraison != null)
+                    {
+                        costiLivraison.PrixAuKm = prixAuKm;
+                        costiLivraison.PrixMin = prixMin;
+                    }
+                    else
+                    {
+                        costiLivraison = new CostiLivraison
+                        {
+                            PrixAuKm = prixAuKm,
+                            PrixMin = prixMin,
+                            CategoryId = existingCategory.Id
+                        };
+                        existingCategory.CostiLivraisons.Add(costiLivraison);
+                    }
+
+                    _context.SaveChanges();
+                    return RedirectToAction("Categories", new { page });
+                }
+
+                //_context.Entry(category).State = System.Data.Entity.EntityState.Modified;
+                //_context.SaveChanges();
+                TempData.SetAlert("Alert", "Error d'association entre Categories et Prix de Livraison", "error");
                 return RedirectToAction("Categories", new {page});
             }            
             TempData.SetAlert("Alert", ModelState.Values.SelectMany(e => e.Errors).FirstOrDefault()?.ErrorMessage, "warning");

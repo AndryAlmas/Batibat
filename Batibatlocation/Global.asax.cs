@@ -33,8 +33,8 @@ namespace Batibatlocation
         protected void Application_BeginRequest()
         {
             // Imposta la cultura invariante per l'applicazione
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            //Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         }
     }
 }

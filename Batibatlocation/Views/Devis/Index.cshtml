@@ -271,6 +271,10 @@
         color: #dc3545;
         cursor: default;
     }
+
+    .leaflet-top, .leaflet-bottom {
+        z-index: 500 !important;
+    }
 </style>
 
 <section id="hero" class="hero-devis">
@@ -812,7 +816,7 @@
             // Imposta un nuovo timer per ritardare la chiamata API
             debounceTimer = setTimeout(() => {
                 $.ajax({
-                    url: `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=fr`,
+                    url: `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=fr&countrycodes=FR`,
                     method: 'GET',
                     beforeSend: function () {
                         // Mostra lo spinner prima di inviare la richiesta
@@ -966,12 +970,12 @@
                                         <td>${deliveryEnabled ? 'Oui' : 'Non'}</td>
                                     </tr>
                                     ${deliveryEnabled ? `<tr>
-                                        <th>Distance</th>
-                                        <td>${response.distance} km</td>
+                                        <th>Prix Livraison</th>
+                                        <td>${response.priceLivraison.toFixed(2)} €</td>
                                     </tr>` : ''}
                                     <tr>
                                         <th>Prix Total</th>
-                                        <td><b>${response.price.toFixed(2)} €</b></td>
+                                        <td><b>${response.priceTotal.toFixed(2)} €</b></td>
                                     </tr>
                                 </tbody>
                             </table>

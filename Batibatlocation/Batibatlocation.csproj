@@ -211,10 +211,7 @@
     <Compile Include="Data\Configuration.cs" />
     <Compile Include="Helpers\SlugName.cs" />
     <Compile Include="Helpers\AlertData.cs" />
-    <Compile Include="Migrations\202503211345402_Produit.cs" />
-    <Compile Include="Migrations\202503211345402_Produit.Designer.cs">
-      <DependentUpon>202503211345402_Produit.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\CostiLivraison.cs" />
     <Compile Include="Models\Devis.cs" />
     <Compile Include="Models\EtatFacture.cs" />
     <Compile Include="Models\CategoryClient.cs" />
@@ -285,6 +282,7 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Sitemap\" />
   </ItemGroup>
@@ -311,11 +309,6 @@
     <Content Include="Views\Shared\_AlertMessage.cshtml" />
     <Content Include="Views\Prova\Index.cshtml" />
     <Content Include="Views\Devis\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202503211345402_Produit.resx">
-      <DependentUpon>202503211345402_Produit.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

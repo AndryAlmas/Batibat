@@ -16,6 +16,8 @@ namespace Batibatlocation.Models
 
         // Proprietà di navigazione per la relazione uno-a-molti
         public virtual ICollection<Produit> Produits { get; set; }
+
+        public virtual ICollection<CostiLivraison> CostiLivraisons { get; set; }
     }
 
 }
