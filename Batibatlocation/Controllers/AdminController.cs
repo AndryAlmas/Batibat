@@ -952,6 +952,11 @@ namespace Batibatlocation.Controllers
                 return RedirectToAction("Categories", new { page });
             }
 
+            if (category.Id == 14 || category.Id == 1 )
+            {
+                TempData.SetAlert("Alert", "Impossible de supprimer cette catégorie car elles sont des catégoriees principales.", "warning");
+                return RedirectToAction("Categories", new { page });
+            }
             // Controlla se ci sono prodotti associati alla categoria
             var produitsAssociés = _context.Produits.Any(p => p.CategoryId == id);
 

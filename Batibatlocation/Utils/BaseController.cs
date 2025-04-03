@@ -324,7 +324,11 @@ namespace Batibatlocation.Utils
                         break;
                 }
 
-                return (prodotto.Prix * duration + priceLivraison);
+                var prezzo = prodotto.Prix;
+
+                if (prodotto.CategoryId == 14 && duration >= 7) // TODO: logica bloccante per questa tipologia Bétonnière
+                    prezzo = 20;
+                return (prezzo * duration + priceLivraison);
 
             }
             return -1;
