@@ -95,6 +95,7 @@ namespace Batibatlocation.Utils
 
             string ipAddress = Request.UserHostAddress;
             string localisation;
+            int devisId;
 
             if (lat != null && lon != null)
             {
@@ -118,6 +119,8 @@ namespace Batibatlocation.Utils
                 existingDevis.ConnectionsCount += 1;
                 existingDevis.DateConnection = DateTime.Now;
                 existingDevis.Localisation = localisation;
+                devisId = existingDevis.Id;
+
             }
             else
             {
@@ -131,10 +134,12 @@ namespace Batibatlocation.Utils
                     ConnectionsCount = 1
                 };
                 _context.Devis.Add(newDevis);
+                _context.SaveChanges();
+                devisId = newDevis.Id;
             }
 
             _context.SaveChanges();
-            return Json(new { success = true, location = localisation }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, location = localisation, devisId }, JsonRequestBehavior.AllowGet);
         }
 
         private string GetLocationFromCoordinates(double? latitude, double? longitude)
@@ -265,7 +270,45 @@ namespace Batibatlocation.Utils
 
             return -2;
         }
+        protected async Task<string> GetLocalisationFromCoord(double Lat, double Lon)
+        {
+            try
+            {
+                string latitude = Lat.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
+                string longitude = Lon.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
 
+                string url = $"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&format=json&zoom=18&addressdetails=1";
+                using (var client = new HttpClient())
+                {
+                    // Aggiungi un'intestazione per rispettare i termini di utilizzo di Nominatim
+                    client.DefaultRequestHeaders.Add("User-Agent", "YourAppName");
+
+                    // Effettua la richiesta HTTP GET
+                    var response = await client.GetStringAsync(url);
+
+                    // Analizza la risposta JSON
+                    var result = JObject.Parse(response);
+
+                    // Estrai il nome del luogo principale o l'indirizzo completo
+                    string displayName = result["display_name"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(displayName))
+                    {
+                        return displayName; // Restituisci il nome completo del luogo
+                    }
+                    else
+                    {
+                        return "Luogo non trovato"; // Messaggio di fallback
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gestisci eventuali errori
+                Console.WriteLine($"Errore durante la richiesta di reverse geocoding: {ex.Message}");
+                return "Errore nella ricerca del luogo";
+            }
+        }
         public static int GetMonthsBetweenDates(DateTime startDate, DateTime endDate)
         {
             endDate.AddDays(1);

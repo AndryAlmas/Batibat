@@ -1,12 +1,12 @@
 ﻿
 @{
-    ViewBag.Title = "Devis Produit BatiBat";
+    ViewBag.Title = "Réservation Produit BatiBat";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let prodId = @ViewBag.ProdID; // Sostituisci con il valore corretto del prodotto
-        let controller = "Devis";
+        var controller = "Reservation";
         sendLocation(prodId, controller);
     });
 </script>
@@ -281,7 +281,7 @@
             <div class="col-md-12">
                 <div class="card shadow">
                     <div class="card-header text-white text-center">
-                        <h3 class="mb-0">Devis pour @ViewBag.ProdCat</h3>
+                        <h3 class="mb-0">Demande de Réservation pour @ViewBag.ProdCat</h3>
                     </div>
                     <div class="card-body">
 
@@ -1038,7 +1038,7 @@
                 EndLat: deliveryEnabled ? selectedEnd.lat : null,
                 EndLon: deliveryEnabled ? selectedEnd.lon : null,
                 Localisation: $('#placeName').text().trim(),
-                DevisId: $('#devisIdTrack').val(),                
+                DevisId: $('#devisIdTrack').val(),
                 PrixLivraison: $('#prixLivraisonResult').text().trim(),
                 PrixTotal: $('#prixTotalResult').text().trim()
             };

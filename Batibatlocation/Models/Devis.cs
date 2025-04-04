@@ -38,6 +38,9 @@ namespace Batibatlocation.Models
         [MaxLength(255)] // Limita la lunghezza dell'email
         public string AdresseEmail { get; set; }
 
+        [MaxLength(15)] // Limita la lunghezza dell'email
+        public string Telephone { get; set; }
+
         // Contatore connessioni
         public int ConnectionsCount { get; set; }
 
@@ -50,5 +53,6 @@ namespace Batibatlocation.Models
 
         // Contatore richieste Devis
         public int DevisCount { get; set; }
+        public bool DemandeDeReserver { get; set; }
     }
 }

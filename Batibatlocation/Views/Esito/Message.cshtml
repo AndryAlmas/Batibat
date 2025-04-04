@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Devis Produit BatiBat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool success = ViewBag.Success;
+    string message = ViewBag.Message;
+}
+
+<section id="hero" class="hero-devis">
+    <div class="preHero-devis"></div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header text-white text-center" style="background-color: @(success ? "#28a745" : "#dc3545");">
+                        <h3 class="mb-0">@(success ? "Succès" : "Erreur")</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-center">@message</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

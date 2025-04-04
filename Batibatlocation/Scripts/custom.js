@@ -148,7 +148,7 @@ if (glideSlide != null) {
     }).mount();
 }
 
-function sendLocation(prodId) {
+function sendLocation(prodId,controller) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function (position) {
@@ -156,21 +156,28 @@ function sendLocation(prodId) {
                 let longitude = position.coords.longitude;
 
                 // Invia al server la posizione GPS
-                fetch(`/Devis/TrackVisit?prodId=${prodId}&lat=${latitude}&lon=${longitude}`)
+                fetch(`/${controller}/TrackVisit?prodId=${prodId}&lat=${latitude}&lon=${longitude}`)
                     .then(response => response.json())
+                    .then(data => {
+                        const localisationTrack = document.getElementById('localisationTrack');
+                        const devisIdTrack = document.getElementById('devisIdTrack');
+
+                        localisationTrack.value = data.location;
+                        devisIdTrack.value = data.devisId;
+                    })
                     .catch(error => console.error("Errore tracking GPS", error));
             },
             function (error) {
                 console.warn("GPS non disponibile, uso solo IP");
 
                 // Se il GPS è bloccato, invia solo la richiesta con IP
-                fetch(`/Devis/TrackVisit?prodId=${prodId}`)
+                fetch(`/${controller}/TrackVisit?prodId=${prodId}`)
                     .catch(error => console.error("Errore tracking IP", error));
             }
         );
     } else {
         console.warn("Geolocalizzazione non supportata, uso solo IP");
-        fetch(`/Devis/TrackVisit?prodId=${prodId}`)
+        fetch(`/${controller}/TrackVisit?prodId=${prodId}`)
             .catch(error => console.error("Errore tracking IP", error));
     }
 }

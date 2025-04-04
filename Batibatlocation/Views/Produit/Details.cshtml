@@ -46,16 +46,10 @@
                     <dt>Description:</dt>
                     <dd>@Model.Description</dd>
                 </dl>
-
-                <form id="devisForm" action="@Url.Action("TrackVisit", "Devis", new { prodId = Model.Id })" method="post">
-                    <input type="hidden" name="localisation" value="true" />
-
-                    <a href="@Url.Action("CreateReservation", "Reservation", new { echafaudageId = Model.Id })" class="btn-group reserve-button">Réserver</a>
-                    <button type="submit" class="btn-group devis-button">Faire un Devis</button>
-                </form>
-                    @*<a href="@Url.Action("Index", "Devis", new { prodId = Model.Id })"
-                       class="devis-button">Faire un Devis</a>*@
-
+                    <a href="@Url.Action("Index", "Devis", new { prodId = Model.Id })"
+                        class="btn-group devis-button">Faire un Devis</a>
+                    <a href="@Url.Action("Index", "Reservation", new { prodId = Model.Id })" 
+                       class="btn-group reserve-button">Réserver</a>
             </div>
         </div>
         <div class="specifications-container">

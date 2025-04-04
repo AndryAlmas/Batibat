@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Batibatlocation.Controllers
+{
+    public class EsitoController : Controller
+    {
+        // GET: Esito
+        public ActionResult Message(bool success, string message)
+        {
+            ViewBag.Success = success;
+            ViewBag.Message = message;
+            return View();
+        }
+    }
+}

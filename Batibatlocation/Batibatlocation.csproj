@@ -194,6 +194,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DevisController.cs" />
+    <Compile Include="Controllers\EsitoController.cs" />
     <Compile Include="Controllers\ProvaController.cs" />
     <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -294,7 +295,6 @@
     <None Include="packages.config" />
     <Content Include="Views\Admin\Produits.cshtml" />
     <Content Include="Views\Produit\Details.cshtml" />
-    <Content Include="Views\Reservation\CreateReservation.cshtml" />
     <Content Include="Views\Admin\CreateProduit.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
@@ -309,6 +309,8 @@
     <Content Include="Views\Shared\_AlertMessage.cshtml" />
     <Content Include="Views\Prova\Index.cshtml" />
     <Content Include="Views\Devis\Index.cshtml" />
+    <Content Include="Views\Esito\Message.cshtml" />
+    <Content Include="Views\Reservation\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
