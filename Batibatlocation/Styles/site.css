@@ -200,6 +200,21 @@ a:focus {
     right: 0; /* Sposta il menu in vista */
 }
 
+@media (min-width: 768px) {
+    .navbar-expand-md .navbar-toggler {
+        display: none !important;
+    }
+}
+@media (max-width: 425px) {
+    #hambIcon {
+        width: 65% !important;
+    }
+    footer{
+        font-size: 13px !important;
+    }
+}
+
+
 
 /*Produits Section*/
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,500,700);

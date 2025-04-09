@@ -272,6 +272,45 @@
     .leaflet-top, .leaflet-bottom {
         z-index: 500 !important;
     }
+
+    /* Media query */
+    @@media (max-width: 425px) {
+        .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .card-header {
+            padding: 12px !important;
+            margin: 10px !important;
+            border: 3px solid #ca5554 !important;
+        }
+        h3{
+            font-size: 1.3rem !important;
+        }
+        .row {
+            font-size: 0.85rem !important;
+        }
+        .btn-group-vertical > .btn, .btn-group > .btn {
+            font-size: 0.85rem !important;
+        }
+        .form-control {
+            font-size: 0.85rem !important;
+        }
+        .flatpickr-day {
+            font-size: 14px !important; 
+        }
+        #deliverySection {
+            margin-right: -15px !important;
+            margin-left: -15px !important;
+        }
+        ul {
+            padding-inline-start: 25px !important;
+        }
+        #calculateQuote, #reserveButton {
+            width: 100% !important;
+            font-size: 18px !important;
+        }
+    }
 </style>
 
 <section id="hero" class="hero-devis">
@@ -287,7 +326,7 @@
 
                         <!-- Radio Button Privato/Professionista -->
                         <div class="mb-4">
-                            <label class="form-label text-bold text-bold">Vous êtes :</label>
+                            <label class="form-label text-bold text-bold">Vous êtes un :</label>
                             <div class="btn-group w-100" role="group" aria-label="Type d'utilisateur">
                                 <input type="radio" class="btn-check d-none" name="userType" id="privateRadio" value="private" checked required>
                                 <label class="btn active-devis" for="privateRadio">Privé</label>
@@ -318,14 +357,14 @@
                             <br />
                             <div class="row justify-content-center align-items-center">
                                 <!-- Calendario per la data di inizio -->
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-6 text-center mb-4">
                                     <label class="form-label text-bold">Date de Début de Location <span class="text-danger">*</span></label>
                                     <div id="privateStartDateCalendar" class="flatpickr-inline mx-auto"></div>
                                     <input type="hidden" data-type="@ViewBag.ProdPeriod" id="privateStartDate" required>
                                 </div>
 
                                 <!-- Calendario per la data di fine -->
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-6 text-center mb-3">
                                     <label class="form-label text-bold">Date de Fin de Location <span class="text-danger">*</span></label>
                                     <div id="privateEndDateCalendar" class="flatpickr-inline mx-auto"></div>
                                     <input type="hidden" data-type="@ViewBag.ProdPeriod" id="privateEndDate" required disabled>
@@ -352,14 +391,14 @@
                             <br />
                             <div class="row justify-content-center align-items-center">
                                 <!-- Calendario per la data di inizio -->
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-6 text-center mb-4">
                                     <label class="form-label text-bold">Date de Début de Location <span class="text-danger">*</span></label>
                                     <div id="companyStartDateCalendar" class="flatpickr-inline mx-auto"></div>
                                     <input type="hidden" data-type="@ViewBag.ProdPeriod" id="companyStartDate" required>
                                 </div>
 
                                 <!-- Calendario per la data di fine -->
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-6 text-center mb-3">
                                     <label class="form-label text-bold">Date de Fin de Location <span class="text-danger">*</span></label>
                                     <div id="companyEndDateCalendar" class="flatpickr-inline mx-auto"></div>
                                     <input type="hidden" data-type="@ViewBag.ProdPeriod" id="companyEndDate" required disabled>
@@ -392,7 +431,10 @@
                         <br />
                         <!-- Pulsante Calcola Preventivo -->
                         <div class="d-grid text-end" style="margin-bottom: 5rem !important">
-                            <button type="button" id="calculateQuote" class="btn btn-primary btn-lg float-right">Calculer le Devis</button>
+                            <button type="button" id="calculateQuote" class="btn btn-primary btn-lg float-right">
+                                <span id="buttonText">Calculer le devis</span>
+                                <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
                             <input type="hidden" id="localisationTrack" name="localisationTrack" />
                             <input type="hidden" id="devisIdTrack" name="devisIdTrack" />
 
@@ -910,6 +952,10 @@
 
         // Funzione unica per calcolare il preventivo
         $('#calculateQuote').click(function () {
+            const button = $(this); // Riferimento al pulsante
+            const buttonText = $('#buttonText'); // Testo del pulsante
+            const spinner = $('#spinner'); // Spinner
+
             // Determina il tipo di utente
             const userType = $('input[name="userType"]:checked').val();
 
@@ -947,6 +993,12 @@
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(dataToSend),
+                beforeSend: function () {
+                    // Mostra lo spinner e nascondi il testo
+                    button.prop('disabled', true);
+                    buttonText.text('Veuillez patienter pendant le chargement...');
+                    spinner.removeClass('d-none');
+                },
                 success: function (response) {
                     if (response.error) {
                         $('#result').html(`<div class="alert alert-danger">${response.error}</div>`);
@@ -1003,7 +1055,10 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <button id="reserveButton" class="btn btn-lg btn-success w-100" style="margin-top: 15px;">Demandez une réservation dès maintenant</button>
+                            <button id="reserveButton" class="btn btn-lg btn-success w-100" style="margin-top: 15px;">
+                                <span id="buttonTextR">Demandez une réservation dès maintenant</span>
+                                <span id="spinnerR" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>                                
+                            </button>
                 `;
                         $('#result').html(resultText);
                         $('#result').show();
@@ -1012,12 +1067,22 @@
                 error: function () {
                     $('#result').html('<div class="alert alert-danger">Une erreur est survenue lors du calcul du devis.</div>');
                     $('#result').show();
+                },
+                complete: function () {
+                    // Ripristina il testo del pulsante e nascondi lo spinner
+                    button.prop('disabled', false);
+                    buttonText.text('Calculer le devis');
+                    spinner.addClass('d-none');
                 }
             });
         });
 
         // Delegazione dell'evento per il pulsante dinamico
         $('#result').on('click', '#reserveButton', function () {
+            const button = $('#reserveButton'); // Testo del pulsante
+            const buttonText = $('#buttonTextR'); // Testo del pulsante
+            const spinner = $('#spinnerR'); // Spinner
+
             // Determina il tipo di utente
             const userType = $('input[name="userType"]:checked').val();
 
@@ -1049,6 +1114,12 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(reservationData),
+                beforeSend: function () {
+                    // Mostra lo spinner e nascondi il testo
+                    button.prop('disabled', true);
+                    buttonText.text('Veuillez patienter pendant le chargement...');
+                    spinner.removeClass('d-none');
+                },
                 success: function (response) {
                     if (response.success) {
                         // Se c'è un redirectUrl, esegui il redirect
@@ -1064,6 +1135,12 @@
                 error: function (error) {
                     alert('Erreur lors de la réservation.');
                     console.error(error);
+                },
+                complete: function () {
+                    // Ripristina il testo del pulsante e nascondi lo spinner
+                    button.prop('disabled', false);
+                    buttonText.text('Demandez une réservation dès maintenant');
+                    spinner.addClass('d-none');
                 }
             });
         });
