@@ -172,12 +172,28 @@ function sendLocation(prodId,controller) {
 
                 // Se il GPS è bloccato, invia solo la richiesta con IP
                 fetch(`/${controller}/TrackVisit?prodId=${prodId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const localisationTrack = document.getElementById('localisationTrack');
+                        const devisIdTrack = document.getElementById('devisIdTrack');
+
+                        localisationTrack.value = data.location;
+                        devisIdTrack.value = data.devisId;
+                    })
                     .catch(error => console.error("Errore tracking IP", error));
             }
         );
     } else {
         console.warn("Geolocalizzazione non supportata, uso solo IP");
         fetch(`/${controller}/TrackVisit?prodId=${prodId}`)
+            .then(response => response.json())
+            .then(data => {
+                const localisationTrack = document.getElementById('localisationTrack');
+                const devisIdTrack = document.getElementById('devisIdTrack');
+
+                localisationTrack.value = data.location;
+                devisIdTrack.value = data.devisId;
+            })
             .catch(error => console.error("Errore tracking IP", error));
     }
 }
