@@ -337,7 +337,7 @@
                             <label class="form-label text-bold text-bold">Vous êtes un :</label>
                             <div class="btn-group w-100" role="group" aria-label="Type d'utilisateur">
                                 <input type="radio" class="btn-check d-none" name="userType" id="privateRadio" value="private" checked required>
-                                <label class="btn active-devis" for="privateRadio">Privé</label>
+                                <label class="btn active-devis" for="privateRadio">Particulier</label>
 
                                 <input type="radio" class="btn-check d-none" name="userType" id="professionalRadio" value="professional" required>
                                 <label class="btn non-active-devis" for="professionalRadio">Professionnel</label>
@@ -1022,7 +1022,7 @@
                                     </tr>
                                     <tr>
                                         <th class="w-50">Type de Client</th>
-                                        <td class="w-50">${userType === 'private' ? 'Privé' : 'Professionnel'}</td>
+                                        <td class="w-50">${userType === 'private' ? 'Particulier' : 'Professionnel'}</td>
                                     </tr>
                                     <tr>
                                         <th class="w-50">Nom</th>
@@ -1137,6 +1137,10 @@
                             alert('Réservation réussie!');
                         }
                     } else {
+                        // Ripristina il testo del pulsante e nascondi lo spinner
+                        button.prop('disabled', false);
+                        buttonText.text('Demandez une réservation dès maintenant');
+                        spinner.addClass('d-none');
                         alert('Erreur lors de la réservation.');
                     }
                 },

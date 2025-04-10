@@ -91,6 +91,8 @@ namespace Batibatlocation.Controllers
                                 devis.Telephone = telephone;
                                 devis.DevisProdID = prodID;
                                 devis.DevisCount = devis.DevisCount + 1;
+                                devis.ClientCatID = userType == "private" ? 1 : 2;
+                                devis.NomClient = name;
                                 _context.SaveChanges();
                             }
                         }

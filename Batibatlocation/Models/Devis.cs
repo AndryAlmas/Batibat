@@ -54,5 +54,16 @@ namespace Batibatlocation.Models
         // Contatore richieste Devis
         public int DevisCount { get; set; }
         public bool DemandeDeReserver { get; set; }
+
+        // Chiave esterna verso la classe Produit
+        public int? ClientCatID { get; set; }
+
+        // Proprietà di navigazione verso la classe Produit
+        [ForeignKey("ClientCatID")]
+        public virtual CategoryClient CategoryClient { get; set; }
+
+        // Indirizzo email
+        [MaxLength(50)] // Limita la lunghezza dell'email
+        public string NomClient { get; set; }
     }
 }
