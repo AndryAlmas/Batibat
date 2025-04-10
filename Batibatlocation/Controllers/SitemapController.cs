@@ -21,7 +21,7 @@ namespace Batibatlocation.Controllers
         public ActionResult Index()
         {
             // Recupera tutti i prodotti dal database
-            var produits = _context.Produits.ToList();
+            var produits = _context.Produits.Where(p=>p.Visible == true).ToList();
 
             // Crea l'XML del sitemap
             var sitemap = new XDocument(

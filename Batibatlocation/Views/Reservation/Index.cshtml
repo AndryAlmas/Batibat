@@ -1141,14 +1141,14 @@
                     }
                 },
                 error: function (error) {
-                    alert('Erreur lors de la réservation.');
-                    console.error(error);
-                },
-                complete: function () {
                     // Ripristina il testo del pulsante e nascondi lo spinner
                     button.prop('disabled', false);
                     buttonText.text('Demandez une réservation dès maintenant');
                     spinner.addClass('d-none');
+                    alert('Erreur lors de la réservation.');
+                    console.error(error);
+                },
+                complete: function () {
                 }
             });
         });
