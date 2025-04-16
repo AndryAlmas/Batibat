@@ -21,7 +21,7 @@ namespace Batibatlocation.Helpers
         public static decimal SansVirgule(decimal prezzo)
         {
             // Arrotonda a due cifre decimali
-            prezzo = Math.Round(prezzo, 2, MidpointRounding.AwayFromZero);
+            prezzo = Math.Round(prezzo, 0, MidpointRounding.AwayFromZero);
 
             // Verifica se il numero ha .00 alla fine
             if (Decimal.Remainder(prezzo, 1) == 0)

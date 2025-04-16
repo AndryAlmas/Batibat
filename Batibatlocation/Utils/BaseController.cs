@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Batibatlocation.ViewModels;
+using Batibatlocation.Helpers;
+
 
 namespace Batibatlocation.Utils
 {
@@ -340,7 +342,8 @@ namespace Batibatlocation.Utils
             if (costi != null)
             {
                 decimal prezzoPerDistanza = (costi.PrixAuKm ?? 0) * Convert.ToDecimal(distance);
-                return Math.Max((costi.PrixMin ?? 0), prezzoPerDistanza);
+                var prezzoFinale = Math.Max((costi.PrixMin ?? 0), prezzoPerDistanza);
+                return Calcules.SansVirgule(prezzoFinale);
             }
             return Math.Max(80, Convert.ToDecimal(distance)); // default nel caso in cui non trova la categoria o il prodotto
         }
@@ -382,8 +385,8 @@ namespace Batibatlocation.Utils
                         prezzo = prezzo - promotion.DiscountValue;
                 }
 
-                return (prezzo * duration + priceLivraison);
-
+                prezzo = (prezzo * duration + priceLivraison);
+                return Calcules.SansVirgule(prezzo);
             }
             return -1;
         }
