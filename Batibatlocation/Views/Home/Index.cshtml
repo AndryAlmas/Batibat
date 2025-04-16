@@ -1,9 +1,13 @@
 ﻿@{
     ViewBag.Title = "Bati'Bat Location d'Echafaudages - Accueil";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var listaPromozioni = new List<Batibatlocation.Models.Promotion>();
 }
 @model IEnumerable<Batibatlocation.Models.Produit>
-
+@if ((List<Batibatlocation.Models.Promotion>)ViewBag.PromotionList != null)
+{
+    listaPromozioni = (List<Batibatlocation.Models.Promotion>)ViewBag.PromotionList;
+}
 @if (Model.Any())
 {
     <script type="application/ld+json">
@@ -55,22 +59,68 @@
             <div class="row">
                 @foreach (var produit in Model)
                 {
-                    <div class="col-md-6 mb-4">
-                        <figure class="snip-produit hover d-flex flex-column">
-                            <div class="snip-image-area d-flex flex-column">
-                                <img src="@produit.ImageUrl" alt="@produit.Nom" />
-                                <div class="add-to-cart"> <i class="fas fa-plus"></i><span>détails</span></div>
-                            </div>
-                            <figcaption>
-                                <h3>@produit.Nom</h3>
-                                <p>@produit.Description </p>
-                                <div class="price">
-                                    @produit.Prix€ <span class="snip-price-period">par @produit.Periodicite.Nom.ToLower()</span>
-                                </div>
-                            </figcaption><a href="@Url.Action("Details", "Produit", new { slug = Batibatlocation.Helpers.SlugName.GenerateSlug(produit.Id, produit.Nom) })"></a>
-                        </figure>
-                    </div>
+                    if (listaPromozioni.ToList().Where(l => (l.CategoryId ?? -1) == produit.CategoryId || (l.ProductId ?? -1) == produit.Id).Any())
+                    {
+                        var promo = listaPromozioni.ToList().Where(prm => (prm.CategoryId ?? -1) == produit.CategoryId).FirstOrDefault();
+                        if (promo == null)
+                        {
+                            promo = listaPromozioni.Where(l => l.ProductId == produit.Id).FirstOrDefault();
+                        }
 
+
+
+                        <div class="col-md-6 mb-4">
+                            <figure class="snip-produit hover d-flex flex-column">
+                                <div class="snip-image-area d-flex flex-column">
+                                    <!-- Adesivo a forma di cerchio -->
+                                    <div class="discount-sticker-circle">
+                                        <div class="discount-text">
+                                            @if (promo.IsPercentage)
+                                            {
+                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% </span>
+                                            }
+                                            else
+                                            {
+                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ </span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <img src="@produit.ImageUrl" alt="@produit.Nom" />
+                                    <div class="add-to-cart">
+                                        <i class="fas fa-plus"></i><span>détails</span>
+                                    </div>
+                                </div>
+                                <figcaption>
+                                    <h3>@produit.Nom</h3>
+                                    <p>@produit.Description</p>
+                                    <div class="price">
+                                        <span><s>@Batibatlocation.Helpers.Calcules.SansVirgule(produit.Prix)€</s></span>
+                                        @Batibatlocation.Helpers.Calcules.PrixDiscount(produit.Prix, promo)€
+                                        <span class="snip-price-period">par @produit.Periodicite.Nom.ToLower()</span>
+                                    </div>
+                                </figcaption>
+                                <a href="@Url.Action("Details", "Produit", new { slug = Batibatlocation.Helpers.SlugName.GenerateSlug(produit.Id, produit.Nom) })"></a>
+                            </figure>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-6 mb-4">
+                            <figure class="snip-produit hover d-flex flex-column">
+                                <div class="snip-image-area d-flex flex-column">
+                                    <img src="@produit.ImageUrl" alt="@produit.Nom" />
+                                    <div class="add-to-cart"> <i class="fas fa-plus"></i><span>détails</span></div>
+                                </div>
+                                <figcaption>
+                                    <h3>@produit.Nom</h3>
+                                    <p>@produit.Description </p>
+                                    <div class="price">
+                                        @Batibatlocation.Helpers.Calcules.SansVirgule(produit.Prix)€ <span class="snip-price-period">par @produit.Periodicite.Nom.ToLower()</span>
+                                    </div>
+                                </figcaption><a href="@Url.Action("Details", "Produit", new { slug = Batibatlocation.Helpers.SlugName.GenerateSlug(produit.Id, produit.Nom) })"></a>
+                            </figure>
+                        </div>
+                    }
                 }
             </div>
         </div>

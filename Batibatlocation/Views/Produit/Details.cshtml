@@ -1,9 +1,14 @@
 ﻿@{
     ViewBag.Title = "Détail Produit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var promo = new Batibatlocation.Models.Promotion();
+
 }
 @model Batibatlocation.Models.Produit
-
+@if ((Batibatlocation.Models.Promotion)ViewBag.Promotion != null)
+{
+    promo = (Batibatlocation.Models.Promotion)ViewBag.Promotion;
+}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,6 +20,22 @@
         <div class="details-container">
             <div class="image-container">
                 <div class="glide">
+                    @if ((promo.CategoryId ?? -1) == Model.CategoryId || (promo.ProductId ?? -1) == Model.Id)
+                    {
+                        <div class="discount-sticker-circle">
+                            <div class="discount-text">
+                                @if (promo.IsPercentage)
+                                {
+                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% </span>
+                                }
+                                else
+                                {
+                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ </span>
+                                }
+                            </div>
+                        </div>
+
+                    }
                     <div class="glide__track" data-glide-el="track">
                         <ul class="glide__slides">
                             <li class="glide__slide">
@@ -42,14 +63,22 @@
                 <h2>@Model.Nom</h2>
                 <dl class="dl-horizontal">
                     <dt>Prix:</dt>
-                    <dd><strong>@Model.Prix €</strong> par  @Model.Periodicite.Nom.ToLower()</dd>
+                    @if ((promo.CategoryId ?? -1) == Model.CategoryId || (promo.ProductId ?? -1) == Model.Id)
+                    {
+                        <span><s>@Batibatlocation.Helpers.Calcules.SansVirgule(Model.Prix)€</s></span>
+                        <dd><strong>@Batibatlocation.Helpers.Calcules.PrixDiscount(Model.Prix, promo)€ €</strong> par  @Model.Periodicite.Nom.ToLower()</dd>
+                    }
+                    else
+                    {
+                        <dd><strong>@Batibatlocation.Helpers.Calcules.SansVirgule(Model.Prix) €</strong> par  @Model.Periodicite.Nom.ToLower()</dd>
+                    }
                     <dt>Description:</dt>
                     <dd>@Model.Description</dd>
                 </dl>
-                    <a href="@Url.Action("Index", "Devis", new { prodId = Model.Id })"
-                        class="btn-group devis-button">Faire un Devis</a>
-                    <a href="@Url.Action("Index", "Reservation", new { prodId = Model.Id })" 
-                       class="btn-group reserve-button">Réserver</a>
+                <a href="@Url.Action("Index", "Devis", new { prodId = Model.Id })"
+                   class="btn-group devis-button">Faire un Devis</a>
+                <a href="@Url.Action("Index", "Reservation", new { prodId = Model.Id })"
+                   class="btn-group reserve-button">Réserver</a>
             </div>
         </div>
         <div class="specifications-container">

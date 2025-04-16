@@ -371,10 +371,40 @@ namespace Batibatlocation.Utils
 
                 if (prodotto.CategoryId == 14 && duration >= 7) // TODO: logica bloccante per questa tipologia Bétonnière
                     prezzo = 20;
+
+                // applico sconto sul prodotto/categoria
+                var promotion = GetActivePromotion(prodotto);
+                if (promotion != null)
+                {
+                    if (promotion.IsPercentage)
+                        prezzo = prezzo - (prezzo * promotion.DiscountValue / 100);
+                    else
+                        prezzo = prezzo - promotion.DiscountValue;
+                }
+
                 return (prezzo * duration + priceLivraison);
 
             }
             return -1;
+        }
+
+        protected Promotion GetActivePromotion(Produit prodotto)
+        {
+            // Cerca prima le promozioni per la categoria
+            var categoryPromotion = _context.Promotions
+                .Where(p => p.CategoryId == prodotto.CategoryId
+                            && p.StartDate <= DateTime.Now
+                            && DateTime.Now <= p.EndDate)
+                .FirstOrDefault();
+
+            // Se non ci sono promozioni per la categoria, cerca quelle per il prodotto
+            var promotion = categoryPromotion ?? _context.Promotions
+                .Where(p => p.ProductId == prodotto.Id
+                            && p.StartDate <= DateTime.Now
+                            && DateTime.Now <= p.EndDate)
+                .FirstOrDefault();
+
+            return promotion;
         }
 
     }

@@ -19,6 +19,7 @@ namespace Batibatlocation.Data
         public DbSet<Models.Document> Documents { get; set; }
         public DbSet<Models.Periodicite> Periodicites { get; set; }
         public DbSet<Models.Category> Categories { get; set; }
+        public DbSet<Models.Promotion> Promotions { get; set; }
         public DbSet<Models.CategoryDocument> CategoriesDocuments { get; set; }
         public DbSet<Models.CategoryClient> CategoriesClients { get; set; }
         public DbSet<Models.EtatFacture> EtatFactures { get; set; }

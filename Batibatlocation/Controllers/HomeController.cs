@@ -1,4 +1,6 @@
 ﻿using Batibatlocation.Data;
+using Batibatlocation.Models;
+using Batibatlocation.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +9,22 @@ using System.Web.Mvc;
 
 namespace Batibatlocation.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
         public ActionResult Index()
         {
             var produits = _context.Produits.Where(e=>e.Visible).ToList();
+            var promotionList = new List<Promotion>();
+            foreach(var prodotto in produits)
+            {
+                var promo = GetActivePromotion(prodotto);
+                if(!promotionList.Contains(promo) && promo != null)
+                    promotionList.Add(promo);
+            }
+            ViewBag.PromotionList = promotionList;
             return View(produits);
         }
 

@@ -1393,3 +1393,26 @@ footer{
 .top-bar-admin a:hover {
     color: #ff6e6e;
 }
+
+/* Contenitore principale dell'adesivo */
+.discount-sticker-circle {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 80px; /* Dimensione del cerchio */
+    height: 80px; /* Dimensione del cerchio */
+    background-color: #ff4d4d; /* Colore rosso */
+    border-radius: 50%; /* Forma circolare */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Sovrapposizione garantita */
+}
+
+    /* Testo dello sconto */
+    .discount-sticker-circle .discount-text {
+        font-size: 18px; /* Testo più grande */
+        font-weight: bold;
+        color: white; /* Colore del testo */
+        text-align: center;
+    }

@@ -8,16 +8,14 @@ using Batibatlocation.Models;
 using System.IO;
 using WebGrease.Css.Extensions;
 using Batibatlocation.Helpers;
+using Batibatlocation.Utils;
 
 namespace Batibatlocation.Controllers
 {
-    public class ProduitController : Controller
+    public class ProduitController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProduitController(ApplicationDbContext context)
+        public ProduitController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         [Obsolete]
@@ -50,6 +48,9 @@ namespace Batibatlocation.Controllers
             {
                 return HttpNotFound();
             }
+
+            var promo = GetActivePromotion(produit);
+            ViewBag.Promotion = promo;
 
             var imageUrl = produit.ImageUrl.Split('/').LastOrDefault().Split('.').FirstOrDefault();
             string folderPath = Server.MapPath("~/Content/Images/Produits/SlideGallery/" + imageUrl + "/");

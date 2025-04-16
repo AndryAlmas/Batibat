@@ -1,0 +1,256 @@
+﻿@model PagedList.IPagedList<Batibatlocation.ViewModels.PromotionVM>
+@using PagedList.Mvc
+@using PagedList
+
+@{
+    ViewBag.Title = "Promotions";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h3>Promotions</h3>
+<hr />
+<div class="row">
+    <div class="offset-md-10"></div>
+    <div class="col-md-2 d-flex align-items-end justify-content-end">
+        <div class="col-md-12 text-right">
+            <button id="btnAddPromotion" class="btn btn-success mb-3">
+                <i class="fas fa-plus"></i> Nouvelle Promotion
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Form nascosto per creare una nuova promozione -->
+<form id="createPromotionForm" style="display: none;">
+    <input type="hidden" name="CategoryId" id="newCategoryId" />
+    <input type="hidden" name="ProductId" id="newProductId" />
+    <input type="hidden" name="StartDate" id="newStartDate" />
+    <input type="hidden" name="EndDate" id="newEndDate" />
+    <input type="hidden" name="DiscountValue" id="newDiscountValue" />
+    <input type="hidden" name="IsPercentage" id="newIsPercentage" value="true"/>
+</form>
+
+<div class="table-responsive">
+    <table id="promotionsTable" class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Catégorie / Produit</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Réduction</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in Model)
+            {
+                <tr>
+                    <td>@promotion.Id</td>
+                    <td>
+                        @if (promotion.CategoryId.HasValue)
+                        {
+                            <span>Catégorie: @(promotion.Categories?.FirstOrDefault(c => c.Value == promotion.CategoryId.ToString())?.Text)</span>
+                        }
+                        else if (promotion.ProductId.HasValue)
+                        {
+                            <span>Produit: @(promotion.Products?.FirstOrDefault(p => p.Value == promotion.ProductId.ToString())?.Text)</span>
+                        }
+                        else
+                        {
+                            <span>Aucun</span>
+                        }
+                    </td>
+                    <td>@promotion.StartDate.ToShortDateString()</td>
+                    <td>@promotion.EndDate.ToShortDateString()</td>
+                    <td>
+                        @if (promotion.IsPercentage)
+                        {
+                            <span>@(promotion.DiscountValue)%</span>
+                        }
+                        else
+                        {
+                            <span>@(promotion.DiscountValue)€</span>
+                        }
+                    </td>
+                    <td class="text-right">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                @*<a class="dropdown-item" href="#">Modifier</a>*@
+                                <button type="button" class="dropdown-item text-danger trigger-modal"
+                                        data-action="@Url.Action("DeletePromotion", "Admin", new { id = promotion.Id, page = Model.PageNumber })"
+                                        data-title="Supprimer la promotion"
+                                        data-message="Êtes-vous sûr de vouloir supprimer cette promotion ? Cette action est irréversible."
+                                        data-confirm-button="Oui, supprimer"
+                                        data-cancel-button="Annuler">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination-container">
+    @Html.PagedListPager(Model, page => Url.Action("Promotions", new { page }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new List<string> { "page-link" },
+            UlElementClasses = new List<string> { "pagination" },
+            LinkToFirstPageFormat = "«« Première",
+            LinkToPreviousPageFormat = "« Précédente",
+            LinkToNextPageFormat = "Suivante »",
+            LinkToLastPageFormat = "Dernière »»",
+            DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+            EllipsesFormat = "...",
+        })
+</div>
+
+<!-- Modal per aggiungere/modificare una promozione -->
+<div class="modal fade" id="promotionModal" tabindex="-1" role="dialog" aria-labelledby="promotionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="promotionModalLabel">Nouvelle Promotion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">                
+                <div class="form-group">
+                    <label for="categorySelect">Catégorie ou Produit</label>
+                    <select id="categorySelect" class="form-control">
+                        <option value="">Sélectionnez une option</option>
+                        <optgroup label="Catégories">
+                            @if (Model.Any())
+                            {
+                                foreach (var category in Model.FirstOrDefault()?.Categories ?? new List<SelectListItem>())
+                                {
+                                    <option value="category_@category.Value">@category.Text</option>
+                                }
+                            }
+                            else
+                            {
+                                foreach (var category in ViewBag?.Categories ?? new List<SelectListItem>())
+                                {
+                                    <option value="category_@category.Value">@category.Text</option>
+                                }
+                            }
+                        </optgroup>
+                        <optgroup label="Produits">
+                            @if (Model.Any())
+                            {
+                                foreach (var product in Model.FirstOrDefault()?.Products ?? new List<SelectListItem>())
+                                {
+                                    <option value="product_@product.Value">@product.Text</option>
+                                }
+                            }
+                            else
+                            {
+                                foreach (var product in ViewBag?.Products ?? new List<SelectListItem>())
+                                {
+                                    <option value="product_@product.Value">@product.Text</option>
+                                }
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Date de début</label>
+                    <input type="date" id="startDate" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Date de fin</label>
+                    <input type="date" id="endDate" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="discountType">Type de réduction</label>
+                    <select id="discountType" class="form-control">
+                        <option value="percentage">Pourcentage (%)</option>
+                        <option value="amount">Montant fixe (€)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="discountValue">Valeur de la réduction</label>
+                    <input type="number" step="0.01" id="discountValue" class="form-control" required />
+                </div>               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="savePromotion()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Mostra il modal al click su "Nouvelle Promotion"
+        document.getElementById('btnAddPromotion').addEventListener('click', function () {
+            $('#promotionModal').modal('show');
+        });
+
+        // Gestisci la selezione di categoria/prodotto
+        document.getElementById('categorySelect').addEventListener('change', function () {
+            const selectedValue = this.value; // Recupera il valore selezionato
+            const [type, id] = selectedValue.split('_'); // Separa il tipo (categoria/prodotto) dall'ID
+
+            // Imposta i valori nei campi nascosti
+            document.getElementById('newCategoryId').value = type === 'category' ? id : '';
+            document.getElementById('newProductId').value = type === 'product' ? id : '';
+        });
+
+        // Gestisci il tipo di sconto (percentuale o importo)
+        document.getElementById('discountType').addEventListener('change', function () {
+            const discountType = this.value; // Recupera il valore selezionato
+            document.getElementById('newIsPercentage').value = discountType === 'percentage'; // Imposta true/false
+        });
+
+        // Salva la promozione
+        function savePromotion() {
+            const categoryId = document.getElementById('newCategoryId').value || null;
+            const productId = document.getElementById('newProductId').value || null;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const discountValue = parseFloat(document.getElementById('discountValue').value); // Converti in numero
+            const isPercentage = document.getElementById('newIsPercentage').value === 'true'; // Converti in booleano
+
+            const promotionData = {
+                CategoryId: categoryId,
+                ProductId: productId,
+                StartDate: startDate,
+                EndDate: endDate,
+                DiscountValue: discountValue,
+                IsPercentage: isPercentage
+            };
+
+            $.ajax({
+                url: '/Admin/CreatePromotion',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(promotionData),
+                success: function (response) {
+                    if (response.success) {                        
+                        location.reload(); // Ricarica la pagina per mostrare la nuova promozione
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Une erreur est survenue lors de la création de la promotion.');
+                }
+            });
+        }
+    </script>
+}

@@ -29,6 +29,7 @@ using Batibatlocation.Utils;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using Produit = Batibatlocation.Models.Produit;
 using System.Globalization;
+using Batibatlocation.ViewModels;
 
 namespace Batibatlocation.Controllers
 {
@@ -822,6 +823,139 @@ namespace Batibatlocation.Controllers
             return View(categories); 
         }
 
+        // GET: Admin/Promotions
+        [Authorize]
+        [HttpGet]
+        public ActionResult Promotions(int? page)
+        {
+            // Numero di pagina corrente (default: 1)
+            int pageNumber = (page ?? 1);
+
+            // Recupera tutte le categorie ordinate per ID decrescente
+            List<Category> categories = _context.Categories
+                .OrderByDescending(c => c.Id)
+                .ToList();
+
+            // Recupera tutti i prodotti ordine decrescente per ID
+            List<Produit> products = _context.Produits
+                .OrderByDescending(p => p.Id)
+                .ToList();
+
+            // Recupera tutte le promozioni dal database
+            List<Promotion> promotions = _context.Promotions
+                .OrderByDescending(p => p.Id)
+                .ToList();
+
+            // Mappa le promozioni in PromotionVM
+            var promotionVMs = promotions.Select(promotion => new PromotionVM
+            {
+                Id = promotion.Id,
+                CategoryId = promotion.CategoryId,
+                ProductId = promotion.ProductId,
+                StartDate = promotion.StartDate ?? new DateTime(),
+                EndDate = promotion.EndDate ?? new DateTime(),
+                DiscountValue = promotion.DiscountValue,
+                IsPercentage = promotion.IsPercentage,
+                Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Nom
+                }).ToList(),
+                Products = products.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Nom
+                }).ToList()
+            }).ToList();
+
+            ViewBag.Categories = categories.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Nom
+            }).ToList();
+
+            ViewBag.Products = products.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Nom
+            }).ToList();
+            
+
+            // Pagina i risultati
+            int pageSize = 10; // Numero di elementi per pagina
+            IPagedList<PromotionVM> pagedPromotions = promotionVMs.ToPagedList(pageNumber, pageSize);
+
+            // Passa i dati alla vista
+            return View(pagedPromotions);
+        }
+
+        [HttpPost]
+        public ActionResult CreatePromotion([FromBody] PromotionVM promotionVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Restituisci gli errori di validazione
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
+            }
+
+            try
+            {
+                // Verifica che sia selezionata almeno una categoria o un prodotto
+                if (!promotionVM.CategoryId.HasValue && !promotionVM.ProductId.HasValue)
+                {
+                    return Json(new { success = false, message = "Vous devez sélectionner une catégorie ou un produit." });
+                }
+
+                // Verifica che la data di inizio sia precedente alla data di fine
+                if (promotionVM.StartDate >= promotionVM.EndDate)
+                {
+                    return Json(new { success = false, message = "La date de début doit être antérieure à la date de fin." });
+                }
+
+                // Verifica che le date non si sovrappongano ad altre promozioni
+                bool isOverlapping = _context.Promotions.Any(p =>
+                    (p.CategoryId == promotionVM.CategoryId || p.ProductId == promotionVM.ProductId) &&
+                    (
+                        (promotionVM.StartDate >= p.StartDate && promotionVM.StartDate <= p.EndDate) || // Inizia durante un'altra promozione
+                        (promotionVM.EndDate >= p.StartDate && promotionVM.EndDate <= p.EndDate) ||     // Termina durante un'altra promozione
+                        (promotionVM.StartDate <= p.StartDate && promotionVM.EndDate >= p.EndDate)      // Avvolge completamente un'altra promozione
+                    )
+                );
+
+                if (isOverlapping)
+                {
+                    return Json(new { success = false, message = "Les dates de la promotion se chevauchent avec une autre promotion existante." });
+                }
+
+                // Crea una nuova entità Promotion
+                var newPromotion = new Promotion
+                {
+                    CategoryId = promotionVM.CategoryId,
+                    ProductId = promotionVM.ProductId,
+                    StartDate = promotionVM.StartDate,
+                    EndDate = promotionVM.EndDate,
+                    DiscountValue = promotionVM.DiscountValue,
+                    IsPercentage = promotionVM.IsPercentage
+                };
+
+                // Aggiungi la promozione al database
+                _context.Promotions.Add(newPromotion);
+                _context.SaveChanges();
+
+                // Restituisci una risposta di successo
+                return Json(new { success = true, message = "La promotion a été créée avec succès." });
+            }
+            catch (Exception ex)
+            {
+                // Gestisci eventuali errori
+                return Json(new { success = false, message = $"Une erreur est survenue : {ex.Message}" });
+            }
+        }
+
         [HttpPost]
         [Authorize]
         public ActionResult CreateCategorie(string Nom, string PrixKm, string PrixMin, int? page)
@@ -972,6 +1106,28 @@ namespace Batibatlocation.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Categories", new { page });
+        }
+
+        [HttpPost]
+        [Authorize]
+        //[ValidateAntiForgeryToken]
+        public ActionResult DeletePromotion(int id, int? page)
+        {
+            // Trova la promotion da eliminare
+            var promotion = _context.Promotions.Find(id);
+
+            if (promotion == null)
+            {
+                TempData.SetAlert("Alert", "La promotion n'existe pas.", "warning");
+                return RedirectToAction("Promotions", new { page });
+            }
+            
+            // Se non ci sono prodotti associati, elimina la categoria
+            _context.Promotions.Remove(promotion);
+            _context.SaveChanges();
+
+            TempData.SetAlert("Alert", "Promotions supprimé avec succès.", "success");
+            return RedirectToAction("Promotions", new { page });
         }
 
 
