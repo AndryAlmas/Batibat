@@ -56,10 +56,16 @@
                             @Html.EditorFor(model => Model.ElementAtOrDefault(i).Nom, new { htmlAttributes = new { @id = $"inputNom-{categorie.Id}", @class = "form-control", placeholder = "Nom de l'échafaudage", disabled = "disabled", required = "required" } })
                         </td>
                         <td>
-                            <input type="number" step="0.01" id="PrixAuKm_@categorie.Id" name="PrixAuKm_@categorie.Id" value="@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixAuKm).ToString().Replace(',', '.')" class="form-control" disabled="disabled"/>
+                            <div class="input-group">
+                                <input type="number" step="0.01" id="PrixAuKm_@categorie.Id" name="PrixAuKm_@categorie.Id" value="@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixAuKm).ToString().Replace(',', '.')" class="form-control" disabled="disabled" />
+                                <span class="input-group-text">€</span>
+                            </div>
                         </td>
                         <td>
-                            <input type="number" step="0.01" id="PrixMin_@categorie.Id" name="PrixMin_@categorie.Id" value="@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixMin).ToString().Replace(',', '.')" class="form-control" placeholder="Prix minimum"  disabled="disabled"/>
+                            <div class="input-group">
+                                <input type="number" step="0.01" id="PrixMin_@categorie.Id" name="PrixMin_@categorie.Id" value="@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixMin).ToString().Replace(',', '.')" class="form-control" placeholder="Prix minimum" disabled="disabled" />
+                                <span class="input-group-text">€</span>
+                            </div>
                         </td>
                     }
                     <td class="text-right">
@@ -83,7 +89,7 @@
 
                         <div id="formContainer-@categorie.Id" style="display:none">
                             <div class="form-group float-md-right m-1">
-                                <a href="#" onclick="nascondiFormCategorie('@categorie.Id','@Model.ElementAtOrDefault(i).Nom', '@Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixAuKm', '@Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixMin')" class="btn btn-secondary">Annuler</a>
+                                <a href="#" onclick="nascondiFormCategorie('@categorie.Id','@Model.ElementAtOrDefault(i).Nom', '@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixAuKm).ToString().Replace(',', '.')', '@Convert.ToDouble(Model.ElementAtOrDefault(i).CostiLivraisons.FirstOrDefault().PrixMin).ToString().Replace(',', '.')')" class="btn btn-secondary">Annuler</a>
                             </div>
                             <div class="form-group float-md-right m-1">
                                 <input type="submit" form="editForm-@categorie.Id" value="Enregistrer" class="btn btn-primary" />

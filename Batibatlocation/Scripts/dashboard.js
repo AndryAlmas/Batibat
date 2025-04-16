@@ -253,6 +253,7 @@ function nascondiFormCategorie(categoriaId, nom, prixKm, prixMin) {
     // Rimuovi l'attributo "disabled" per abilitare il campo
     if (campoPrixKm) {
         campoPrixKm.setAttribute("disabled", "disabled");
+        debugger;
         campoPrixKm.value = prixKm;
     }
 
@@ -285,10 +286,16 @@ $('#btnAddCategory').on('click', function () {
                     <input type="text" required class="form-control" id="categoryName_New" placeholder="Nom de la catégorie" />
                 </td>
                 <td>
-                    <input type="number" step="0.01" required class="form-control" id="prixAuKm_New" placeholder="Prix Au Km" />
+                    <div class="input-group">
+                        <input type="number" step="0.01" required class="form-control" id="prixAuKm_New" placeholder="Prix Au Km" />
+                        <span class="input-group-text">€</span>
+                    </div>
                 </td>
                 <td>
-                    <input type="number" step="0.01" required class="form-control" id="prixMin_New" placeholder="Prix Minimum" />
+                    <div class="input-group">
+                        <input type="number" step="0.01" required class="form-control" id="prixMin_New" placeholder="Prix Minimum" />
+                        <span class="input-group-text">€</span>
+                    </div>
                 </td>
                 <td class="text-right">
                     <button class="btn btn-primary btn-create">Creer</button>
