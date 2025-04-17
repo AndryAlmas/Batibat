@@ -66,9 +66,6 @@
                         {
                             promo = listaPromozioni.Where(l => l.ProductId == produit.Id).FirstOrDefault();
                         }
-
-
-
                         <div class="col-md-6 mb-4">
                             <figure class="snip-produit hover d-flex flex-column">
                                 <div class="snip-image-area d-flex flex-column">
@@ -77,11 +74,15 @@
                                         <div class="discount-text">
                                             @if (promo.IsPercentage)
                                             {
-                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% </span>
+                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% <sup>(*)</sup></span>
+                                                <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
+                                                <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
                                             }
                                             else
                                             {
-                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ </span>
+                                                <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ <sup>(*)</sup></span>
+                                                <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
+                                                <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
                                             }
                                         </div>
                                     </div>
@@ -123,6 +124,11 @@
                     }
                 }
             </div>
+            <section id="infoPromo">
+                <div class="card-header font-italic" style="font-size:12px">
+                    <b>(*)</b> Les promotions concernent uniquement le produit et n’incluent pas de réductions sur les frais de livraison.
+                </div>
+            </section>
         </div>
     </section>
 }

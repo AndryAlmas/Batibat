@@ -918,11 +918,25 @@ namespace Batibatlocation.Controllers
 
                 // Verifica che le date non si sovrappongano ad altre promozioni
                 bool isOverlapping = _context.Promotions.Any(p =>
-                    (p.CategoryId == promotionVM.CategoryId || p.ProductId == promotionVM.ProductId) &&
                     (
-                        (promotionVM.StartDate >= p.StartDate && promotionVM.StartDate <= p.EndDate) || // Inizia durante un'altra promozione
-                        (promotionVM.EndDate >= p.StartDate && promotionVM.EndDate <= p.EndDate) ||     // Termina durante un'altra promozione
-                        (promotionVM.StartDate <= p.StartDate && promotionVM.EndDate >= p.EndDate)      // Avvolge completamente un'altra promozione
+                        // Sovrapposizione nella stessa categoria
+                        (p.CategoryId == promotionVM.CategoryId && promotionVM.CategoryId.HasValue &&
+                            (
+                                (promotionVM.StartDate >= p.StartDate && promotionVM.StartDate <= p.EndDate) || // Inizia durante un'altra promozione
+                                (promotionVM.EndDate >= p.StartDate && promotionVM.EndDate <= p.EndDate) ||     // Termina durante un'altra promozione
+                                (promotionVM.StartDate <= p.StartDate && promotionVM.EndDate >= p.EndDate)      // Avvolge completamente un'altra promozione
+                            )
+                        )
+                    ) ||
+                    (
+                        // Sovrapposizione nello stesso prodotto
+                        (p.ProductId == promotionVM.ProductId && promotionVM.ProductId.HasValue &&
+                            (
+                                (promotionVM.StartDate >= p.StartDate && promotionVM.StartDate <= p.EndDate) || // Inizia durante un'altra promozione
+                                (promotionVM.EndDate >= p.StartDate && promotionVM.EndDate <= p.EndDate) ||     // Termina durante un'altra promozione
+                                (promotionVM.StartDate <= p.StartDate && promotionVM.EndDate >= p.EndDate)      // Avvolge completamente un'altra promozione
+                            )
+                        )
                     )
                 );
 

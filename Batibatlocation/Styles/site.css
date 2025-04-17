@@ -1399,8 +1399,8 @@ footer{
     position: absolute;
     bottom: 10px;
     left: 10px;
-    width: 80px; /* Dimensione del cerchio */
-    height: 80px; /* Dimensione del cerchio */
+    width: 7rem; /* Dimensione del cerchio */
+    height: 7rem; /* Dimensione del cerchio */
     background-color: #ff4d4d; /* Colore rosso */
     border-radius: 50%; /* Forma circolare */
     display: flex;

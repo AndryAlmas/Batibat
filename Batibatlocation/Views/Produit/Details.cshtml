@@ -26,11 +26,15 @@
                             <div class="discount-text">
                                 @if (promo.IsPercentage)
                                 {
-                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% </span>
+                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% <sup>(*)</sup></span>
+                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
+                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
                                 }
                                 else
                                 {
                                     <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ </span>
+                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
+                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
                                 }
                             </div>
                         </div>
@@ -81,6 +85,14 @@
                    class="btn-group reserve-button">Réserver</a>
             </div>
         </div>
+        @if ((promo.CategoryId ?? -1) == Model.CategoryId || (promo.ProductId ?? -1) == Model.Id)
+        {
+            <section id="infoPromo">
+                <div class="card-header font-italic" style="font-size:12px">
+                    <b>(*)</b> Les promotions concernent uniquement le produit et n’incluent pas de réductions sur les frais de livraison.
+                </div>
+            </section>
+        }
         <div class="specifications-container">
             <h3>Spécifications Techniques</h3>
             <p>@Model.SpecifiquesTechniques</p>
