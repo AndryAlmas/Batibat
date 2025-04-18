@@ -353,6 +353,7 @@ namespace Batibatlocation.Utils
             var prodotto = _context.Produits.Where(p => p.Id == prodID).FirstOrDefault();
             if (prodotto != null)
             {
+                // Calcola la durata in base alla periodicità del prodotto
                 int duration = 0;
                 switch (prodotto.Periodicite.Id)
                 {
@@ -372,19 +373,69 @@ namespace Batibatlocation.Utils
 
                 var prezzo = prodotto.Prix;
 
-                if (prodotto.CategoryId == 14 && duration >= 7) // TODO: logica bloccante per questa tipologia Bétonnière
+                // Logica speciale per la categoria Bétonnière
+                if (prodotto.CategoryId == 14 && duration >= 7)
                     prezzo = 20;
 
-                // applico sconto sul prodotto/categoria
+                // Recupera la promozione attiva per il prodotto o la categoria
                 var promotion = GetActivePromotion(prodotto);
                 if (promotion != null)
                 {
+                    // Date della promozione
+                    var promStartDate = promotion.StartDate;
+                    var promEndDate = promotion.EndDate;
+
+                    // Date selezionate dal cliente
+                    var clientStartDate = startDate; // Data di inizio selezionata dal cliente
+                    var clientEndDate = endDate;    // Data di fine selezionata dal cliente
+
+                    // Calcola il numero di unità di tempo coperte dalla promozione
+                    int discountedUnits = 0;
+                    int totalUnits = duration;
+
+                    switch (prodotto.Periodicite.Id)
+                    {
+                        case (int)Enum.PeriodicityType.Jour:
+                            // Ogni giorno è un'unità di tempo
+                            discountedUnits = Enumerable.Range(0, totalUnits)
+                                .Count(i => clientStartDate.AddDays(i) >= promStartDate && clientStartDate.AddDays(i) <= promEndDate);
+                            break;
+
+                        case (int)Enum.PeriodicityType.Semaine:
+                            // Ogni settimana è un'unità di tempo
+                            discountedUnits = Enumerable.Range(0, totalUnits)
+                                .Count(i => clientStartDate.AddDays(i * 7) >= promStartDate && clientStartDate.AddDays(i * 7) <= promEndDate);
+                            break;
+
+                        case (int)Enum.PeriodicityType.Mois:
+                            // Ogni mese è un'unità di tempo
+                            discountedUnits = Enumerable.Range(0, totalUnits)
+                                .Count(i => clientStartDate.AddMonths(i) >= promStartDate && clientStartDate.AddMonths(i) <= promEndDate);
+                            break;
+                    }
+
+                    // Numero di unità di tempo senza sconto
+                    int nonDiscountedUnits = totalUnits - discountedUnits;
+
+                    // Calcola il prezzo con sconto per le unità coperte dalla promozione
+                    decimal discountedPrice = prezzo;
                     if (promotion.IsPercentage)
-                        prezzo = prezzo - (prezzo * promotion.DiscountValue / 100);
+                    {
+                        discountedPrice = prezzo - (prezzo * promotion.DiscountValue / 100);
+                    }
                     else
-                        prezzo = prezzo - promotion.DiscountValue;
+                    {
+                        discountedPrice = prezzo - promotion.DiscountValue;
+                    }
+
+                    // Calcola il prezzo totale
+                    decimal totalDiscountedPrice = discountedPrice * discountedUnits;
+                    decimal totalNonDiscountedPrice = prezzo * nonDiscountedUnits;
+                    prezzo = totalDiscountedPrice + totalNonDiscountedPrice;
+                    duration = 1;
                 }
 
+                // Calcola il prezzo finale includendo la durata e il costo di spedizione
                 prezzo = (prezzo * duration + priceLivraison);
                 return Calcules.SansVirgule(prezzo);
             }
