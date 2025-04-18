@@ -30,6 +30,8 @@ using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using Produit = Batibatlocation.Models.Produit;
 using System.Globalization;
 using Batibatlocation.ViewModels;
+using OpenQA.Selenium;
+using System.Threading;
 
 namespace Batibatlocation.Controllers
 {
@@ -1144,6 +1146,37 @@ namespace Batibatlocation.Controllers
             return RedirectToAction("Promotions", new { page });
         }
 
+        public ActionResult RicercaGruppiFB()
+        {
+            SeleniumHelper.RicercaGruppiCostruzione(60);
+            return View("Dashboard");
+        }
+
+        public void PostaNelGruppo(string gruppoUrl, string messaggio)
+        {
+            using (var driver = SeleniumHelper.GetDriver())
+            {
+                driver.Navigate().GoToUrl(gruppoUrl);
+                Thread.Sleep(6000);
+
+                // Trova la textarea per postare
+                var postBox = driver.FindElement(By.XPath("//div[@role='textbox']"));
+                postBox.Click();
+                Thread.Sleep(2000);
+                postBox.SendKeys(messaggio);
+                Thread.Sleep(2000);
+
+                // Trova il pulsante "Pubblica"
+                var buttons = driver.FindElements(By.XPath("//div[@aria-label='Pubblica']"));
+                if (buttons.Any())
+                {
+                    buttons.First().Click();
+                    Console.WriteLine("Post pubblicato con successo.");
+                }
+
+                Thread.Sleep(5000);
+            }
+        }
 
 
         protected override void Dispose(bool disposing)
