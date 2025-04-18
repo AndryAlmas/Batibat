@@ -26,15 +26,15 @@
                             <div class="discount-text">
                                 @if (promo.IsPercentage)
                                 {
-                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% <sup>(*)</sup></span>
-                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
-                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
+                                    <span class="discount-prix">- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)% <sup class="discount-sup">(*)</sup></span>
+                                    <span class="discount-fin"> Jusqu'au</span>
+                                    <span class="discount-date"> @promo.EndDate.Value.ToShortDateString()</span>
                                 }
                                 else
                                 {
-                                    <span>- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ </span>
-                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> Jusqu'au</span>
-                                    <span style="font-size: 9px; font-weight: normal; display: flex; justify-content: center;"> @promo.EndDate.Value.ToShortDateString()</span>
+                                    <span class="discount-prix">- @Batibatlocation.Helpers.Calcules.SansVirgule(promo.DiscountValue)€ <sup class="discount-sup">(*)</sup></span>
+                                    <span class="discount-fin"> Jusqu'au</span>
+                                    <span class="discount-date"> @promo.EndDate.Value.ToShortDateString()</span>
                                 }
                             </div>
                         </div>
@@ -89,7 +89,9 @@
         {
             <section id="infoPromo">
                 <div class="card-header font-italic" style="font-size:12px">
-                    <b>(*)</b> Les promotions concernent uniquement le produit et n’incluent pas de réductions sur les frais de livraison.
+                    <b>(*)</b> Les promotions concernent uniquement les produits réservé en ligne sur la période indiquée et n’incluent pas de réductions sur les frais de livraison.
+                    <br />
+                    <b>Important:</b> En cas de réservation sur plusieurs semaines, seule les semaines englobant la période de promotion bénéficieront du tarif réduit. Les autres semaines au-delà de cette période seront facturées au tarif standard.
                 </div>
             </section>
         }
